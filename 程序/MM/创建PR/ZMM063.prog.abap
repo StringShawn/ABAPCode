@@ -1,7 +1,7 @@
 *&---------------------------------------------------------------------*
 *& Program ID    : ZMM063
-*& Program Text  : æ‰¹é‡é‡‡è´­ç”³è¯·å¯¼å…¥
-*& Overview      : æ‰¹é‡é‡‡è´­ç”³è¯·å¯¼å…¥
+*& Program Text  : ÅúÁ¿²É¹ºÉêÇëµ¼Èë
+*& Overview      : ÅúÁ¿²É¹ºÉêÇëµ¼Èë
 *& Created by    : HANDYXH
 *& Creation Date : 2019/03/22
 *&---------------------------------------------------------------------*
@@ -16,7 +16,7 @@ REPORT zmm063.
 * GLOBAL DATA DECLARE
 *-----------------------------------------------------------------------
 TYPES:BEGIN OF ty_alv,
-        id   LIKE icon-id,        "çŠ¶æ€
+        id   LIKE icon-id,        "×´Ì¬
         mess TYPE bapi_msg.
         INCLUDE STRUCTURE zspr_change.
 TYPES END OF ty_alv.
@@ -59,19 +59,19 @@ DATA:gt_fcat TYPE lvc_t_fcat,
 
 DATA:gs_layo TYPE lvc_s_layo.
 
-*&---ç‰©æ–™æè¿°
+*&---ÎïÁÏÃèÊö
 DATA:gt_makt TYPE TABLE OF ty_makt,
      gs_makt TYPE ty_makt.
 
-*&---ç‰©æ–™ä¿¡æ¯
+*&---ÎïÁÏĞÅÏ¢
 DATA:gt_mara TYPE TABLE OF ty_mara,
      gs_mara TYPE ty_mara.
 
-*&---ç‰©æ–™å·¥å‚ä¿¡æ¯
+*&---ÎïÁÏ¹¤³§ĞÅÏ¢
 DATA:gt_marc TYPE TABLE OF ty_marc,
      gs_marc TYPE ty_marc.
 
-*&---ç‰©æ–™å·¥å‚ä¿¡æ¯
+*&---ÎïÁÏ¹¤³§ĞÅÏ¢
 DATA:gt_t161 TYPE TABLE OF ty_t161,
      gs_t161 TYPE ty_t161.
 
@@ -85,7 +85,7 @@ FIELD-SYMBOLS: <dyn_field> TYPE any.
 FIELD-SYMBOLS: <fs_alv> TYPE ty_alv.
 
 *-----------------------------------------------------------------------
-* é€‰æ‹©å±å¹•
+* Ñ¡ÔñÆÁÄ»
 *-----------------------------------------------------------------------
 
 SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME .
@@ -117,17 +117,17 @@ END-OF-SELECTION.
 *&---------------------------------------------------------------------*
 *&      Form  FM_GET_PATH
 *&---------------------------------------------------------------------*
-*       è·å–æ–‡ä»¶è·¯å¾„
+*       »ñÈ¡ÎÄ¼şÂ·¾¶
 *----------------------------------------------------------------------*
 FORM fm_get_path .
-  DATA: title   TYPE string VALUE 'é€‰æ‹©æ–‡ä»¶',
+  DATA: title   TYPE string VALUE 'Ñ¡ÔñÎÄ¼ş',
         ini_dir TYPE string,
         l_rc    TYPE i,
         it_tab  TYPE filetable.
   DATA: lv_filter TYPE string.
   CONCATENATE cl_gui_frontend_services=>filetype_excel
             cl_gui_frontend_services=>filetype_all INTO lv_filter.
-  CALL METHOD cl_gui_frontend_services=>file_open_dialog  "è·å–æ–‡ä»¶è·¯å¾„
+  CALL METHOD cl_gui_frontend_services=>file_open_dialog  "»ñÈ¡ÎÄ¼şÂ·¾¶
     EXPORTING
       window_title            = title
       initial_directory       = ini_dir
@@ -149,18 +149,18 @@ ENDFORM.                    "FM_GET_PATH
 *&---------------------------------------------------------------------*
 *&      Form  FRM_INPUT_FILE
 *&---------------------------------------------------------------------*
-*       è¯»å–excel å†…å®¹
+*       ¶ÁÈ¡excel ÄÚÈİ
 *----------------------------------------------------------------------*
 FORM frm_input_file .
   REFRESH:gt_excel.
 
-  CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'    "è¯»å–excelæ–‡ä»¶ä¸­çš„å†…å®¹
+  CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'    "¶ÁÈ¡excelÎÄ¼şÖĞµÄÄÚÈİ
     EXPORTING
       filename                = p_fname
       i_begin_col             = '1'
       i_begin_row             = '3'
-      i_end_col               = '30' " è¯»å–å¤šå°‘åˆ—
-      i_end_row               = '9999' "è¯»å–å¤šå°‘è¡Œ
+      i_end_col               = '30' " ¶ÁÈ¡¶àÉÙÁĞ
+      i_end_row               = '9999' "¶ÁÈ¡¶àÉÙĞĞ
     TABLES
       intern                  = gt_excel
     EXCEPTIONS
@@ -175,11 +175,11 @@ ENDFORM. "FRM_INPUT_FILE
 *&---------------------------------------------------------------------*
 *&      Form  FRM_BUILD_TABLE
 *&---------------------------------------------------------------------*
-*       åˆ›å»ºfieldcat
+*       ´´½¨fieldcat
 *----------------------------------------------------------------------*
 FORM frm_build_table .
   REFRESH gt_fcat.
-  CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'   "è·å–fieldcat
+  CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'   "»ñÈ¡fieldcat
     EXPORTING
       i_structure_name       = 'ZSPR_CHANGE'
     CHANGING
@@ -192,13 +192,13 @@ ENDFORM.                    "FRM_BUILD_TABLE
 *&---------------------------------------------------------------------*
 *&      Form  FRM_ISNERT_DATA
 *&---------------------------------------------------------------------*
-*       excelè¯»å–å…¥å†…è¡¨
+*       excel¶ÁÈ¡ÈëÄÚ±í
 *----------------------------------------------------------------------*
 FORM frm_fill_data .
   DATA: lv_times TYPE i VALUE 1.
   DATA: lc_date TYPE sy-datum.
   DATA: lc_time TYPE sy-uzeit.
-  LOOP AT gt_excel INTO gs_excel.  "æŠŠexcelæ•°æ®å¯¼å…¥å†…è¡¨
+  LOOP AT gt_excel INTO gs_excel.  "°ÑexcelÊı¾İµ¼ÈëÄÚ±í
     lv_times = gs_excel-col.
     READ TABLE gt_fcat INTO gs_fcat INDEX lv_times.
     ASSIGN COMPONENT gs_fcat-fieldname OF STRUCTURE gs_data TO <dyn_field>.
@@ -221,12 +221,12 @@ ENDFORM. "FRM_ISNERT_DATA
 *&---------------------------------------------------------------------*
 *&      Form  FRM_DISPLAY_DATA
 *&---------------------------------------------------------------------*
-*       å±•ç¤ºalv
+*       Õ¹Ê¾alv
 *----------------------------------------------------------------------*
 FORM frm_display_data .
 
-  PERFORM frm_build_layout."æ ¼å¼
-  PERFORM frm_alv_output. "è¾“å‡º
+  PERFORM frm_build_layout."¸ñÊ½
+  PERFORM frm_alv_output. "Êä³ö
 
 ENDFORM.
 FORM frm_build_layout .
@@ -236,12 +236,12 @@ FORM frm_build_layout .
 
   CLEAR gs_fcat.
   gs_fcat-fieldname = 'ID'.
-  gs_fcat-coltext   = 'çŠ¶æ€'.
+  gs_fcat-coltext   = '×´Ì¬'.
   APPEND gs_fcat TO gt_fcat.
 
   CLEAR gs_fcat.
   gs_fcat-fieldname = 'MESS'.
-  gs_fcat-coltext   = 'æ¶ˆæ¯'.
+  gs_fcat-coltext   = 'ÏûÏ¢'.
   APPEND gs_fcat TO gt_fcat.
 ENDFORM.
 FORM frm_alv_output .
@@ -264,7 +264,7 @@ ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  FRM_CHANGE_PR
 *&---------------------------------------------------------------------*
-*       ä¿®æ”¹prä¹‹å‰æ£€æŸ¥
+*       ĞŞ¸ÄprÖ®Ç°¼ì²é
 *----------------------------------------------------------------------*
 FORM frm_change_pr .
 
@@ -286,14 +286,14 @@ FORM frm_change_pr .
   CLEAR:lv_banfn.
   CLEAR:lv_bnfpo.
 
-*&---B ä»£è¡¨é‡‡è´­ç”³è¯·
+*&---B ´ú±í²É¹ºÉêÇë
   lv_bstyp = 'B'.
 
   SELECT bstyp
-         bsart  "é‡‡è´­ç”³è¯·ç±»å‹
-         pincr  "é¡¹ç›®ç¼–å·é—´éš”
-         numki  "å†…éƒ¨å·ç åˆ†é…çš„å·ç èŒƒå›´
-         numke  "å¤–éƒ¨å·ç åˆ†é…çš„å·ç èŒƒå›´
+         bsart  "²É¹ºÉêÇëÀàĞÍ
+         pincr  "ÏîÄ¿±àºÅ¼ä¸ô
+         numki  "ÄÚ²¿ºÅÂë·ÖÅäµÄºÅÂë·¶Î§
+         numke  "Íâ²¿ºÅÂë·ÖÅäµÄºÅÂë·¶Î§
   INTO TABLE gt_t161
   FROM t161
   WHERE bstyp = lv_bstyp.
@@ -303,11 +303,11 @@ FORM frm_change_pr .
 
   SORT gt_t161 BY bsart.
 
-*&---å¯¼å…¥æ•°æ®æ•´ç†
+*&---µ¼ÈëÊı¾İÕûÀí
   LOOP AT gt_data INTO gs_data.
-*&---åˆå§‹åŒ–ALVç»“æ„/initial alv structure
+*&---³õÊ¼»¯ALV½á¹¹/initial alv structure
     CLEAR:gs_alv.
-*&---è®¾ç½®æŒ‡ç¤ºç¯é»„è‰²ç­‰å¾…å¯¼å…¥æ ‡è®°/set indicate yellow light of wait
+*&---ÉèÖÃÖ¸Ê¾µÆ»ÆÉ«µÈ´ıµ¼Èë±ê¼Ç/set indicate yellow light of wait
     "for import
     gs_alv-id         = '@5D@'.
 
@@ -324,16 +324,37 @@ FORM frm_change_pr .
               WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
     ENDIF.
 
-*&---ç»“æ„åŒ–èµ‹å€¼
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = gs_data-vbeln
+      IMPORTING
+        output = gs_data-vbeln.
+
+    CALL FUNCTION 'CONVERSION_EXIT_CUNIT_INPUT'
+      EXPORTING
+        input          = gs_data-meins
+        language       = sy-langu
+      IMPORTING
+        output         = gs_data-meins
+      EXCEPTIONS
+        unit_not_found = 1
+        OTHERS         = 2.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+
+*&---½á¹¹»¯¸³Öµ
     MOVE-CORRESPONDING gs_data TO gs_alv.
-*&---å¢åŠ åˆ°ALVæ˜¾ç¤ºå†…è¡¨
+*&---Ôö¼Óµ½ALVÏÔÊ¾ÄÚ±í
     APPEND gs_alv TO gt_alv.
   ENDLOOP.
 
 
-*&---æ£€æŸ¥æ•°æ®
+*&---¼ì²éÊı¾İ
   IF gt_alv IS NOT INITIAL.
-*&---ç‰©æ–™ç»„
+*&---ÎïÁÏ×é
     CLEAR:lt_alv.
     lt_alv = gt_alv.
     DELETE lt_alv WHERE matnr IS INITIAL.
@@ -342,7 +363,7 @@ FORM frm_change_pr .
 
     IF lt_alv IS NOT INITIAL.
       SELECT matnr
-             matkl    "ç‰©æ–™ç»„
+             matkl    "ÎïÁÏ×é
       FROM mara
       INTO TABLE gt_mara
       FOR ALL ENTRIES IN lt_alv
@@ -352,7 +373,7 @@ FORM frm_change_pr .
       ENDIF.
       SORT gt_mara BY matnr.
 
-*&---ç‰©æ–™æè¿°
+*&---ÎïÁÏÃèÊö
       SELECT matnr
              maktx
       INTO TABLE gt_makt
@@ -366,7 +387,7 @@ FORM frm_change_pr .
       SORT gt_makt BY matnr.
     ENDIF.
 
-*&---é‡‡è´­ç»„
+*&---²É¹º×é
     CLEAR:lt_alv.
     lt_alv = gt_alv.
     DELETE lt_alv  WHERE matnr IS INITIAL AND werks IS INITIAL.
@@ -376,7 +397,7 @@ FORM frm_change_pr .
     IF lt_alv IS NOT INITIAL.
       SELECT matnr
              werks
-             ekgrp    "é‡‡è´­ç»„
+             ekgrp    "²É¹º×é
       FROM marc
       INTO TABLE gt_marc
       FOR ALL ENTRIES IN lt_alv
@@ -390,47 +411,47 @@ FORM frm_change_pr .
   ENDIF.
 
 
-*&---ä½¿ç”¨å®Œæ¯•å†…è¡¨ï¼Œé‡Šæ”¾å†…å­˜ï¼›
+*&---Ê¹ÓÃÍê±ÏÄÚ±í£¬ÊÍ·ÅÄÚ´æ£»
   FREE:lt_alv.
   FREE:gt_data.
 
 
-*&---å¯¼å…¥å‰æ£€æŸ¥
+*&---µ¼ÈëÇ°¼ì²é
   LOOP AT gt_alv ASSIGNING <fs_alv>.
-*&---æ—¥å¿—ä¿¡æ¯
+*&---ÈÕÖ¾ĞÅÏ¢
 *    <fs_alv>-ernam = sy-uname.
 *    <fs_alv>-erdat = sy-datum.
 *    <fs_alv>-erzzt = sy-uzeit.
 *    <fs_alv>-rsrow = sy-tabix.
 
-*&---ç³»ç»Ÿé¢„è®¾å®šçš„è¡Œé¡¹ç›®é—´éš”
+*&---ÏµÍ³Ô¤Éè¶¨µÄĞĞÏîÄ¿¼ä¸ô
     READ TABLE gt_t161 INTO gs_t161 WITH KEY bsart = gs_data-bsart BINARY SEARCH.
     IF sy-subrc <> 0.
       gs_t161-pincr = 10.
     ENDIF.
 
-*&---ç‰©æ–™ç»„
+*&---ÎïÁÏ×é
     READ TABLE gt_mara INTO gs_mara WITH KEY matnr = <fs_alv>-matnr BINARY SEARCH.
     IF sy-subrc = 0.
       <fs_alv>-matkl = gs_mara-matkl.
     ELSE.
       <fs_alv>-id    = '@5C@'.
       err_flag = 'X'.
-      CONCATENATE <fs_alv>-mess text-909 INTO <fs_alv>-mess."'ç‰©æ–™ä¸å­˜åœ¨'.
+      CONCATENATE <fs_alv>-mess text-909 INTO <fs_alv>-mess."'ÎïÁÏ²»´æÔÚ'.
     ENDIF.
 
 
-*&---çŸ­æ–‡æœ¬
+*&---¶ÌÎÄ±¾
     READ TABLE gt_makt INTO gs_makt WITH KEY matnr = <fs_alv>-matnr BINARY SEARCH.
     IF sy-subrc = 0.
       <fs_alv>-maktx = gs_makt-maktx.
     ELSE.
       <fs_alv>-id    = '@5C@'.
       err_flag = 'X'.
-      CONCATENATE <fs_alv>-mess text-910 INTO <fs_alv>-mess."'ç‰©æ–™æè¿°ä¸å­˜åœ¨'.
+      CONCATENATE <fs_alv>-mess text-910 INTO <fs_alv>-mess."'ÎïÁÏÃèÊö²»´æÔÚ'.
     ENDIF.
 
-*&---é‡‡è´­ç»„
+*&---²É¹º×é
     READ TABLE gt_marc INTO gs_marc WITH KEY matnr = <fs_alv>-matnr
                                              werks = <fs_alv>-werks
                                              BINARY SEARCH.
@@ -439,16 +460,16 @@ FORM frm_change_pr .
     ELSE.
       <fs_alv>-id    = '@5C@'.
       err_flag = 'X'.
-      CONCATENATE <fs_alv>-mess text-908 INTO <fs_alv>-mess."'é‡‡è´­ç»„ä¸å­˜åœ¨'.
+      CONCATENATE <fs_alv>-mess text-908 INTO <fs_alv>-mess."'²É¹º×é²»´æÔÚ'.
     ENDIF.
 
-*&---PRè¡Œé¡¹ç›®ç´¯åŠ 10
+*&---PRĞĞÏîÄ¿ÀÛ¼Ó10
 
     IF <fs_alv>-bnfpo > lv_bnfpo.
       lv_bnfpo = <fs_alv>-bnfpo.
       APPEND <fs_alv> TO lt_alv.
     ELSE.
-      IF err_flag IS INITIAL.       "æœ‰é”™è¯¯ä¸äº§ç”Ÿé‡‡è´­ç”³è¯·
+      IF err_flag IS INITIAL.       "ÓĞ´íÎó²»²úÉú²É¹ºÉêÇë
         PERFORM frm_impt_data TABLES lt_alv.
       ENDIF.
       APPEND LINES OF lt_alv TO lt_alv_temp.
@@ -473,9 +494,9 @@ ENDFORM.                    " FRM_CHANGE_PR
 *&---------------------------------------------------------------------*
 *&      Form  FRM_IMPT_DATA
 *&---------------------------------------------------------------------*
-*       åˆ›å»ºé‡‡è´­ç”³è¯·
+*       ´´½¨²É¹ºÉêÇë
 *----------------------------------------------------------------------*
-FORM frm_impt_data TABLES p_alv like gt_alv.
+FORM frm_impt_data TABLES p_alv LIKE gt_alv.
   DATA:
     ls_header             TYPE bapimereqheader,
     ls_headerx            TYPE bapimereqheaderx,
@@ -507,10 +528,10 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 
   DATA:lt_alv TYPE TABLE OF ty_alv.
 
-  DATA: lv_id   LIKE icon-id,        "çŠ¶æ€
+  DATA: lv_id   LIKE icon-id,        "×´Ì¬
         lv_mess TYPE bapi_msg.
 
-*&---åˆ†å‰²æ–‡æœ¬
+*&---·Ö¸îÎÄ±¾
   DATA:
     lv_txt    TYPE string,
     lv_length TYPE n LENGTH 4,
@@ -525,7 +546,7 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 
 
 
-*&---æ¯æ¬¡è®¡ç®—éœ€è¦å¯¼å…¥çš„é‡‡è´­ç”³è¯·ä¸ªæ•°
+*&---Ã¿´Î¼ÆËãĞèÒªµ¼ÈëµÄ²É¹ºÉêÇë¸öÊı
   CLEAR:lt_alv.
   lt_alv = p_alv[].
 
@@ -536,129 +557,134 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 
   LOOP AT lt_alv INTO gs_alv.
 
-*&---å¦‚æœè¯¥æ¡æ•°æ®å·²ç»æ­£å¼å¯¼å…¥æˆåŠŸï¼Œåˆ™ä¸å†å¯¼å…¥
+*&---Èç¹û¸ÃÌõÊı¾İÒÑ¾­ÕıÊ½µ¼Èë³É¹¦£¬Ôò²»ÔÙµ¼Èë
     IF <fs_alv>-id = '@5B@'.
       CONTINUE.
     ENDIF.
 
     gv_index = sy-tabix.
 
-*&---å½“å‰æ¡ç›®
+*&---µ±Ç°ÌõÄ¿
     gv_tabix = gv_tabix + 1.
 
 
 
 
-*&---å¡«å……è¡Œé¡¹ç›®æ•°æ®
+*&---Ìî³äĞĞÏîÄ¿Êı¾İ
     CLEAR:ls_item,ls_itemx.
-    ls_item-preq_item   = gs_alv-bnfpo. "é‡‡è´­ç”³è¯·è¡Œé¡¹ç›®
+    ls_item-preq_item   = gs_alv-bnfpo. "²É¹ºÉêÇëĞĞÏîÄ¿
     ls_itemx-preq_item  = gs_alv-bnfpo.
     ls_itemx-preq_itemx = 'X'.
 
 
     IF gs_alv-knttp IS NOT INITIAL.
-      ls_item-acctasscat  = gs_alv-knttp. "è´¦æˆ·åˆ†é…ç±»åˆ«
+      ls_item-acctasscat  = gs_alv-knttp. "ÕË»§·ÖÅäÀà±ğ
       ls_itemx-acctasscat = 'X'.
     ENDIF.
 
     IF gs_alv-pstyp IS NOT INITIAL.
-      ls_item-item_cat    = gs_alv-pstyp. "é¡¹ç›®ç±»åˆ«æ–‡æœ¬
+      ls_item-item_cat    = gs_alv-pstyp. "ÏîÄ¿Àà±ğÎÄ±¾
       ls_itemx-item_cat   = 'X'.
     ENDIF.
 
     IF gs_alv-matnr IS NOT INITIAL.
-      ls_item-material    = gs_alv-matnr. "ç‰©æ–™ç¼–å·
+      ls_item-material    = gs_alv-matnr. "ÎïÁÏ±àºÅ
       ls_itemx-material   = 'X'.
     ENDIF.
 
     IF gs_alv-menge IS NOT INITIAL.
-      ls_item-quantity    = gs_alv-menge. "æ•°é‡
+      ls_item-quantity    = gs_alv-menge. "ÊıÁ¿
       ls_itemx-quantity   = 'X'.
     ENDIF.
 
     IF gs_alv-meins IS NOT INITIAL.
-      ls_item-unit        = gs_alv-meins. "ç”³è¯·å•ä½ï¼ˆåŸºæœ¬å•ä½ï¼‰
+      ls_item-unit        = gs_alv-meins. "ÉêÇëµ¥Î»£¨»ù±¾µ¥Î»£©
       ls_itemx-unit       = 'X'.
     ENDIF.
 
     IF gs_alv-lfdat IS NOT INITIAL.
-      ls_item-deliv_date  = gs_alv-lfdat. "äº¤è´§æ—¥æœŸ
+      ls_item-deliv_date  = gs_alv-lfdat. "½»»õÈÕÆÚ
       ls_itemx-deliv_date = 'X'.
     ENDIF.
 
+    IF gs_alv-lpein IS NOT INITIAL.
+      ls_item-del_datcat_ext = gs_alv-lpein. "½»»õÈÕÆÚÀà±ğ
+      ls_itemx-del_datcat_ext = 'X'.
+    ENDIF.
+
     IF gs_alv-werks IS NOT INITIAL .
-      ls_item-plant       = gs_alv-werks. "å·¥å‚
+      ls_item-plant       = gs_alv-werks. "¹¤³§
       ls_itemx-plant      = 'X'.
     ENDIF.
 
 *    IF gs_alv-ekorg IS NOT INITIAL.
-*      ls_item-purch_org   = gs_alv-ekorg. "é‡‡è´­ç»„ç»‡
+*      ls_item-purch_org   = gs_alv-ekorg. "²É¹º×éÖ¯
 *      ls_itemx-purch_org  = 'X'.
 *    ENDIF.
 
     IF gs_alv-afnam IS NOT INITIAL.
-      ls_item-preq_name   = gs_alv-afnam. "ç”³è¯·è€…
+      ls_item-preq_name   = gs_alv-afnam. "ÉêÇëÕß
       ls_itemx-preq_name  = 'X'.
     ENDIF.
 
 *    IF gs_alv-badat IS NOT INITIAL.
-*      ls_item-preq_date   = gs_alv-badat. "è¯·æ±‚æ—¥æœŸ
+*      ls_item-preq_date   = gs_alv-badat. "ÇëÇóÈÕÆÚ
 *      ls_itemx-preq_date  = 'X'.
 *    ENDIF.
 
 *    IF gs_alv-flief IS NOT INITIAL.
-*      ls_item-fixed_vend   = gs_alv-flief. "å›ºå®šä¾›åº”å•†
+*      ls_item-fixed_vend   = gs_alv-flief. "¹Ì¶¨¹©Ó¦ÉÌ
 *      ls_itemx-fixed_vend  = 'X'.
 *    ENDIF.
 
     IF gs_alv-preis IS NOT INITIAL.
-      ls_item-preq_price  = gs_alv-preis. "è¯„ä¼°ä»·æ ¼
+      ls_item-preq_price  = gs_alv-preis. "ÆÀ¹À¼Û¸ñ
       ls_itemx-preq_price = 'X'.
     ENDIF.
 
     IF gs_alv-peinh IS NOT INITIAL.
-      ls_item-price_unit  = gs_alv-peinh. "ä»·æ ¼å•ä½
+      ls_item-price_unit  = gs_alv-peinh. "¼Û¸ñµ¥Î»
       ls_itemx-price_unit = 'X'.
     ENDIF.
 
     IF gs_alv-waers IS NOT INITIAL.
-      ls_item-currency    = gs_alv-waers. "å¸åˆ«
+      ls_item-currency    = gs_alv-waers. "±Ò±ğ
       ls_itemx-currency   = 'X'.
     ENDIF.
 
 *    IF gs_alv-fistl IS NOT INITIAL.
-*      ls_item-funds_ctr   = gs_alv-fistl. "åŸºé‡‘ä¸­å¿ƒ
+*      ls_item-funds_ctr   = gs_alv-fistl. "»ù½ğÖĞĞÄ
 *      ls_itemx-funds_ctr  = 'X'.
 *    ENDIF.
 
 *    IF gs_alv-fipos IS NOT INITIAL .
-*      ls_item-cmmt_item   = gs_alv-fipos. "æ‰¿è¯ºé¡¹ç›®
+*      ls_item-cmmt_item   = gs_alv-fipos. "³ĞÅµÏîÄ¿
 *      ls_itemx-cmmt_item  = 'X'.
 *    ENDIF.
 
     IF gs_alv-txz01 IS NOT INITIAL.
-      ls_item-short_text  = gs_alv-txz01. "çŸ­æ–‡æœ¬
+      ls_item-short_text  = gs_alv-txz01. "¶ÌÎÄ±¾
       ls_itemx-short_text = 'X'.
     ENDIF.
 
     IF gs_alv-ekgrp IS NOT INITIAL.
-      ls_item-pur_group   = gs_alv-ekgrp. "é‡‡è´­ç»„
+      ls_item-pur_group   = gs_alv-ekgrp. "²É¹º×é
       ls_itemx-pur_group  = 'X'.
     ENDIF.
 
     IF gs_alv-matkl IS NOT INITIAL.
-      ls_item-matl_group  = gs_alv-matkl. "ç‰©æ–™ç»„
+      ls_item-matl_group  = gs_alv-matkl. "ÎïÁÏ×é
       ls_itemx-matl_group = 'X'.
     ENDIF.
 
-*&---å®¡æ‰¹ç­–ç•¥
+*&---ÉóÅú²ßÂÔ
 *    IF gs_alv-bednr IS NOT INITIAL.
-*      ls_item-trackingno  = 'X'. "éœ€æ±‚è·Ÿè¸ªå·
+*      ls_item-trackingno  = 'X'. "ĞèÇó¸ú×ÙºÅ
 *      ls_itemx-trackingno = 'X'.
 *    ENDIF.
 
     IF gs_alv-lgort IS NOT INITIAL.
-      ls_item-store_loc  = gs_alv-lgort. "åº“å­˜åœ°ç‚¹
+      ls_item-store_loc  = gs_alv-lgort. "¿â´æµØµã
       ls_itemx-store_loc = 'X'.
     ENDIF.
 
@@ -671,34 +697,49 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 
     IF gs_alv-kostl IS NOT INITIAL.
       CONDENSE gs_alv-kostl.
-      ls_praccount-costcenter   =  gs_alv-kostl."æˆæœ¬ä¸­å¿ƒ
+      ls_praccount-costcenter   =  gs_alv-kostl."³É±¾ÖĞĞÄ
       ls_praccountx-costcenter  = 'X'.
     ENDIF.
 
+    IF gs_alv-sakto IS NOT INITIAL.
+      ls_praccount-gl_account = gs_alv-sakto.   "×ÜÕË¿ÆÄ¿
+      ls_praccountx-gl_account = 'X'.
+    ENDIF.
+
+    IF gs_alv-vbeln IS NOT INITIAL.
+      CONDENSE gs_alv-vbeln.
+      ls_praccount-sd_doc     = gs_alv-vbeln.    "ÏúÊÛ¶©µ¥ºÅ
+      ls_praccount-itm_number = gs_alv-vbelp.    "ÏúÊÛ¶©µ¥ĞĞÏîÄ¿
+
+      ls_praccountx-sd_doc     = 'X'.
+      ls_praccountx-itm_number = 'X'.
+
+    ENDIF.
+
 *    IF gs_alv-fipos IS NOT INITIAL.
-*      ls_praccount-cmmt_item         =  gs_alv-fipos."æ‰¿è¯ºé¡¹ç›®
+*      ls_praccount-cmmt_item         =  gs_alv-fipos."³ĞÅµÏîÄ¿
 *      ls_praccountx-cmmt_item        = 'X'.
-*      ls_praccount-cmmt_item_long    =  gs_alv-fipos."æ‰¿è¯ºé¡¹ç›®
+*      ls_praccount-cmmt_item_long    =  gs_alv-fipos."³ĞÅµÏîÄ¿
 *      ls_praccountx-cmmt_item_long   = 'X'.
 *    ENDIF.
 
 
 *    IF gs_alv-fistl IS NOT INITIAL.
-*      ls_praccount-funds_ctr   = gs_alv-fistl. "åŸºé‡‘ä¸­å¿ƒ
+*      ls_praccount-funds_ctr   = gs_alv-fistl. "»ù½ğÖĞĞÄ
 *      ls_praccountx-funds_ctr  = 'X'.
 *    ENDIF.
 
 
 *    IF gs_alv-wbs_ele IS NOT INITIAL.
-*      ls_praccount-wbs_element   = gs_alv-wbs_ele."WBSå…ƒç´ 
+*      ls_praccount-wbs_element   = gs_alv-wbs_ele."WBSÔªËØ
 *      ls_praccountx-wbs_element  = 'X'.
 *    ENDIF.
 
     IF ls_praccount IS NOT INITIAL.
-      ls_praccount-preq_item    =  gs_alv-bnfpo. "é‡‡è´­ç”³è¯·è¡Œé¡¹ç›®
+      ls_praccount-preq_item    =  gs_alv-bnfpo. "²É¹ºÉêÇëĞĞÏîÄ¿
       ls_praccount-serial_no    = '01'.
 
-      ls_praccountx-preq_item   = gs_alv-bnfpo. "é‡‡è´­ç”³è¯·è¡Œé¡¹ç›®
+      ls_praccountx-preq_item   = gs_alv-bnfpo. "²É¹ºÉêÇëĞĞÏîÄ¿
       ls_praccountx-serial_no   = '01'.
 
       APPEND  ls_praccount  TO lt_praccount.
@@ -706,13 +747,13 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
     ENDIF.
 
 
-*&---è¡Œé¡¹ç›®æ–‡æœ¬å¤„ç†
-*&---æ¯132å­—ç¬¦è¿›è¡Œåˆ†å‰²
-*    IF gs_alv-item_t01 IS NOT INITIAL."æŠ¬å¤´æ–‡æœ¬
+*&---ĞĞÏîÄ¿ÎÄ±¾´¦Àí
+*&---Ã¿132×Ö·û½øĞĞ·Ö¸î
+*    IF gs_alv-item_t01 IS NOT INITIAL."Ì§Í·ÎÄ±¾
 *      CLEAR:lv_length,lv_num,lv_count,lv_start,lv_txt.
 *      CONDENSE gs_alv-item_t01.
 *      lv_length = strlen( gs_alv-item_t01 ).
-*      lv_num    = lv_length DIV 132.    "æ¯132å­—ç¬¦åˆ†å‰²ï¼Œéœ€è¦åˆ†å‰²å¤šå°‘æ•´æ•°æ¬¡
+*      lv_num    = lv_length DIV 132.    "Ã¿132×Ö·û·Ö¸î£¬ĞèÒª·Ö¸î¶àÉÙÕûÊı´Î
 *      DO lv_num TIMES.
 *        lv_length = lv_length - 132.
 *        lv_count  = lv_count + 1.      "
@@ -721,15 +762,15 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 *        lv_txt = gs_alv-item_t01+lv_start(132).
 *        CLEAR ls_pritemtext.
 *
-*        ls_pritemtext-preq_item = gs_alv-bnfpo. "è¡Œé¡¹ç›®å·
+*        ls_pritemtext-preq_item = gs_alv-bnfpo. "ĞĞÏîÄ¿ºÅ
 *        ls_pritemtext-text_id   = 'B01'. "
 *        ls_pritemtext-text_form = '*'. "
 *        ls_pritemtext-text_line = lv_txt. "
 *        APPEND ls_pritemtext TO lt_pritemtext.
 *      ENDDO.
-**&---åˆ†å‰²å‰©ä¸‹çš„å­—ç¬¦å†™äººå†…è¡¨
+**&---·Ö¸îÊ£ÏÂµÄ×Ö·ûĞ´ÈËÄÚ±í
 *      IF lv_length > 0.
-*        IF lv_num > 0."æœ€åˆçš„å­—ç¬¦é•¿åº¦å¤§äº132
+*        IF lv_num > 0."×î³õµÄ×Ö·û³¤¶È´óÓÚ132
 *          lv_start = lv_start + 132.
 *        ELSE.
 *          CLEAR lv_start.
@@ -737,15 +778,19 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 *        CLEAR lv_txt.
 *        lv_txt = gs_alv-item_t01+lv_start(lv_length).
 *        CLEAR ls_pritemtext.
-**&---å¤–éƒ¨ç»™å·
+**&---Íâ²¿¸øºÅ
 *        IF rb_04 = 'X' .
-*          ls_pritemtext-preq_no   = gs_alv-banfn. "é‡‡è´­ç”³è¯·ç¼–å·
+*          ls_pritemtext-preq_no   = gs_alv-banfn. "²É¹ºÉêÇë±àºÅ
 *        ENDIF.
-*        ls_pritemtext-preq_item = gs_alv-bnfpo. "è¡Œé¡¹ç›®å·
-*        ls_pritemtext-text_id   = 'B01'. "
-*        ls_pritemtext-text_form = '*'. "
-*        ls_pritemtext-text_line = lv_txt. "
-*        APPEND ls_pritemtext TO lt_pritemtext.
+    IF gs_alv-zbanfn IS NOT INITIAL AND gs_alv-zbnfpo IS NOT INITIAL.
+      CLEAR ls_pritemtext.
+      ls_pritemtext-preq_item = gs_alv-bnfpo. "ĞĞÏîÄ¿ºÅ
+      ls_pritemtext-text_id   = 'B01'. "
+      ls_pritemtext-text_form = '*'. "
+      ls_pritemtext-text_line = '²É¹ºÉêÇë±àºÅ£º' && gs_alv-zbanfn && 'ĞĞÏîÄ¿±àºÅ£º' && gs_alv-zbnfpo. "
+      APPEND ls_pritemtext TO lt_pritemtext.
+    ENDIF.
+
 *      ENDIF.
 *    ENDIF.
 
@@ -754,22 +799,22 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 
       READ TABLE lt_alv INTO gs_alv INDEX gv_index.
 
-*&---å¡«å……æŠ¬å¤´æ•°æ®
+*&---Ìî³äÌ§Í·Êı¾İ
       CLEAR:ls_header,ls_headerx.
       CLEAR:lt_prheadertext.
 
-      ls_header-pr_type  = gs_alv-bsart. "è®¢å•ç±»å‹
+      ls_header-pr_type  = gs_alv-bsart. "¶©µ¥ÀàĞÍ
       ls_headerx-pr_type = 'X'.
 
 
 
-*&---æŠ¬å¤´æ–‡æœ¬
-*&---æ¯132å­—ç¬¦è¿›è¡Œåˆ†å‰²
-*      IF gs_alv-head_t01 IS NOT INITIAL."æŠ¬å¤´æ–‡æœ¬
+*&---Ì§Í·ÎÄ±¾
+*&---Ã¿132×Ö·û½øĞĞ·Ö¸î
+*      IF gs_alv-head_t01 IS NOT INITIAL."Ì§Í·ÎÄ±¾
 *        CLEAR:lv_length,lv_num,lv_count,lv_start,lv_txt.
 *        CONDENSE gs_alv-head_t01.
 *        lv_length = strlen( gs_alv-head_t01 ).
-*        lv_num    = lv_length DIV 132.    "æ¯132å­—ç¬¦åˆ†å‰²ï¼Œéœ€è¦åˆ†å‰²å¤šå°‘æ•´æ•°æ¬¡
+*        lv_num    = lv_length DIV 132.    "Ã¿132×Ö·û·Ö¸î£¬ĞèÒª·Ö¸î¶àÉÙÕûÊı´Î
 *        DO lv_num TIMES.
 *          lv_length = lv_length - 132.
 *          lv_count  = lv_count + 1.      "
@@ -783,9 +828,9 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 *          ls_prheadertext-text_line = lv_txt. "
 *          APPEND ls_prheadertext TO lt_prheadertext.
 *        ENDDO.
-**&---åˆ†å‰²å‰©ä¸‹çš„å­—ç¬¦å†™äººå†…è¡¨
+**&---·Ö¸îÊ£ÏÂµÄ×Ö·ûĞ´ÈËÄÚ±í
 *        IF lv_length > 0.
-*          IF lv_num > 0."æœ€åˆçš„å­—ç¬¦é•¿åº¦å¤§äº132
+*          IF lv_num > 0."×î³õµÄ×Ö·û³¤¶È´óÓÚ132
 *            lv_start = lv_start + 132.
 *          ELSE.
 *            CLEAR lv_start.
@@ -802,7 +847,7 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
 *      ENDIF.
 
 
-*&---è°ƒç”¨BAPI:BAPI_PR_CREATE
+*&---µ÷ÓÃBAPI:BAPI_PR_CREATE
 
       CLEAR:lv_banfn.
       CALL FUNCTION 'BAPI_PR_CREATE'
@@ -835,7 +880,7 @@ FORM frm_impt_data TABLES p_alv like gt_alv.
             wait = 'X'.
 
         lv_id   = '@5B@'.
-        lv_mess = 'å¯¼å…¥æˆåŠŸï¼Œå‡­è¯å·ä¸º' && lv_banfn.
+        lv_mess = 'µ¼Èë³É¹¦£¬Æ¾Ö¤ºÅÎª' && lv_banfn.
 
       ELSE.
 
