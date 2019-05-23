@@ -1,1 +1,1 @@
-ren *.txt *.prog.abap
+for /r %%i in (*.txt) do ren %%i *.prog.abap
