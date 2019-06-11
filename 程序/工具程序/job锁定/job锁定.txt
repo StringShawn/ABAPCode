@@ -1,0 +1,1456 @@
+*&---------------------------------------------------------------------*
+*& Report  ZSD_002
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT zsd_002.
+TYPE-POOLS:sils.
+
+TYPES:BEGIN OF ty_out,
+      kunnr TYPE bsid-kunnr,"客户编码
+      name TYPE kna1-name1,"客户编码描述
+      bukrs TYPE ztsde013a-bukrs,"公司代码
+      klimk TYPE ztsde013a-klimk,"风险值
+      status01 TYPE ztsde013b-status01,"客户状态
+      jgdat TYPE ztsde013b-jgdat,"警告日期
+      tzdat TYPE ztsde013b-tzdat,"通知日期
+      status02 TYPE ztsde013b-status02,"通知状态
+      jzdat TYPE ztsde013b-jzdat,"截止日期
+      status03 TYPE ztsde013b-status03,"解除警告
+      status04 TYPE ztsde013b-status03,"已冻结
+
+      handle TYPE i,"控制下拉框列表
+
+      zday1 TYPE ztsde013c-zday2,"通知天数
+      zday2 TYPE ztsde013c-zday2,"冻结天数
+      status05 TYPE ztsde013b-status05,"邮件提醒状态
+      status06 TYPE ztsde013b-status06,"邮件冻结通知状态
+      sgdat TYPE ztsde013b-sgdat,
+  END OF ty_out.
+DATA:gt_out TYPE TABLE OF ty_out,
+     gs_out TYPE ty_out.
+
+*DATA:LT_OUT TYPE TABLE OF TY_OUT.
+
+
+DATA:lc_belnr(16) TYPE n."流水号
+
+
+"风险值
+TYPES:BEGIN OF ty_ztsde013a,
+      kunnr TYPE ztsde013a-kunnr,"客户编码
+      bukrs TYPE ztsde013a-bukrs,"公司代码
+      ztag1 TYPE ztsde013a-ztag1,"账龄
+      gjahr TYPE bsid-gjahr,"财年
+      belnr TYPE bsid-belnr,"凭证编号
+      buzei TYPE bsid-buzei,"行项目
+      kidno TYPE bsid-kidno,"付款参考
+      vbeln TYPE bsid-vbeln,"凭证号
+      bldat TYPE bsid-bldat,
+      shkzg TYPE bsid-shkzg,
+      dmbtr TYPE bsid-dmbtr,
+      zfbdt TYPE bsid-zfbdt,
+  END OF ty_ztsde013a.
+DATA:gt_ztsde013a TYPE TABLE OF ty_ztsde013a,
+     gs_ztsde013a TYPE ty_ztsde013a.
+DATA:lt_ztsde013a TYPE TABLE OF ty_ztsde013a,
+     ls_ztsde013a TYPE ty_ztsde013a.
+DATA:lt_ztsde013a2 TYPE TABLE OF ty_ztsde013a,
+     ls_ztsde013a2 TYPE ty_ztsde013a.
+
+
+TYPES:BEGIN OF ty_vbrk,
+      vbeln TYPE vbrk-vbeln,
+      erdat TYPE vbrk-erdat,
+  END OF ty_vbrk.
+DATA:gt_vbrk1 TYPE TABLE OF ty_vbrk,
+     gs_vbrk1 TYPE ty_vbrk.
+DATA:gt_vbrk2 TYPE TABLE OF ty_vbrk,
+     gs_vbrk2 TYPE ty_vbrk.
+
+DATA:sumdat TYPE vbrk-erdat.
+
+RANGES:s_vbeln1 FOR vbrk-vbeln.
+RANGES:s_vbeln2 FOR vbrk-vbeln.
+
+"客户编码描述
+TYPES:BEGIN OF ty_kna1,
+      kunnr TYPE kna1-kunnr,"客户编码
+      name1 TYPE kna1-name1,"客户编码描述
+  END OF ty_kna1.
+DATA:gt_kna1 TYPE TABLE OF ty_kna1,
+     gs_kna1 TYPE ty_kna1.
+
+
+"客户状态
+TYPES:BEGIN OF ty_klimk,
+      kunnr TYPE ztsde013a-kunnr,
+      bukrs TYPE ztsde013a-bukrs,
+      waerb TYPE  ztsde013a-waerb,"单位
+      klimk TYPE ztsde013a-klimk,
+      horda TYPE ztsde013a-horda,"有效截止日期
+  END OF ty_klimk.
+DATA:gt_klimk TYPE TABLE OF ty_klimk,
+     gs_klimk TYPE ty_klimk.
+
+"通知天数
+DATA:gt_ztsde013c TYPE TABLE OF ztsde013c ,
+     gs_ztsde013c TYPE ztsde013c .
+
+
+"更新的数据库表
+DATA:gs_ztsde013b TYPE ztsde013b.
+DATA:gs_ztsde013e TYPE ztsde013e.
+
+
+"读取B表的数据
+DATA:lt_ztsde013b TYPE TABLE OF ztsde013b,
+     ls_ztsde013b TYPE ztsde013b.
+
+"更新解除警告手工输入字段
+DATA:lt_ztsde013b2 TYPE TABLE OF ztsde013b,
+     ls_ztsde013b2 TYPE ztsde013b.
+
+"清除解除警告字段
+DATA: lt_ztsde013b3 TYPE TABLE OF ztsde013b,
+      ls_ztsde013b3 TYPE ztsde013b.
+
+"定义储存下拉框的数据
+DATA: lth_list TYPE lvc_s_drop,"工作区
+      td_list TYPE lvc_t_drop."内表
+*      TD_LIST2 TYPE LVC_T_DROP."内表
+
+"事件定义
+DATA:lw_grid TYPE REF TO cl_gui_alv_grid.
+DATA:gs_cells TYPE lvc_s_modi.
+
+
+"收件人邮箱定义
+TYPES:BEGIN OF ty_ztsde013f,
+       bukrs TYPE ztsde013f-bukrs,
+       email TYPE ztsde013f-email,
+  END OF ty_ztsde013f.
+DATA:gt_ztsde013f TYPE TABLE OF ty_ztsde013f,
+     gs_ztsde013f TYPE ty_ztsde013f.
+
+
+TYPES:BEGIN OF ty_table,
+       kunnr TYPE ztsde013b-kunnr,"客户编码
+*       NAME  TYPE ZTSDE013B-NAME,"客户描述
+       bukrs TYPE ztsde013b-bukrs,"公司代码
+*       KLIMK TYPE ZTSDE013B-KLIMK,"风险值
+       jgdat TYPE ztsde013b-jzdat,"警告日期
+       status01 TYPE ztsde013b-status01,"客户状态
+       status02 TYPE ztsde013b-status02,"通知状态
+       status05 TYPE ztsde013b-status05,"邮件提醒状态
+       status03 TYPE ztsde013b-status03,"解除警告
+       status06 TYPE ztsde013b-status06,"邮件冻结通知状态
+  END OF ty_table.
+DATA:gt_table TYPE TABLE OF ty_table,
+     gs_table TYPE ty_table.
+
+DATA:lv_waerb TYPE ztsde013a-waerb,"货币单位
+     lv_klimk TYPE ztsde013a-klimk,"信贷额度
+     lv_horda TYPE string."有效截止日期
+
+DATA:gs_sendemail TYPE zssend_email.
+
+"记录是哪个邮件
+DATA: lv_email TYPE i.
+
+
+"ALV输出相关的定义
+DATA:gs_layout   TYPE lvc_s_layo,
+   gs_fieldcat TYPE LINE OF lvc_t_fcat,
+   gt_fieldcat TYPE lvc_t_fcat.
+
+*---------------------------------------------------------------------*
+*                  定义和注册事件接受器类
+*---------------------------------------------------------------------*
+CLASS lcl_event_receiver DEFINITION DEFERRED.
+
+*---------------------------------------------------------------------*
+*                  LVC_EVENT_RECEIVER的类定义
+*---------------------------------------------------------------------*
+CLASS lcl_event_receiver DEFINITION.
+  PUBLIC SECTION.
+    METHODS:handle_modify_alv
+      FOR EVENT data_changed_finished OF cl_gui_alv_grid
+      IMPORTING e_modified
+                et_good_cells.
+ENDCLASS.                    "LVC_EVENT_RECEIVER DEFINITION
+
+*---------------------------------------------------------------------*
+*                  LVC_EVENT_RECEIVER的类实现
+*---------------------------------------------------------------------*
+CLASS lcl_event_receiver IMPLEMENTATION.
+  METHOD handle_modify_alv.
+    DATA:lv_enter TYPE REF TO cl_gui_event.
+    DATA:stbl TYPE lvc_s_stbl.
+
+    "获取当前事件
+    lv_enter = lw_grid->cur_event.
+
+    "获取AlV中修改的字段
+    "限制只要点保存的时候才能写入自建表
+    IF sy-ucomm = '&SAVE2'.
+
+
+      LOOP AT et_good_cells INTO gs_cells WHERE fieldname = 'STATUS03' OR fieldname = 'STATUS04'.
+
+        "写入自建表
+        CLEAR:gs_out.
+        READ TABLE gt_out INTO gs_out INDEX gs_cells-row_id.
+        IF sy-subrc = 0.
+
+          "add by handyxh 20190521
+          IF gs_cells-fieldname = 'STATUS04' AND gs_cells-value = '' AND gs_out-status04 = 'X'.
+            lv_email = '5'.
+            PERFORM frm_send_maill.
+          ENDIF.
+
+*---------add STATUS06的清空随着STATUS04
+          IF gs_cells-fieldname = 'STATUS04'.
+            IF gs_out-status04 = ''.
+              gs_out-status06 = ''.
+            ENDIF.
+          ENDIF.
+
+          MOVE-CORRESPONDING gs_out TO ls_ztsde013b2.
+          MODIFY ztsde013b FROM ls_ztsde013b2.
+
+          MODIFY gt_out FROM gs_out INDEX gs_cells-row_id."更新STATUS04
+
+          CLEAR:ls_ztsde013b2.
+        ENDIF.
+
+      ENDLOOP.
+
+
+
+      "ALV稳定刷新
+      stbl-row = 'X'."基于行的稳定刷新
+      stbl-col = 'X'."基于列的稳定刷新
+
+
+*  调用方法 （刷新）
+*  实例：LW_GRID
+*  类/接口：CL_GUI_ALV_GRID
+*  方法：REFRESH_TABLE_DISPLAY
+      CALL METHOD lw_grid->refresh_table_display
+        EXPORTING
+          is_stable      = stbl
+          i_soft_refresh = 'X'
+        EXCEPTIONS
+          finished       = 1
+          OTHERS         = 2.
+      IF sy-subrc <> 0.
+*     Implement suitable error handling here
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.                    "HANDLE_MODIFY_ALV
+ENDCLASS.                    "LVC_EVENT_RECEIVER DEFINITION
+*---------------------------------------------------------------------*
+*                  选择屏幕定义块
+*---------------------------------------------------------------------*
+SELECTION-SCREEN:BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.
+*SELECT-OPTIONS:S_VKORG FOR VBAK-VKORG OBLIGATORY .
+SELECTION-SCREEN:END OF BLOCK b1 .
+
+
+
+*---------------------------------------------------------------------*
+*                   初始化块
+*---------------------------------------------------------------------*
+INITIALIZATION.
+
+*---------------------------------------------------------------------*
+*                 选择屏幕字段处理块
+*---------------------------------------------------------------------*
+AT SELECTION-SCREEN.
+
+*---------------------------------------------------------------------*
+*                  逻辑处理块
+*---------------------------------------------------------------------*
+START-OF-SELECTION.
+  PERFORM frm_get_data."选择数据
+  PERFORM frm_edit_data."整合数据
+
+*---------------------------------------------------------------------*
+*                  报表输出块
+*---------------------------------------------------------------------*
+END-OF-SELECTION.
+  IF gt_out[] IS NOT INITIAL.
+    PERFORM frm_print_data."输出数据
+  ELSE.
+    MESSAGE s000(zsd01) DISPLAY LIKE 'E'.
+    LEAVE LIST-PROCESSING AND RETURN TO SCREEN 0.
+  ENDIF.
+
+*&---------------------------------------------------------------------*
+*&      Form  FRM_PRINT_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_print_data .
+  PERFORM frm_set_layout.
+  PERFORM frm_build_fielacat.
+  PERFORM frm_alv_show.
+ENDFORM.                    " FRM_PRINT_DATA
+*&---------------------------------------------------------------------
+
+*&      Form  FRM_SET_LAYOUT
+*&---------------------------------------------------------------------
+
+*       text
+*----------------------------------------------------------------------
+
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------
+
+FORM frm_set_layout .
+
+  gs_layout-cwidth_opt = 'X'.
+  gs_layout-sel_mode = 'D'.
+ENDFORM.                    " FRM_SET_LAYOUT
+*&---------------------------------------------------------------------*
+*&      Form  FRM_BUILD_FIELACAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_build_fielacat .
+
+  PERFORM subfrm_build_fieldcat USING 'KUNNR' '客户编码' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING  'NAME' '客户描述' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'BUKRS' '公司代码' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING  'KLIMK' '风险值' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'STATUS01' '客户状态' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING  'JGDAT' '状态变更警告日期' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'STATUS05' '邮件提醒状态' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'TZDAT' '预警日期' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'STATUS02' '邮件预警状态' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'JZDAT' '截止日期' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'SGDAT' '手工截止日期' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'STATUS06' '邮件冻结通知状态' '' '' '' '' ''.
+  PERFORM subfrm_build_fieldcat USING 'STATUS03' '解除警告' '' '' 'X' '' 'HANDLE'.
+  PERFORM subfrm_build_fieldcat USING 'STATUS04' '已冻结' '' '' 'X' '1' ''.
+
+
+ENDFORM.                    "FRM_BUILD_FIELACAT
+
+*&---------------------------------------------------------------------*
+*&      Form  SUBFRM_BUILD_FIELDCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_108    text
+*      -->P_1463   text
+*      -->P_TEXT_108  text
+*----------------------------------------------------------------------*
+
+FORM subfrm_build_fieldcat USING value(p_fieldname)
+                                       value(p_coltext)
+                                       value(p_ref_table)
+                                       value(p_ref_field)
+                                       value(p_edit)
+                                       value(p_drdn_hndl)
+                                       value(p_drdn_field).
+  CLEAR gs_fieldcat.
+  gs_fieldcat-fieldname = p_fieldname."字段名
+  gs_fieldcat-coltext = p_coltext.    "文本
+  gs_fieldcat-ref_table = p_ref_table.
+  gs_fieldcat-ref_field = p_ref_field.
+  gs_fieldcat-edit = p_edit.
+  gs_fieldcat-drdn_hndl = p_drdn_hndl.
+  gs_fieldcat-drdn_field = p_drdn_field.
+  APPEND gs_fieldcat TO gt_fieldcat.
+ENDFORM.                    "SUBFRM_BUILD_FIELDCAT
+*&---------------------------------------------------------------------*
+*&      Form  FRM_ALV_SHOW
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_alv_show .
+
+  DATA:ltd_event TYPE TABLE OF slis_alv_event,
+       lth_event TYPE slis_alv_event.
+
+  lth_event-name = 'CALLER_EXIT'.
+  lth_event-form = 'FRM_SET_DDROP'.
+  APPEND lth_event TO ltd_event.
+
+  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY_LVC'
+    EXPORTING
+      i_callback_program       = sy-repid
+      i_callback_pf_status_set = 'PF_STATUS'
+      i_callback_user_command  = 'USER_COMMAND'
+      is_layout_lvc            = gs_layout
+      it_fieldcat_lvc          = gt_fieldcat
+*     IS_SAVE                  = 'A'
+      it_events                = ltd_event
+    TABLES
+      t_outtab                 = gt_out
+    EXCEPTIONS
+      program_error            = 1
+      OTHERS                   = 2.
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.                    " FRM_ALV_SHOW
+*&---------------------------------------------------------------------*
+*&      FORM  PF_STATUS
+*&---------------------------------------------------------------------*
+*       TEXT
+*----------------------------------------------------------------------*
+*      -->RT_EXTAB   TEXT
+*----------------------------------------------------------------------*
+FORM pf_status USING rt_extab TYPE slis_t_extab.
+  SET PF-STATUS 'ZSD_002'.
+*  SET TITLEBAR  '1000_TITLE' .
+ENDFORM.                    "PF_STATUS
+*&---------------------------------------------------------------------*
+*&      FORM  USER_COMMAND
+*&---------------------------------------------------------------------*
+*       TEXT
+*----------------------------------------------------------------------*
+*      -->R_UCOMM      TEXT
+*      -->RS_SELFIELD  TEXT
+*----------------------------------------------------------------------*
+FORM user_command  USING r_ucomm LIKE sy-ucomm  rs_selfield TYPE
+slis_selfield.
+*  DATA: LR_GRID TYPE REF TO CL_GUI_ALV_GRID.
+  "解决点击不属于ALV的地方无法触发的修改事件
+  CALL METHOD cl_gui_cfw=>dispatch.
+  CALL METHOD lw_grid->check_changed_data.
+
+  DATA:stbl TYPE lvc_s_stbl.
+
+  CASE r_ucomm.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0 .
+    WHEN 'EXIT' .
+      LEAVE TO SCREEN 0 .
+    WHEN  'CANCEL'.
+      LEAVE PROGRAM .
+    WHEN  '&CLEAR'.
+      LOOP AT gt_out INTO gs_out .
+
+        gs_out-status03 = ''."清空解除警告
+        MOVE-CORRESPONDING gs_out TO ls_ztsde013b3.
+        APPEND ls_ztsde013b3 TO lt_ztsde013b3.
+
+        MODIFY gt_out FROM gs_out."更新ALV展示的内表
+        CLEAR:gs_out.
+      ENDLOOP.
+      MODIFY ztsde013b FROM TABLE lt_ztsde013b3."更新自建表B
+
+      "ALV稳定刷新
+      stbl-row = 'X'."基于行的稳定刷新
+      stbl-col = 'X'."基于列的稳定刷新
+
+
+*  调用方法 （刷新）
+*  实例：LW_GRID
+*  类/接口：CL_GUI_ALV_GRID
+*  方法：REFRESH_TABLE_DISPLAY
+      CALL METHOD lw_grid->refresh_table_display
+        EXPORTING
+          is_stable      = stbl
+          i_soft_refresh = 'X'
+        EXCEPTIONS
+          finished       = 1
+          OTHERS         = 2.
+      IF sy-subrc <> 0.
+*     Implement suitable error handling here
+      ENDIF.
+  ENDCASE.
+
+ENDFORM.                    "USER_COMMAND
+*&---------------------------------------------------------------------*
+*&      FORM  FRM_SET_DDROP
+*&---------------------------------------------------------------------*
+*       下拉框事件添加
+*----------------------------------------------------------------------*
+FORM frm_set_ddrop  USING excluding.
+  DATA:lv_event_receiver TYPE REF TO lcl_event_receiver.
+
+  CALL FUNCTION 'GET_GLOBALS_FROM_SLVC_FULLSCR'
+    IMPORTING
+      e_grid = lw_grid.
+
+*  调用方法 （下拉框）
+*  实例：LW_GRID
+*  类/接口：CL_GUI_ALV_GRID
+*  方法：SET_DROP_DOWN_TABLE
+  CALL METHOD lw_grid->set_drop_down_table
+    EXPORTING
+      it_drop_down       = td_list
+*     IT_DROP_DOWN_ALIAS =
+    .
+
+
+*  调用方法 （设置enter事件）
+*  实例：LW_GRID
+*  类/接口：CL_GUI_ALV_GRID
+*  方法：REGISTER_EDIT_EVENT
+  CALL METHOD lw_grid->register_edit_event
+    EXPORTING
+      i_event_id = cl_gui_alv_grid=>mc_evt_enter
+*    EXCEPTIONS
+*      ERROR      = 1
+*      OTHERS     = 2
+          .
+  IF sy-subrc <> 0.
+*   Implement suitable error handling here
+  ENDIF.
+
+  "注册自定义事件
+  CREATE OBJECT lv_event_receiver.
+  SET HANDLER lv_event_receiver->handle_modify_alv FOR lw_grid.
+
+
+ENDFORM.                    "USER_COMMAND
+*&---------------------------------------------------------------------*
+*&      Form  FRM_GET_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_get_data .
+
+  "风险值
+  SELECT ztsde013a~kunnr
+         ztsde013a~bukrs
+         ztsde013a~ztag1
+         bsid~gjahr
+         bsid~belnr
+         bsid~buzei
+         bsid~kidno
+         bsid~vbeln
+         bsid~bldat"日期
+         bsid~shkzg
+         bsid~dmbtr
+         bsid~zfbdt
+    INTO CORRESPONDING FIELDS OF TABLE gt_ztsde013a
+    FROM ztsde013a
+    INNER JOIN bsid
+    ON ztsde013a~kunnr = bsid~kunnr
+    AND ztsde013a~bukrs = bsid~bukrs
+    WHERE bsid~hkont = '1122010000'
+    AND ( bsid~umskz = '' OR  bsid~umskz = 'B' ).
+
+  "把付款参考或者凭证编号不为空的放在内表中
+  LOOP AT gt_ztsde013a INTO gs_ztsde013a.
+    IF gs_ztsde013a-kidno IS NOT INITIAL .
+      s_vbeln1-option = 'EQ'.
+      s_vbeln1-sign = 'I'.
+      s_vbeln1-low = gs_ztsde013a-kidno.
+      APPEND s_vbeln1.
+
+    ENDIF.
+
+    IF gs_ztsde013a-vbeln IS NOT INITIAL.
+      s_vbeln2-option = 'EQ'.
+      s_vbeln2-sign = 'I'.
+      s_vbeln2-low = gs_ztsde013a-vbeln.
+      APPEND s_vbeln2.
+    ENDIF.
+    CLEAR:gs_ztsde013a.
+  ENDLOOP.
+
+
+  "通过付款参考 取vbrk中的日期
+  SELECT vbrk~vbeln
+         vbrk~erdat
+    INTO CORRESPONDING FIELDS OF TABLE gt_vbrk1
+    FROM vbrk
+    WHERE vbeln IN s_vbeln1.
+*    AND ERDAT <= SY-DATUM.
+
+  "通过凭证编号 取vbrk中的日期
+  SELECT vbrk~vbeln
+         vbrk~erdat
+    INTO CORRESPONDING FIELDS OF TABLE gt_vbrk2
+    FROM vbrk
+    WHERE vbeln IN s_vbeln2.
+*    AND ERDAT <= SY-DATUM.
+
+  LOOP AT  gt_ztsde013a INTO gs_ztsde013a.
+    "如果kidno不为空
+    IF gs_ztsde013a-kidno IS NOT INITIAL.
+      CLEAR:gs_vbrk1.
+      READ TABLE gt_vbrk1 INTO gs_vbrk1 WITH KEY vbeln =
+gs_ztsde013a-kidno.
+      IF sy-subrc = 0.
+        sumdat = gs_vbrk1-erdat + gs_ztsde013a-ztag1.
+        IF sy-datum > sumdat.
+          APPEND gs_ztsde013a TO lt_ztsde013a.
+          CLEAR:sumdat.
+        ENDIF.
+      ENDIF.
+
+    ENDIF.
+
+    "如果kidno为空 vbeln不为空
+    IF gs_ztsde013a-kidno IS INITIAL AND gs_ztsde013a-vbeln IS NOT
+INITIAL.
+      CLEAR:gs_vbrk2.
+      READ TABLE gt_vbrk2 INTO gs_vbrk2 WITH KEY vbeln =
+gs_ztsde013a-vbeln.
+      IF sy-subrc = 0.
+        sumdat = gs_vbrk1-erdat + gs_ztsde013a-ztag1.
+        IF sy-datum > sumdat.
+          APPEND gs_ztsde013a TO lt_ztsde013a.
+          CLEAR:sumdat.
+        ENDIF.
+      ENDIF.
+
+    ENDIF.
+
+    "如果两个都为空
+    IF gs_ztsde013a-kidno IS INITIAL AND gs_ztsde013a-vbeln IS INITIAL.
+
+*      SUMDAT = GS_ZTSDE013A-BLART + GS_ZTSDE013A-ZTAG1.
+      sumdat = gs_ztsde013a-zfbdt + gs_ztsde013a-ztag1.
+      IF sy-datum > sumdat.
+        APPEND gs_ztsde013a TO lt_ztsde013a.
+        CLEAR:sumdat.
+      ENDIF.
+
+    ENDIF.
+
+    CLEAR:gs_ztsde013a.
+  ENDLOOP.
+
+
+
+  "根据客户编码、公司代码汇总金额
+  SORT lt_ztsde013a DESCENDING BY kunnr bukrs.
+  LOOP AT lt_ztsde013a INTO ls_ztsde013a.
+
+    IF ls_ztsde013a-shkzg = 'H'.
+      ls_ztsde013a-dmbtr = ls_ztsde013a-dmbtr * ( -1 ).
+    ENDIF.
+
+    CLEAR:ls_ztsde013a-ztag1.
+    CLEAR:ls_ztsde013a-gjahr.
+    CLEAR:ls_ztsde013a-belnr.
+    CLEAR:ls_ztsde013a-buzei.
+    CLEAR:ls_ztsde013a-kidno.
+    CLEAR:ls_ztsde013a-vbeln.
+    CLEAR:ls_ztsde013a-bldat."日期
+    CLEAR:ls_ztsde013a-shkzg.
+    CLEAR:ls_ztsde013a-zfbdt.
+
+    COLLECT ls_ztsde013a INTO lt_ztsde013a2.
+
+    CLEAR:ls_ztsde013a.
+  ENDLOOP.
+
+  IF lt_ztsde013a2 IS NOT INITIAL.
+    "取客户编码的描述
+    SELECT kna1~kunnr
+           kna1~name1
+      INTO CORRESPONDING FIELDS OF TABLE gt_kna1
+      FROM kna1
+      FOR ALL ENTRIES IN lt_ztsde013a2
+      WHERE kunnr = lt_ztsde013a2-kunnr.
+  ENDIF.
+
+
+
+  "客户状态
+  SELECT ztsde013a~kunnr
+         ztsde013a~bukrs
+         ztsde013a~waerb
+         ztsde013a~klimk
+         ztsde013a~horda"有效截止日期
+    FROM ztsde013a
+    INTO CORRESPONDING FIELDS OF TABLE gt_klimk.
+
+  "取C表通知天数
+  SELECT *
+    FROM ztsde013c
+    INTO CORRESPONDING FIELDS OF TABLE gt_ztsde013c.
+
+  SELECT * FROM ztsde013b INTO CORRESPONDING FIELDS OF TABLE
+lt_ztsde013b.
+
+
+  "取收件人邮箱
+  SELECT ztsde013f~bukrs
+         ztsde013f~email
+    INTO TABLE gt_ztsde013f
+    FROM  ztsde013f.
+
+
+  "取B表中的数据(邮件)
+  SELECT
+         ztsde013b~kunnr
+*         ZTSDE013B~NAME
+         ztsde013b~bukrs
+*         ZTSDE013B~KLIMK
+         ztsde013b~jgdat
+         ztsde013b~status01"客户状态
+         ztsde013b~status02
+         ztsde013b~status05"邮件提醒状态
+         ztsde013b~status03"解除警告
+         ztsde013b~status06"邮件冻结通知状态
+    INTO CORRESPONDING FIELDS OF TABLE gt_table
+    FROM ztsde013b.
+
+ENDFORM.                   " FRM_GET_DATA
+*&---------------------------------------------------------------------*
+*&      Form  FRM_EDIT_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_edit_data .
+
+  CLEAR:lth_list.
+  lth_list-handle = 1.
+  lth_list-value = 'X'.
+  APPEND lth_list TO td_list.
+
+  CLEAR:lth_list.
+  lth_list-handle = 1.
+  lth_list-value = ''.
+  APPEND lth_list TO td_list.
+
+  CLEAR:lth_list.
+  lth_list-handle = 2.
+  lth_list-value = ''.
+  APPEND lth_list TO td_list.
+
+
+
+  LOOP AT lt_ztsde013a2 INTO ls_ztsde013a2.
+    gs_out-kunnr = ls_ztsde013a2-kunnr."客户编码
+
+    CLEAR:gs_kna1.
+    READ TABLE gt_kna1 INTO gs_kna1 WITH KEY kunnr = gs_out-kunnr.
+    IF sy-subrc = 0.
+      gs_out-name = gs_kna1-name1."客户编码描述
+    ENDIF.
+
+    gs_out-bukrs = ls_ztsde013a2-bukrs."公司代码
+    gs_out-klimk = ls_ztsde013a2-dmbtr."风险值
+
+    CLEAR:gs_ztsde013c .
+    READ TABLE gt_ztsde013c  INTO gs_ztsde013c  WITH KEY zday1 = 'TZ'.
+    IF sy-subrc = 0.
+      gs_out-zday1 = gs_ztsde013c-zday2."通知天数
+    ENDIF.
+
+    CLEAR:gs_ztsde013c .
+    READ TABLE gt_ztsde013c  INTO gs_ztsde013c  WITH KEY zday1 = 'DJ'.
+    IF sy-subrc = 0.
+      gs_out-zday2 = gs_ztsde013c-zday2."冻结天数
+    ENDIF.
+
+    "解除状态
+    CLEAR:ls_ztsde013b.
+    READ TABLE lt_ztsde013b INTO ls_ztsde013b WITH KEY kunnr = ls_ztsde013a2-kunnr bukrs = ls_ztsde013a2-bukrs status03 = 'X'.
+    IF sy-subrc = 0.
+      gs_out-status03 = ls_ztsde013b-status03.
+    ENDIF.
+
+
+
+    "客户状态
+    CLEAR:gs_klimk.
+    READ TABLE gt_klimk INTO gs_klimk WITH KEY kunnr = ls_ztsde013a2-kunnr bukrs = ls_ztsde013a2-bukrs.
+    IF sy-subrc = 0.
+*-------------------ADD 邮件字段 20180702--------------------
+*      LV_WAERB = GS_KLIMK-WAERB."货币单位
+*      LV_KLIMK = GS_KLIMK-KLIMK."信贷额度
+*      LV_HORDA = GS_KLIMK-HORDA+0(4) && '-' && GS_KLIMK-HORDA+4(2) && '-' && GS_KLIMK-HORDA+6(2)."有效截止日期
+*--------------------------------------
+
+*----STEP1：A表的有效截止日期大于等于当前日期
+      IF gs_klimk-horda >= sy-datum.
+        IF gs_out-klimk > gs_klimk-klimk.
+
+*----STEP2：查看B表是否存在这一条数据，已存在判断客户状态是X还是空（主要是为了警告日期），不存在因为满足条件，所以客户状态为X
+          CLEAR:gs_table.
+          READ TABLE gt_table INTO gs_table WITH KEY kunnr = gs_out-kunnr  bukrs = gs_out-bukrs .
+          IF sy-subrc = 0.
+
+*----STEP3：信用客户存在的情况下：取变化那刻的警告日期 不是执行一次报表的当前日期为警告日期
+            IF  gs_table-status01 = ''.
+              gs_out-status01 = 'X'."客户状态
+              gs_out-jgdat = sy-datum."警告日期
+            ENDIF.
+
+            IF gs_table-status01 = 'X'.
+              gs_out-status01 = 'X'."客户状态
+              gs_out-jgdat = gs_table-jgdat."警告日期
+            ENDIF.
+
+            gs_out-tzdat = gs_out-jgdat + gs_out-zday1."通知日期
+            gs_out-jzdat = gs_out-jgdat + gs_out-zday2."截止日期
+
+            gs_out-handle = 1.
+
+          ELSE.
+*----STEP4：信用客户不存在，客户状态就直接为X
+            gs_out-status01 = 'X'."客户状态
+            gs_out-jgdat = sy-datum."警告日期
+            gs_out-tzdat = gs_out-jgdat + gs_out-zday1."通知日期
+            gs_out-jzdat = gs_out-jgdat + gs_out-zday2."截止日期
+
+            gs_out-handle = 1.
+          ENDIF.
+
+
+*-----------发送邮件1：STATUS01=X & STATUS05=><，发送邮件后，STATUS05变更状态为X
+
+          IF gs_table-status05 = '' ."邮件提醒状态
+            lv_email = 1.
+            PERFORM frm_send_maill.
+            gs_out-status05 = 'X'.
+
+          ENDIF.
+
+          IF gs_table-status05 = 'X' .
+            gs_out-status05 = gs_table-status05.
+          ENDIF.
+
+
+*------------发送邮件3：TZDAT=当前日期 & STATUS03=>< & STATUS02=><，发送邮件后，STATUS02变更状态为X
+          IF gs_table-status02 = '' AND gs_table-status03 = ''.
+            IF gs_out-tzdat = sy-datum .
+              lv_email = 3.
+              PERFORM frm_send_maill.
+              gs_out-status02 = 'X'.
+            ENDIF.
+          ENDIF.
+
+          IF gs_table-status02 = 'X' .
+            gs_out-status02 = gs_table-status02."通知状态
+          ENDIF.
+
+
+
+
+        ELSE.
+
+*----STEP5：A表的有效截止日期大于等于当前日期  更新数据到E表中 且随着客户状态为空 情况一些字段
+          SELECT SINGLE * FROM ztsde013b  INTO CORRESPONDING FIELDS OF gs_ztsde013e WHERE kunnr = gs_out-kunnr AND bukrs = gs_out-bukrs AND status01 = 'X'.
+
+          IF sy-subrc = 0.
+            PERFORM frm_get_next_no CHANGING lc_belnr ."获取流水号
+            gs_ztsde013e-num =  lc_belnr.
+            gs_ztsde013e-bgdat =  sy-datum."记录变更日期
+            gs_ztsde013e-bgtime =  sy-uzeit."记录变更时间
+
+*        MOVE-CORRESPONDING GS_OUT TO GS_ZTSDE013E.
+            MODIFY ztsde013e FROM gs_ztsde013e.
+            gs_out-status04 = gs_ztsde013e-status04."已冻结
+            gs_out-status06 = gs_ztsde013e-status06."邮件冻结通知状态 add by 20180712
+            CLEAR:gs_ztsde013e.
+          ENDIF.
+
+
+          gs_out-status01 = ' '."客户状态
+          gs_out-status02 = ' '."通知状态
+          gs_out-status03 = ' '."解除警告
+          gs_out-jgdat = ''."警告日期
+          gs_out-tzdat = ''."通知日期
+          gs_out-jzdat = ''."截止日期
+
+          gs_out-status05 = ''."邮件提醒状态
+          gs_out-handle = 2.
+
+
+*---------发送邮件2：当ZTSDE013B-STATUS01=X ->“><”，清空状态时发送邮件
+          lv_email = 2.
+          PERFORM frm_send_maill.
+
+        ENDIF.
+      ENDIF.
+
+
+
+*--------------------------------------------------------------------------------------------------
+      IF gs_klimk-horda < sy-datum.
+        IF gs_out-klimk > 0.
+
+          CLEAR:gs_table.
+          READ TABLE gt_table INTO gs_table WITH KEY kunnr = gs_out-kunnr  bukrs = gs_out-bukrs.
+          IF sy-subrc = 0.
+            IF gs_table-status01 = ''.
+              gs_out-status01 = 'X'."客户状态
+              gs_out-jgdat = sy-datum."警告日期
+            ENDIF.
+
+            IF gs_table-status01 = 'X'.
+              gs_out-status01 = 'X'."客户状态
+              gs_out-jgdat = gs_table-jgdat."警告日期
+            ENDIF.
+
+            gs_out-tzdat = gs_out-jgdat + gs_out-zday1."通知日期
+            gs_out-jzdat = gs_out-jgdat + gs_out-zday2."截止日期
+
+            gs_out-handle = 1.
+
+          ELSE.
+            gs_out-status01 = 'X'."客户状态
+            gs_out-jgdat = sy-datum."警告日期
+            gs_out-tzdat = gs_out-jgdat + gs_out-zday1."通知日期
+            gs_out-jzdat = gs_out-jgdat + gs_out-zday2."截止日期
+
+            gs_out-handle = 1.
+          ENDIF.
+
+*-----------发送邮件1：STATUS01=X & STATUS05=><，发送邮件后，STATUS05变更状态为X
+
+          IF gs_table-status05 = '' ."邮件提醒状态
+            lv_email = 1.
+            PERFORM frm_send_maill.
+            gs_out-status05 = 'X'.
+
+          ENDIF.
+
+          IF gs_table-status05 = 'X' .
+            gs_out-status05 = gs_table-status05.
+          ENDIF.
+
+
+
+*------------发送邮件3：TZDAT=当前日期 & STATUS03=>< & STATUS02=><，发送邮件后，STATUS02变更状态为X
+          IF gs_table-status02 = '' AND gs_table-status03 = ''.
+            IF gs_out-tzdat = sy-datum .
+              lv_email = 3.
+              PERFORM frm_send_maill.
+              gs_out-status02 = 'X'.
+            ENDIF.
+          ENDIF.
+
+          IF gs_table-status02 = 'X' .
+            gs_out-status02 = gs_table-status02."通知状态
+          ENDIF.
+
+
+        ELSE.
+          "更新数据到E表中
+          SELECT SINGLE * FROM ztsde013b  INTO CORRESPONDING FIELDS OF gs_ztsde013e WHERE kunnr = gs_out-kunnr AND bukrs = gs_out-bukrs AND status01 = 'X'.
+
+          IF sy-subrc = 0.
+            PERFORM frm_get_next_no CHANGING lc_belnr ."获取流水号
+            gs_ztsde013e-num =  lc_belnr.
+            gs_ztsde013e-bgdat =  sy-datum."记录变更日期
+            gs_ztsde013e-bgtime =  sy-uzeit."记录变更时间
+
+*        MOVE-CORRESPONDING GS_OUT TO GS_ZTSDE013E.
+            MODIFY ztsde013e FROM gs_ztsde013e.
+            gs_out-status04 = gs_ztsde013e-status04."已冻结
+            gs_out-status06 = gs_ztsde013e-status06."邮件冻结通知状态 add by 20180712
+            CLEAR:gs_ztsde013e.
+          ENDIF.
+
+          gs_out-status01 = ' '."客户状态
+          gs_out-status02 = ' '."通知状态
+          gs_out-status03 = ' '."解除警告
+          gs_out-jgdat = ''."警告日期
+          gs_out-tzdat = ''."通知日期
+          gs_out-jzdat = ''."截止日期
+
+
+          gs_out-status05 = ''."邮件提醒状态
+          gs_out-handle = 2.
+
+*---------发送邮件2：当ZTSDE013B-STATUS01=X ->“><”，清空状态时发送邮件
+          lv_email = 2.
+          PERFORM frm_send_maill.
+        ENDIF.
+      ENDIF.
+
+    ENDIF.
+
+
+
+*  已冻结：当解除警告为空&当前日期＞截止日期时，变为"X".
+    IF gs_out-sgdat IS NOT INITIAL.
+      IF sy-datum > gs_out-sgdat.
+        gs_out-status04 = 'X'.
+
+*--------发送邮件4：STATUS04=X & STATUS06=><，发送邮件后，STATUS06变更状态为X
+        IF gs_table-status06 = ''.
+          lv_email = 4.
+          PERFORM frm_send_maill.
+          gs_out-status06 = 'X'.
+        ENDIF.
+        IF gs_table-status06 = 'X'.
+          gs_out-status06 = gs_table-status06.
+        ENDIF.
+      ENDIF.
+
+    ELSE.
+      IF gs_out-status01 = 'X' AND gs_out-status03 IS  INITIAL AND sy-datum > gs_out-jzdat.
+        gs_out-status04 = 'X'.
+
+*--------发送邮件4：STATUS04=X & STATUS06=><，发送邮件后，STATUS06变更状态为X
+        IF gs_table-status06 = ''.
+          lv_email = 4.
+          PERFORM frm_send_maill.
+          gs_out-status06 = 'X'.
+        ENDIF.
+        IF gs_table-status06 = 'X'.
+          gs_out-status06 = gs_table-status06.
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+
+
+
+    APPEND gs_out TO gt_out.
+
+    "更新数据到B表中
+    CLEAR:gs_ztsde013b.
+    MOVE-CORRESPONDING gs_out TO gs_ztsde013b.
+    MODIFY ztsde013b FROM gs_ztsde013b.
+
+    CLEAR:ls_ztsde013a2,gs_out.
+  ENDLOOP.
+ENDFORM.                    " FRM_EDIT_DATA
+*&---------------------------------------------------------------------*
+*&      Form  FRM_GET_NEXT_NO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_LC_BELNR  text
+*----------------------------------------------------------------------*
+FORM frm_get_next_no  CHANGING p_reqno.
+  CALL FUNCTION 'NUMBER_RANGE_ENQUEUE'
+    EXPORTING
+      object           = 'ZSD_002'
+    EXCEPTIONS
+      foreign_lock     = 1
+      object_not_found = 2
+      system_failure   = 3
+      OTHERS           = 4.
+  IF sy-subrc = 0.
+    CALL FUNCTION 'NUMBER_GET_NEXT'
+      EXPORTING
+        nr_range_nr             = '01'              "维护的间隔号
+        object                  = 'ZSD_002'         "流水号对象
+      IMPORTING
+        number                  = p_reqno   "获得的流水号
+      EXCEPTIONS
+        interval_not_found      = 1
+        number_range_not_intern = 2
+        object_not_found        = 3
+        quantity_is_0           = 4
+        quantity_is_not_1       = 5
+        interval_overflow       = 6
+        buffer_overflow         = 7
+        OTHERS                  = 8.
+    CALL FUNCTION 'NUMBER_RANGE_DEQUEUE'
+      EXPORTING
+        object           = 'ZSD_002'
+      EXCEPTIONS
+        object_not_found = 1
+        OTHERS           = 2.
+  ENDIF.
+
+ENDFORM.                    "FRM_GET_NEXT_NO
+
+*&---------------------------------------------------------------------*
+*& Form FRM_SEND_MAILL
+*&---------------------------------------------------------------------*
+*& 发送邮件
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM frm_send_maill .
+
+  DATA:
+    ls_to       TYPE so_text255,
+    lt_messages TYPE STANDARD TABLE OF bapiret2.
+
+  DATA: ls_body TYPE so_text255.
+
+  LOOP AT gt_ztsde013f INTO gs_ztsde013f WHERE bukrs = gs_out-bukrs.
+
+    "收件人
+    ls_to = gs_ztsde013f-email.
+    APPEND ls_to TO gs_sendemail-to.
+
+    CASE lv_email.
+      WHEN '1'.
+        PERFORM build_body_of_mai1.
+      WHEN '2'.
+        PERFORM build_body_of_mai2.
+      WHEN '3'.
+        PERFORM build_body_of_mai3.
+      WHEN '4'.
+        PERFORM build_body_of_mai4.
+      WHEN '5'.
+        PERFORM build_body_of_mai5.
+    ENDCASE.
+
+
+*    IF lv_email = 1.
+*
+*    ENDIF.
+*    IF lv_email = 2.
+*
+*    ENDIF.
+*    IF lv_email = 3.
+*
+*    ENDIF.
+*    IF lv_email = 4.
+*
+*    ENDIF.
+
+
+*    PERFORM BUILD_BODY_OF_MAI.
+
+
+    "调用函数发送邮件
+    CALL FUNCTION 'ZXX_WF_SEND_EMAIL'
+      DESTINATION 'SAPERP_SENDEMAIL'
+      EXPORTING
+        i_sendemail = gs_sendemail
+*       I_RECEIVER  = LS_RECEIVER
+      TABLES
+        t_messages  = lt_messages.
+
+    CLEAR: gs_sendemail,lt_messages."清空邮件发送相关
+
+    CLEAR:gs_ztsde013f.
+  ENDLOOP.
+
+ENDFORM.                    "frm_send_maill
+*&---------------------------------------------------------------------*
+*&      Form  BUILD_BODY_OF_MAI1
+*&---------------------------------------------------------------------*
+*       邮件一
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM build_body_of_mai1 .
+  "邮件标题
+  gs_sendemail-subject = 'C类客户信用逾期超额提醒'.
+
+
+
+  DATA:ls_body TYPE so_text255.
+
+  DATA:lv_jzdat TYPE string.
+  DATA:lv_jzdat2 TYPE ztsde013b-jzdat.
+  lv_jzdat2 = gs_out-jzdat + 1.
+  lv_jzdat = lv_jzdat2+0(4) && '-' && lv_jzdat2+4(2) && '-' && lv_jzdat2+6(2).
+
+
+  ls_body ='<!DOCTYPE html><html><head><meta charset="utf-8"/>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<body>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<P>如下客户信用检查出现逾期超额：</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<TABLE  width= "100%" border="1" cellspacing="0"><tr><td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户编码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户描述</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>公司代码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>预计冻结日期</B> </FONT></td></tr>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+*  LOOP AT GT_TABLE INTO GS_TABLE.
+
+  ls_body = '<TR><td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-kunnr && '</font></td>'."客户编码
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-name && '</font></td>'."客户描述
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-bukrs && '</font></td>'."公司代码
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& lv_jzdat && '</font></td></tr>'."预计冻结日期
+  APPEND ls_body TO gs_sendemail-body.
+
+*    CLEAR:GS_TABLE.
+*  ENDLOOP.
+
+  ls_body = '</table>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<P>请各位同事关注该客户信用状态并及时处理，如未处理，公司代码 <B>' && gs_out-bukrs && '</B>下客户<B>' && gs_out-name && '</B>预计将在<B>' && lv_jzdat && '</B>冻结，谢谢配合。</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  CLEAR: lv_jzdat.
+ENDFORM.                    " BUILD_BODY_OF_MAI1
+*&---------------------------------------------------------------------*
+*&      Form  BUILD_BODY_OF_MAI2
+*&---------------------------------------------------------------------*
+*       邮件二
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM build_body_of_mai2 .
+  "邮件标题
+  gs_sendemail-subject = 'C类客户信用状态恢复'.
+
+
+  DATA:ls_body TYPE so_text255.
+
+
+  ls_body ='<!DOCTYPE html><html><head><meta charset="utf-8"/>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<body>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<P>如下客户信用检查逾期超额状态已经恢复：</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<TABLE  width= "100%" border="1" cellspacing="0"><tr><td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户编码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户描述</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>公司代码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+*  LOOP AT GT_TABLE INTO GS_TABLE.
+
+  ls_body = '<TR><td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-kunnr && '</font></td>'."客户编码
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-name && '</font></td>'."客户描述
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-bukrs && '</font></td>'."公司代码
+  APPEND ls_body TO gs_sendemail-body.
+
+*    CLEAR:GS_TABLE.
+*  ENDLOOP.
+
+  ls_body = '</table>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<P>如该客户信用状态“已冻结”，且确认当前状态不存在逾期超额，请及时关闭公司代码<B>' && gs_out-bukrs && '</B>下客户<B>' && gs_out-name && '</B>的“已冻结”状态，谢谢配合。</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+ENDFORM.                    " BUILD_BODY_OF_MAI2
+*&---------------------------------------------------------------------*
+*&      Form  BUILD_BODY_OF_MAI3
+*&---------------------------------------------------------------------*
+*       邮件三
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM build_body_of_mai3 .
+  "邮件标题
+  gs_sendemail-subject = 'C类客户信用冻结预警'.
+
+
+
+  DATA:ls_body TYPE so_text255.
+
+  DATA:lv_jzdat TYPE string.
+  DATA:lv_jzdat2 TYPE ztsde013b-jzdat.
+  lv_jzdat2 = gs_out-jzdat + 1.
+  lv_jzdat = lv_jzdat2+0(4) && '-' && lv_jzdat2+4(2) && '-' && lv_jzdat2+6(2).
+
+
+  ls_body ='<!DOCTYPE html><html><head><meta charset="utf-8"/>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<body>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<P>如下客户信用检查出现逾期超额：</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<TABLE  width= "100%" border="1" cellspacing="0"><tr><td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户编码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户描述</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>公司代码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>预计冻结日期</B> </FONT></td></tr>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+*  LOOP AT GT_TABLE INTO GS_TABLE.
+
+  ls_body = '<TR><td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-kunnr && '</font></td>'."客户编码
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-name && '</font></td>'."客户描述
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-bukrs && '</font></td>'."公司代码
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& lv_jzdat && '</font></td></tr>'."预计冻结日期
+  APPEND ls_body TO gs_sendemail-body.
+
+*    CLEAR:GS_TABLE.
+*  ENDLOOP.
+
+  ls_body = '</table>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<P>请各位同事关注该客户信用状态并及时处理，如未处理，公司代码<B>' && gs_out-bukrs && '</B>下客户<B>' && gs_out-name && '</B>预计将在<B>' && lv_jzdat && '</B>冻结，谢谢配合。</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  CLEAR: lv_jzdat.
+ENDFORM.                    " BUILD_BODY_OF_MAI3
+*&---------------------------------------------------------------------*
+*&      Form  BUILD_BODY_OF_MAI4
+*&---------------------------------------------------------------------*
+*       邮件四
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM build_body_of_mai4 .
+
+  "邮件标题
+  gs_sendemail-subject = 'C类客户信用冻结通知'.
+
+
+  DATA:ls_body TYPE so_text255.
+
+*  DATA:LV_JZDAT TYPE STRING.
+*  DATA:LV_JZDAT2 TYPE ZTSDE013B-JZDAT.
+*  LV_JZDAT2 = GS_OUT-JZDAT + 1.
+*  LV_JZDAT = LV_JZDAT2+0(4) && '-' && LV_JZDAT2+4(2) && '-' && LV_JZDAT2+6(2).
+
+
+  ls_body ='<!DOCTYPE html><html><head><meta charset="utf-8"/>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<body>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<P>如下客户信用状态因未及时处理，已冻结：</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<TABLE  width= "100%" border="1" cellspacing="0"><tr><td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户编码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户描述</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>公司代码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+*  LS_BODY = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>冻结日期</B> </FONT></td></tr>'.
+*  APPEND LS_BODY TO GS_SENDEMAIL-BODY.
+
+*  LOOP AT GT_TABLE INTO GS_TABLE.
+
+  ls_body = '<TR><td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-kunnr && '</font></td>'."客户编码
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-name && '</font></td>'."客户描述
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-bukrs && '</font></td>'."公司代码
+  APPEND ls_body TO gs_sendemail-body.
+
+*  LS_BODY = '<td align = "LEFT"><font face = "宋体" size = "2">'&& LV_JZDAT && '</font></td></tr>'."预计冻结日期
+*  APPEND LS_BODY TO GS_SENDEMAIL-BODY.
+
+*    CLEAR:GS_TABLE.
+*  ENDLOOP.
+
+  ls_body = '</table>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<P>请各位同事关注该客户信用状态并及时处理，谢谢配合。</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+*  CLEAR: LV_JZDAT.
+ENDFORM.                    " BUILD_BODY_OF_MAI4
+*&---------------------------------------------------------------------*
+*&      Form  BUILD_BODY_OF_MAI5
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM build_body_of_mai5 .
+
+  "邮件标题
+  gs_sendemail-subject = 'C类客户信用状态临时解除冻结'.
+
+
+  DATA:ls_body TYPE so_text255.
+
+
+  ls_body ='<!DOCTYPE html><html><head><meta charset="utf-8"/>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<body>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<P>如下客户信用冻结状态已经临时解锁：</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+  ls_body = '<TABLE  width= "100%" border="1" cellspacing="0"><tr><td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户编码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>客户描述</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><FONT COLOR = "black" face = "宋体" size = "2"> <B>公司代码</B> </FONT></td>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+
+*  LOOP AT GT_TABLE INTO GS_TABLE.
+
+  ls_body = '<TR><td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-kunnr && '</font></td>'."客户编码
+  APPEND ls_body TO gs_sendemail-body.
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-name && '</font></td>'."客户描述
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<td align = "LEFT"><font face = "宋体" size = "2">'&& gs_out-bukrs && '</font></td>'."公司代码
+  APPEND ls_body TO gs_sendemail-body.
+
+*    CLEAR:GS_TABLE.
+*  ENDLOOP.
+
+  ls_body = '</table>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+  ls_body = '<P>请继续后续业务操作。</P>'.
+  APPEND ls_body TO gs_sendemail-body.
+
+ENDFORM.                    " BUILD_BODY_OF_MAI5
