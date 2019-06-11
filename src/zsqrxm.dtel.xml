@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZSQRXM</ROLLNAME>
+    <DDLANGUAGE>1</DDLANGUAGE>
+    <DOMNAME>ZSQRXM</DOMNAME>
+    <HEADLEN>05</HEADLEN>
+    <SCRLEN1>05</SCRLEN1>
+    <SCRLEN2>05</SCRLEN2>
+    <SCRLEN3>05</SCRLEN3>
+    <DDTEXT>申请人姓名</DDTEXT>
+    <REPTEXT>申请人姓名</REPTEXT>
+    <SCRTEXT_S>申请人姓名</SCRTEXT_S>
+    <SCRTEXT_M>申请人姓名</SCRTEXT_M>
+    <SCRTEXT_L>申请人姓名</SCRTEXT_L>
+    <DTELMASTER>1</DTELMASTER>
+    <SHLPNAME>ZSH_15405_SQR</SHLPNAME>
+    <SHLPFIELD>ZSQRXM</SHLPFIELD>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>
