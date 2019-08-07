@@ -571,7 +571,7 @@ FORM frm_impt_data .
 
     CLEAR g_netpr.
     IF lv_shuilv IS NOT INITIAL.
-      g_netpr = gs_alv-netpr * ( ( lv_shuilv / 1000 ) + 1 ).
+      g_netpr = gs_alv-netpr * ( ( lv_shuilv / 1000 ) + 1 ). 
     ELSE.
       g_netpr = gs_alv-netpr * '1.13'.
     ENDIF.
