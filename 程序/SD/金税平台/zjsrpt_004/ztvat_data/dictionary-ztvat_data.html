@@ -1,0 +1,812 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=GB2312" />
+<title>Dictionary object- ZTVAT_DATA</title>
+<style type="text/css">
+  th{text-align:left}
+  .cell{
+     font-family:"Courier New", Courier, monospace;
+     color:#000;
+     font-size:12px;
+     background-color:#F2F4F7;
+  }
+  .cell td { border: thin solid #ccc; }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+  <table class="outerTable">
+    <tr>
+      <td><h2>Table: ZTVAT_DATA</h2>
+  <h3>Description: 金税数据表</h3></td>
+    </tr>
+    <tr>
+      <td><!--This is where our main table begins  -->
+<table class="innerTable">
+<tr>
+  <th>Row</th>
+  <th>Field name</th>
+  <th>Position</th>
+  <th>Key</th>
+  <th>Data element</th>
+  <th>Domain</th>
+  <th>Datatype</th>
+  <th>Length</th>
+  <th>Lowercase</th>
+  <th>Domain text</th>
+</tr>
+<tr class="cell">
+  <td> 1</td>
+  <td>MANDT</td>
+  <td>1</td>
+  <td>X</td>
+  <td>MANDT</td>
+  <td>MANDT</td>
+  <td>CLNT</td>
+  <td>3</td>
+  <td>&nbsp;</td>
+  <td>集团</td>
+</tr>
+<tr class="cell">
+  <td> 2</td>
+  <td>ZIDNUM</td>
+  <td>2</td>
+  <td>X</td>
+  <td>ZDE_IDNUM</td>
+  <td>ZDM_IDNUM</td>
+  <td>CHAR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>样票号码</td>
+</tr>
+<tr class="cell">
+  <td> 3</td>
+  <td>ZSUOYIN</td>
+  <td>3</td>
+  <td>X</td>
+  <td>ZDE_SUOYIN</td>
+  <td>ZDM_SUOYIN</td>
+  <td>CHAR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>索引</td>
+</tr>
+<tr class="cell">
+  <td> 4</td>
+  <td>MATNR</td>
+  <td>4</td>
+  <td>X</td>
+  <td>MATNR</td>
+  <td>MATNR</td>
+  <td>CHAR</td>
+  <td>40</td>
+  <td>&nbsp;</td>
+  <td>物料编号</td>
+</tr>
+<tr class="cell">
+  <td> 5</td>
+  <td>ZSTATUS</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>ZDE_STATUSJS</td>
+  <td>ZDM_STATUSJS</td>
+  <td>CHAR</td>
+  <td>2</td>
+  <td>&nbsp;</td>
+  <td>状态</td>
+</tr>
+<tr class="cell">
+  <td> 6</td>
+  <td>ZJSZL</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>ZDE_JSZL</td>
+  <td>ZDM_JSZL</td>
+  <td>CHAR</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>发票种类</td>
+</tr>
+<tr class="cell">
+  <td> 7</td>
+  <td>ZKPJH</td>
+  <td>7</td>
+  <td>&nbsp;</td>
+  <td>ZDE_KPJH</td>
+  <td>ZDM_KPJH</td>
+  <td>CHAR</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>开票机号</td>
+</tr>
+<tr class="cell">
+  <td> 8</td>
+  <td>ZPOSNR</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>ZDE_POSNR</td>
+  <td>POSNR</td>
+  <td>NUMC</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>样票行项目</td>
+</tr>
+<tr class="cell">
+  <td> 9</td>
+  <td>BUKRS</td>
+  <td>9</td>
+  <td>&nbsp;</td>
+  <td>BUKRS</td>
+  <td>BUKRS</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>公司代码</td>
+</tr>
+<tr class="cell">
+  <td>10</td>
+  <td>VKORG</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>VKORG</td>
+  <td>VKORG</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>销售组织</td>
+</tr>
+<tr class="cell">
+  <td>11</td>
+  <td>VTWEG</td>
+  <td>11</td>
+  <td>&nbsp;</td>
+  <td>VTWEG</td>
+  <td>VTWEG</td>
+  <td>CHAR</td>
+  <td>2</td>
+  <td>&nbsp;</td>
+  <td>分销渠道</td>
+</tr>
+<tr class="cell">
+  <td>12</td>
+  <td>KUNRG</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>KUNRG</td>
+  <td>KUNNR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>付款方</td>
+</tr>
+<tr class="cell">
+  <td>13</td>
+  <td>ZKHNAME</td>
+  <td>13</td>
+  <td>&nbsp;</td>
+  <td>ZDE_KHNAME</td>
+  <td>ZDM_KHNAME</td>
+  <td>CHAR</td>
+  <td>80</td>
+  <td>&nbsp;</td>
+  <td>客户名称</td>
+</tr>
+<tr class="cell">
+  <td>14</td>
+  <td>ZKHSH</td>
+  <td>14</td>
+  <td>&nbsp;</td>
+  <td>ZDE_KHSH</td>
+  <td>ZDM_KHSH</td>
+  <td>CHAR</td>
+  <td>24</td>
+  <td>&nbsp;</td>
+  <td>客户税号</td>
+</tr>
+<tr class="cell">
+  <td>15</td>
+  <td>ZADDRESS</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ADDRESS</td>
+  <td>ZDM_ADDRESS</td>
+  <td>CHAR</td>
+  <td>150</td>
+  <td>&nbsp;</td>
+  <td>客户地址电话</td>
+</tr>
+<tr class="cell">
+  <td>16</td>
+  <td>ZKHBANK</td>
+  <td>16</td>
+  <td>&nbsp;</td>
+  <td>ZDE_KHBANK</td>
+  <td>ZDM_KHBANK</td>
+  <td>CHAR</td>
+  <td>150</td>
+  <td>&nbsp;</td>
+  <td>客户开户行及账号</td>
+</tr>
+<tr class="cell">
+  <td>17</td>
+  <td>ERNAM</td>
+  <td>17</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERNAMK</td>
+  <td>USNAM</td>
+  <td>CHAR</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>开票员</td>
+</tr>
+<tr class="cell">
+  <td>18</td>
+  <td>ZSALER</td>
+  <td>18</td>
+  <td>&nbsp;</td>
+  <td>ZDE_SALER</td>
+  <td>ZDM_SALER</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>销售员</td>
+</tr>
+<tr class="cell">
+  <td>19</td>
+  <td>ZWMFPH</td>
+  <td>19</td>
+  <td>&nbsp;</td>
+  <td>ZDE_WMFPH</td>
+  <td>&nbsp;</td>
+  <td>CHAR</td>
+  <td>20</td>
+  <td>&nbsp;</td>
+  <td>外贸发票号</td>
+</tr>
+<tr class="cell">
+  <td>20</td>
+  <td>BKLAS</td>
+  <td>20</td>
+  <td>&nbsp;</td>
+  <td>BKLAS</td>
+  <td>BKLAS</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>评估类</td>
+</tr>
+<tr class="cell">
+  <td>21</td>
+  <td>ARKTX</td>
+  <td>21</td>
+  <td>&nbsp;</td>
+  <td>ARKTX</td>
+  <td>TEXT40</td>
+  <td>CHAR</td>
+  <td>40</td>
+  <td>X</td>
+  <td>销售订单项目的短文本</td>
+</tr>
+<tr class="cell">
+  <td>22</td>
+  <td>ZSPMC</td>
+  <td>22</td>
+  <td>&nbsp;</td>
+  <td>ZDE_SPMC</td>
+  <td>ZDM_SPMC</td>
+  <td>CHAR</td>
+  <td>60</td>
+  <td>&nbsp;</td>
+  <td>商品名称</td>
+</tr>
+<tr class="cell">
+  <td>23</td>
+  <td>ZGGXH</td>
+  <td>23</td>
+  <td>&nbsp;</td>
+  <td>ZDE_GGXH</td>
+  <td>ZDM_GGXH</td>
+  <td>CHAR</td>
+  <td>32</td>
+  <td>&nbsp;</td>
+  <td>规格型号</td>
+</tr>
+<tr class="cell">
+  <td>24</td>
+  <td>ATWRT</td>
+  <td>24</td>
+  <td>&nbsp;</td>
+  <td>ATWRT</td>
+  <td>ATWRT</td>
+  <td>CHAR</td>
+  <td>70</td>
+  <td>X</td>
+  <td>特性值</td>
+</tr>
+<tr class="cell">
+  <td>25</td>
+  <td>FKIMG</td>
+  <td>25</td>
+  <td>&nbsp;</td>
+  <td>FKIMG</td>
+  <td>MENG13</td>
+  <td>QUAN</td>
+  <td>13</td>
+  <td>&nbsp;</td>
+  <td>实际已开票数量</td>
+</tr>
+<tr class="cell">
+  <td>26</td>
+  <td>VRKME</td>
+  <td>26</td>
+  <td>&nbsp;</td>
+  <td>VRKME</td>
+  <td>MEINS</td>
+  <td>UNIT</td>
+  <td>3</td>
+  <td>X</td>
+  <td>销售单位</td>
+</tr>
+<tr class="cell">
+  <td>27</td>
+  <td>ZPRICE</td>
+  <td>27</td>
+  <td>&nbsp;</td>
+  <td>ZDE_DJ</td>
+  <td>ZDM_DJ</td>
+  <td>CURR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>原币含税单价</td>
+</tr>
+<tr class="cell">
+  <td>28</td>
+  <td>ZBPRICE</td>
+  <td>28</td>
+  <td>&nbsp;</td>
+  <td>ZDE_BDJ</td>
+  <td>ZDE_BDJ</td>
+  <td>CURR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>本位币不含税单价</td>
+</tr>
+<tr class="cell">
+  <td>29</td>
+  <td>ZMOUNT</td>
+  <td>29</td>
+  <td>&nbsp;</td>
+  <td>ZDE_MOUNT</td>
+  <td>ZDM_MOUNT</td>
+  <td>CURR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>金额</td>
+</tr>
+<tr class="cell">
+  <td>30</td>
+  <td>ZBMOUNT</td>
+  <td>30</td>
+  <td>&nbsp;</td>
+  <td>ZDE_BMOUNT</td>
+  <td>ZDM_MOUNT</td>
+  <td>CURR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>本位币金额</td>
+</tr>
+<tr class="cell">
+  <td>31</td>
+  <td>ZSE</td>
+  <td>31</td>
+  <td>&nbsp;</td>
+  <td>ZDE_SE</td>
+  <td>ZDM_MOUNT</td>
+  <td>CURR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>税额</td>
+</tr>
+<tr class="cell">
+  <td>32</td>
+  <td>KURSK</td>
+  <td>32</td>
+  <td>&nbsp;</td>
+  <td>KURSK</td>
+  <td>KURRF</td>
+  <td>DEC</td>
+  <td>9</td>
+  <td>&nbsp;</td>
+  <td>决定价格的汇率</td>
+</tr>
+<tr class="cell">
+  <td>33</td>
+  <td>WAERK</td>
+  <td>33</td>
+  <td>&nbsp;</td>
+  <td>WAERK</td>
+  <td>WAERS</td>
+  <td>CUKY</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>销售和分销凭证货币</td>
+</tr>
+<tr class="cell">
+  <td>34</td>
+  <td>ZWAERK</td>
+  <td>34</td>
+  <td>&nbsp;</td>
+  <td>ZDE_WAERK</td>
+  <td>WAERS</td>
+  <td>CUKY</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>本位币种</td>
+</tr>
+<tr class="cell">
+  <td>35</td>
+  <td>ZTAX</td>
+  <td>35</td>
+  <td>&nbsp;</td>
+  <td>ZDE_TAX</td>
+  <td>ZDM_TAX</td>
+  <td>CHAR</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>税率</td>
+</tr>
+<tr class="cell">
+  <td>36</td>
+  <td>ZBEIZHU</td>
+  <td>36</td>
+  <td>&nbsp;</td>
+  <td>ZDE_BEIZHU</td>
+  <td>ZDM_BEIZHU</td>
+  <td>CHAR</td>
+  <td>240</td>
+  <td>&nbsp;</td>
+  <td>备注</td>
+</tr>
+<tr class="cell">
+  <td>37</td>
+  <td>ZSSFLBM</td>
+  <td>37</td>
+  <td>&nbsp;</td>
+  <td>ZDE_SSFLBM</td>
+  <td>ZDM_SSFLBM</td>
+  <td>CHAR</td>
+  <td>30</td>
+  <td>&nbsp;</td>
+  <td>税收分类编码</td>
+</tr>
+<tr class="cell">
+  <td>38</td>
+  <td>ZCANCEL</td>
+  <td>38</td>
+  <td>&nbsp;</td>
+  <td>ZDE_CANCEL</td>
+  <td>ZDM_CANCEL</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>作废标识</td>
+</tr>
+<tr class="cell">
+  <td>39</td>
+  <td>BEZEI</td>
+  <td>39</td>
+  <td>&nbsp;</td>
+  <td>ZDE_BEZEI</td>
+  <td>ZDM_BEZEI</td>
+  <td>CHAR</td>
+  <td>40</td>
+  <td>&nbsp;</td>
+  <td>描述</td>
+</tr>
+<tr class="cell">
+  <td>40</td>
+  <td>ZZSS</td>
+  <td>40</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ZSS</td>
+  <td>ZDM_CANCEL</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>再生丝标识</td>
+</tr>
+<tr class="cell">
+  <td>41</td>
+  <td>.INCLUDE</td>
+  <td>41</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>0</td>
+  <td>&nbsp;</td>
+  <td>通用结构-创建信息</td>
+</tr>
+<tr class="cell">
+  <td>42</td>
+  <td>ZERNAM</td>
+  <td>42</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERNAM</td>
+  <td>USNAM</td>
+  <td>CHAR</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>创建人</td>
+</tr>
+<tr class="cell">
+  <td>43</td>
+  <td>ZERDAT</td>
+  <td>43</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERDAT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>创建日期</td>
+</tr>
+<tr class="cell">
+  <td>44</td>
+  <td>ZERTIM</td>
+  <td>44</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERTIM</td>
+  <td>UZEIT</td>
+  <td>TIMS</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>创建时间</td>
+</tr>
+<tr class="cell">
+  <td>45</td>
+  <td>.INCLUDE</td>
+  <td>45</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>0</td>
+  <td>&nbsp;</td>
+  <td>通用结构-修改信息</td>
+</tr>
+<tr class="cell">
+  <td>46</td>
+  <td>ZAENAM</td>
+  <td>46</td>
+  <td>&nbsp;</td>
+  <td>ZDE_AENAM</td>
+  <td>USNAM</td>
+  <td>CHAR</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>修改人</td>
+</tr>
+<tr class="cell">
+  <td>47</td>
+  <td>ZAEDAT</td>
+  <td>47</td>
+  <td>&nbsp;</td>
+  <td>ZDE_AEDAT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>修改日期</td>
+</tr>
+<tr class="cell">
+  <td>48</td>
+  <td>ZAETIM</td>
+  <td>48</td>
+  <td>&nbsp;</td>
+  <td>ZDE_AETIM</td>
+  <td>UZEIT</td>
+  <td>TIMS</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>修改时间</td>
+</tr>
+      </table>
+     </td>
+   </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.4.1 - E.G.Mellodew. 1998-2019. Sap Release 752</td>
+   </tr>
+</table>
+</body>
+</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=GB2312" />
+<title>Dictionary object- ZTVAT_DATA</title>
+<style type="text/css">
+  th{text-align:left}
+  .cell{
+     font-family:"Courier New", Courier, monospace;
+     color:#000;
+     font-size:12px;
+     background-color:#F2F4F7;
+  }
+  .cell td { border: thin solid #ccc; }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+  <table class="outerTable">
+    <tr>
+      <td><h2>Table: ZTVAT_DATA陏?Y?#Y</h2>
+  <h3>Description: 金税数据表</h3></td>
+    </tr>
+    <tr>
+      <td><!--This is where our main table begins  -->
+<table class="innerTable">
+<tr class="cell">
+  <td>MANDT</td>
+  <td>ZIDNUM</td>
+  <td>ZSUOYIN</td>
+  <td>MATNR</td>
+  <td>ZSTATUS</td>
+  <td>ZJSZL</td>
+  <td>ZKPJH</td>
+  <td>ZPOSNR</td>
+  <td>BUKRS</td>
+  <td>VKORG</td>
+  <td>VTWEG</td>
+  <td>KUNRG</td>
+  <td>ZKHNAME</td>
+  <td>ZKHSH</td>
+  <td>ZADDRESS</td>
+  <td>ZKHBANK</td>
+  <td>ERNAM</td>
+  <td>ZSALER</td>
+  <td>ZWMFPH</td>
+  <td>BKLAS</td>
+  <td>ARKTX</td>
+  <td>ZSPMC</td>
+  <td>ZGGXH</td>
+  <td>ATWRT</td>
+  <td>FKIMG</td>
+  <td>VRKME</td>
+  <td>ZPRICE</td>
+  <td>ZBPRICE</td>
+  <td>ZMOUNT</td>
+  <td>ZBMOUNT</td>
+  <td>ZSE</td>
+  <td>KURSK</td>
+  <td>WAERK</td>
+  <td>ZWAERK</td>
+  <td>ZTAX</td>
+  <td>ZBEIZHU</td>
+  <td>ZSSFLBM</td>
+  <td>ZCANCEL</td>
+  <td>BEZEI</td>
+  <td>ZZSS</td>
+  <td>ZERNAM</td>
+  <td>ZERDAT</td>
+  <td>ZERTIM</td>
+  <td>ZAENAM</td>
+  <td>ZAEDAT</td>
+  <td>ZAETIM</td>
+</tr>
+<tr class="cell">
+  <td>集团</td>
+  <td>样票号码</td>
+  <td>索引</td>
+  <td>物料</td>
+  <td>状态</td>
+  <td>发票种类</td>
+  <td>开票机号</td>
+  <td>样票行项目</td>
+  <td>公司代码</td>
+  <td>销售组织</td>
+  <td>分销渠道</td>
+  <td>付款方</td>
+  <td>客户名称</td>
+  <td>客户税号</td>
+  <td>客户地址电话</td>
+  <td>客户开户行及账号</td>
+  <td>开票员</td>
+  <td>销售员</td>
+  <td>外贸发票号</td>
+  <td>评估类</td>
+  <td>项目描述</td>
+  <td>商品名称</td>
+  <td>规格型号</td>
+  <td>特性值</td>
+  <td>开票数量</td>
+  <td>销售单位</td>
+  <td>原币含税单价</td>
+  <td>本位币不含税单价</td>
+  <td>金额</td>
+  <td>本位币金额</td>
+  <td>税额</td>
+  <td>汇率</td>
+  <td>凭证货币</td>
+  <td>本位币种</td>
+  <td>税率</td>
+  <td>备注</td>
+  <td>税收分类编码</td>
+  <td>作废标识</td>
+  <td>描述</td>
+  <td>再生丝标识</td>
+  <td>创建人</td>
+  <td>创建日期</td>
+  <td>创建时间</td>
+  <td>修改人</td>
+  <td>修改日期</td>
+  <td>修改时间</td>
+</tr>
+      </table>
+     </td>
+   </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.4.1 - E.G.Mellodew. 1998-2019. Sap Release 752</td>
+   </tr>
+</table>
+</body>
+</html>

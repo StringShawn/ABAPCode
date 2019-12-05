@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=GB2312" />
+<title>Dictionary object- ZTVAT_INVOICE</title>
+<style type="text/css">
+  th{text-align:left}
+  .cell{
+     font-family:"Courier New", Courier, monospace;
+     color:#000;
+     font-size:12px;
+     background-color:#F2F4F7;
+  }
+  .cell td { border: thin solid #ccc; }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+  <table class="outerTable">
+    <tr>
+      <td><h2>Table: ZTVAT_INVOICE</h2>
+  <h3>Description: 金税发票对应表</h3></td>
+    </tr>
+    <tr>
+      <td><!--This is where our main table begins  -->
+<table class="innerTable">
+<tr>
+  <th>Row</th>
+  <th>Field name</th>
+  <th>Position</th>
+  <th>Key</th>
+  <th>Data element</th>
+  <th>Domain</th>
+  <th>Datatype</th>
+  <th>Length</th>
+  <th>Lowercase</th>
+  <th>Domain text</th>
+</tr>
+<tr class="cell">
+  <td> 1</td>
+  <td>MANDT</td>
+  <td>1</td>
+  <td>X</td>
+  <td>MANDT</td>
+  <td>MANDT</td>
+  <td>CLNT</td>
+  <td>3</td>
+  <td>&nbsp;</td>
+  <td>集团</td>
+</tr>
+<tr class="cell">
+  <td> 2</td>
+  <td>ZIDNUM</td>
+  <td>2</td>
+  <td>X</td>
+  <td>ZDE_IDNUM</td>
+  <td>ZDM_IDNUM</td>
+  <td>CHAR</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>样票号码</td>
+</tr>
+<tr class="cell">
+  <td> 3</td>
+  <td>VBELN</td>
+  <td>3</td>
+  <td>X</td>
+  <td>ZDE_VBELN</td>
+  <td>VBELN</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>SAP发票号</td>
+</tr>
+<tr class="cell">
+  <td> 4</td>
+  <td>ZJSDM</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>ZDE_JSDM</td>
+  <td>ZDM_JSDM</td>
+  <td>CHAR</td>
+  <td>16</td>
+  <td>&nbsp;</td>
+  <td>金税代码</td>
+</tr>
+<tr class="cell">
+  <td> 5</td>
+  <td>ZJSHM</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>ZDE_JSHM</td>
+  <td>ZDM_JSHM</td>
+  <td>CHAR</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>金税号码</td>
+</tr>
+<tr class="cell">
+  <td> 6</td>
+  <td>ZJSDATE</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>ZDE_JSDATE</td>
+  <td>ZDM_JSDATE</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>金税日期</td>
+</tr>
+<tr class="cell">
+  <td> 7</td>
+  <td>ZPOST</td>
+  <td>7</td>
+  <td>&nbsp;</td>
+  <td>ZDE_POSTGZ</td>
+  <td>ZDM_CANCEL</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>已过账</td>
+</tr>
+<tr class="cell">
+  <td> 8</td>
+  <td>.INCLUDE</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>0</td>
+  <td>&nbsp;</td>
+  <td>通用结构-创建信息</td>
+</tr>
+<tr class="cell">
+  <td> 9</td>
+  <td>ZERNAM</td>
+  <td>9</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERNAM</td>
+  <td>USNAM</td>
+  <td>CHAR</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>创建人</td>
+</tr>
+<tr class="cell">
+  <td>10</td>
+  <td>ZERDAT</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERDAT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>创建日期</td>
+</tr>
+<tr class="cell">
+  <td>11</td>
+  <td>ZERTIM</td>
+  <td>11</td>
+  <td>&nbsp;</td>
+  <td>ZDE_ERTIM</td>
+  <td>UZEIT</td>
+  <td>TIMS</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>创建时间</td>
+</tr>
+<tr class="cell">
+  <td>12</td>
+  <td>.INCLUDE</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>0</td>
+  <td>&nbsp;</td>
+  <td>通用结构-修改信息</td>
+</tr>
+<tr class="cell">
+  <td>13</td>
+  <td>ZAENAM</td>
+  <td>13</td>
+  <td>&nbsp;</td>
+  <td>ZDE_AENAM</td>
+  <td>USNAM</td>
+  <td>CHAR</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>修改人</td>
+</tr>
+<tr class="cell">
+  <td>14</td>
+  <td>ZAEDAT</td>
+  <td>14</td>
+  <td>&nbsp;</td>
+  <td>ZDE_AEDAT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>修改日期</td>
+</tr>
+<tr class="cell">
+  <td>15</td>
+  <td>ZAETIM</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>ZDE_AETIM</td>
+  <td>UZEIT</td>
+  <td>TIMS</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>修改时间</td>
+</tr>
+      </table>
+     </td>
+   </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.4.1 - E.G.Mellodew. 1998-2019. Sap Release 752</td>
+   </tr>
+</table>
+</body>
+</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=GB2312" />
+<title>Dictionary object- ZTVAT_INVOICE</title>
+<style type="text/css">
+  th{text-align:left}
+  .cell{
+     font-family:"Courier New", Courier, monospace;
+     color:#000;
+     font-size:12px;
+     background-color:#F2F4F7;
+  }
+  .cell td { border: thin solid #ccc; }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+  <table class="outerTable">
+    <tr>
+      <td><h2>Table: ZTVAT_INVOICE陏?Y?#Y</h2>
+  <h3>Description: 金税发票对应表</h3></td>
+    </tr>
+    <tr>
+      <td><!--This is where our main table begins  -->
+<table class="innerTable">
+<tr class="cell">
+  <td>MANDT</td>
+  <td>ZIDNUM</td>
+  <td>VBELN</td>
+  <td>ZJSDM</td>
+  <td>ZJSHM</td>
+  <td>ZJSDATE</td>
+  <td>ZPOST</td>
+  <td>ZERNAM</td>
+  <td>ZERDAT</td>
+  <td>ZERTIM</td>
+  <td>ZAENAM</td>
+  <td>ZAEDAT</td>
+  <td>ZAETIM</td>
+</tr>
+<tr class="cell">
+  <td>集团</td>
+  <td>样票号码</td>
+  <td>SAP发票号</td>
+  <td>金税代码</td>
+  <td>金税号码</td>
+  <td>金税日期</td>
+  <td>已过账</td>
+  <td>创建人</td>
+  <td>创建日期</td>
+  <td>创建时间</td>
+  <td>修改人</td>
+  <td>修改日期</td>
+  <td>修改时间</td>
+</tr>
+<tr class="cell">
+  <td>300</td>
+  <td>100000000000015</td>
+  <td>0000000001</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td></td>
+  <td>&nbsp;</td>
+  <td>SH-HAND</td>
+  <td>20191009</td>
+  <td>113957</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+      </table>
+     </td>
+   </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.4.1 - E.G.Mellodew. 1998-2019. Sap Release 752</td>
+   </tr>
+</table>
+</body>
+</html>

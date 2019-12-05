@@ -1,0 +1,602 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=GB2312" />
+<title>Dictionary object- ZSFIRPT_003_ALV_ITEM</title>
+<style type="text/css">
+  th{text-align:left}
+  .cell{
+     font-family:"Courier New", Courier, monospace;
+     color:#000;
+     font-size:12px;
+     background-color:#F2F4F7;
+  }
+  .cell td { border: thin solid #ccc; }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+  <table class="outerTable">
+    <tr>
+      <td><h2>Table: ZSFIRPT_003_ALV_ITEM</h2>
+  <h3>Description: </h3></td>
+    </tr>
+    <tr>
+      <td><!--This is where our main table begins  -->
+<table class="innerTable">
+<tr>
+  <th>Row</th>
+  <th>Field name</th>
+  <th>Position</th>
+  <th>Key</th>
+  <th>Data element</th>
+  <th>Domain</th>
+  <th>Datatype</th>
+  <th>Length</th>
+  <th>Lowercase</th>
+  <th>Domain text</th>
+</tr>
+<tr class="cell">
+  <td> 1</td>
+  <td>BUKRS</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>BUKRS</td>
+  <td>BUKRS</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>Company Code</td>
+</tr>
+<tr class="cell">
+  <td> 2</td>
+  <td>BELNR</td>
+  <td>2</td>
+  <td>&nbsp;</td>
+  <td>BELNR_D</td>
+  <td>BELNR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>Accounting Document Number</td>
+</tr>
+<tr class="cell">
+  <td> 3</td>
+  <td>GJAHR</td>
+  <td>3</td>
+  <td>&nbsp;</td>
+  <td>GJAHR</td>
+  <td>GJAHR</td>
+  <td>NUMC</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>Fiscal Year</td>
+</tr>
+<tr class="cell">
+  <td> 4</td>
+  <td>BUZEI</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>BUZEI</td>
+  <td>BUZEI</td>
+  <td>NUMC</td>
+  <td>3</td>
+  <td>&nbsp;</td>
+  <td>Number of Line Item Within Accounting Document</td>
+</tr>
+<tr class="cell">
+  <td> 5</td>
+  <td>BUDAT</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>BUDAT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>Posting Date in the Document</td>
+</tr>
+<tr class="cell">
+  <td> 6</td>
+  <td>BLDAT</td>
+  <td>6</td>
+  <td>&nbsp;</td>
+  <td>BLDAT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>Document Date in Document</td>
+</tr>
+<tr class="cell">
+  <td> 7</td>
+  <td>BSTAT</td>
+  <td>7</td>
+  <td>&nbsp;</td>
+  <td>BSTAT_D</td>
+  <td>BSTAT</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>Document Status</td>
+</tr>
+<tr class="cell">
+  <td> 8</td>
+  <td>XREVERSAL</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>XREVERSAL</td>
+  <td>XREVERSAL</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>Specifies whether doc. is reversal doc. or reversed doc.</td>
+</tr>
+<tr class="cell">
+  <td> 9</td>
+  <td>BKTXT</td>
+  <td>9</td>
+  <td>&nbsp;</td>
+  <td>BKTXT</td>
+  <td>TEXT25</td>
+  <td>CHAR</td>
+  <td>25</td>
+  <td>X</td>
+  <td>Document Header Text</td>
+</tr>
+<tr class="cell">
+  <td>10</td>
+  <td>BSCHL</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>BSCHL</td>
+  <td>BSCHL</td>
+  <td>CHAR</td>
+  <td>2</td>
+  <td>&nbsp;</td>
+  <td>Posting Key</td>
+</tr>
+<tr class="cell">
+  <td>11</td>
+  <td>SHKZG</td>
+  <td>11</td>
+  <td>&nbsp;</td>
+  <td>SHKZG</td>
+  <td>SHKZG</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>Debit/Credit Indicator</td>
+</tr>
+<tr class="cell">
+  <td>12</td>
+  <td>XNEGP</td>
+  <td>12</td>
+  <td>&nbsp;</td>
+  <td>XNEGP</td>
+  <td>XFELD</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>Indicator: Negative posting</td>
+</tr>
+<tr class="cell">
+  <td>13</td>
+  <td>KOART</td>
+  <td>13</td>
+  <td>&nbsp;</td>
+  <td>KOART</td>
+  <td>KOART</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>Account Type</td>
+</tr>
+<tr class="cell">
+  <td>14</td>
+  <td>UMSKZ</td>
+  <td>14</td>
+  <td>&nbsp;</td>
+  <td>UMSKZ</td>
+  <td>UMSKZ</td>
+  <td>CHAR</td>
+  <td>1</td>
+  <td>&nbsp;</td>
+  <td>Special G/L Indicator</td>
+</tr>
+<tr class="cell">
+  <td>15</td>
+  <td>HKONT</td>
+  <td>15</td>
+  <td>&nbsp;</td>
+  <td>HKONT</td>
+  <td>SAKNR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>General Ledger Account</td>
+</tr>
+<tr class="cell">
+  <td>16</td>
+  <td>KUNNR</td>
+  <td>16</td>
+  <td>&nbsp;</td>
+  <td>KUNNR</td>
+  <td>KUNNR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>Customer Number</td>
+</tr>
+<tr class="cell">
+  <td>17</td>
+  <td>KUNNR_TEXT</td>
+  <td>17</td>
+  <td>&nbsp;</td>
+  <td>TEXT80</td>
+  <td>TEXT80UEB</td>
+  <td>CHAR</td>
+  <td>80</td>
+  <td>X</td>
+  <td>Text (80 Characters)</td>
+</tr>
+<tr class="cell">
+  <td>18</td>
+  <td>LIFNR</td>
+  <td>18</td>
+  <td>&nbsp;</td>
+  <td>LIFNR</td>
+  <td>LIFNR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>Account Number of Vendor or Creditor</td>
+</tr>
+<tr class="cell">
+  <td>19</td>
+  <td>LIFNR_TEXT</td>
+  <td>19</td>
+  <td>&nbsp;</td>
+  <td>TEXT80</td>
+  <td>TEXT80UEB</td>
+  <td>CHAR</td>
+  <td>80</td>
+  <td>X</td>
+  <td>Text (80 Characters)</td>
+</tr>
+<tr class="cell">
+  <td>20</td>
+  <td>GSBER</td>
+  <td>20</td>
+  <td>&nbsp;</td>
+  <td>GSBER</td>
+  <td>GSBER</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>Business Area</td>
+</tr>
+<tr class="cell">
+  <td>21</td>
+  <td>FKBER</td>
+  <td>21</td>
+  <td>&nbsp;</td>
+  <td>FKBER</td>
+  <td>FKBER</td>
+  <td>CHAR</td>
+  <td>16</td>
+  <td>&nbsp;</td>
+  <td>Functional Area</td>
+</tr>
+<tr class="cell">
+  <td>22</td>
+  <td>DMBTR</td>
+  <td>22</td>
+  <td>&nbsp;</td>
+  <td>ZZFIDMBTR</td>
+  <td>WERTV12</td>
+  <td>CURR</td>
+  <td>23</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+<tr class="cell">
+  <td>23</td>
+  <td>WRBTR</td>
+  <td>23</td>
+  <td>&nbsp;</td>
+  <td>ZZFIWRBTR</td>
+  <td>WERTV12</td>
+  <td>CURR</td>
+  <td>23</td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+<tr class="cell">
+  <td>24</td>
+  <td>WAERS</td>
+  <td>24</td>
+  <td>&nbsp;</td>
+  <td>WAERS</td>
+  <td>WAERS</td>
+  <td>CUKY</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>Currency Key</td>
+</tr>
+<tr class="cell">
+  <td>25</td>
+  <td>MATNR</td>
+  <td>25</td>
+  <td>&nbsp;</td>
+  <td>MATNR</td>
+  <td>MATNR</td>
+  <td>CHAR</td>
+  <td>18</td>
+  <td>&nbsp;</td>
+  <td>Material Number</td>
+</tr>
+<tr class="cell">
+  <td>26</td>
+  <td>MATNR_TEXT</td>
+  <td>26</td>
+  <td>&nbsp;</td>
+  <td>TEXT80</td>
+  <td>TEXT80UEB</td>
+  <td>CHAR</td>
+  <td>80</td>
+  <td>X</td>
+  <td>Text (80 Characters)</td>
+</tr>
+<tr class="cell">
+  <td>27</td>
+  <td>MATNR_TEXT1</td>
+  <td>27</td>
+  <td>&nbsp;</td>
+  <td>TEXT80</td>
+  <td>TEXT80UEB</td>
+  <td>CHAR</td>
+  <td>80</td>
+  <td>X</td>
+  <td>Text (80 Characters)</td>
+</tr>
+<tr class="cell">
+  <td>28</td>
+  <td>VTEXT</td>
+  <td>28</td>
+  <td>&nbsp;</td>
+  <td>BEZEI20</td>
+  <td>TEXT20</td>
+  <td>CHAR</td>
+  <td>20</td>
+  <td>X</td>
+  <td>Description</td>
+</tr>
+<tr class="cell">
+  <td>29</td>
+  <td>MENGE</td>
+  <td>29</td>
+  <td>&nbsp;</td>
+  <td>MENGE_D</td>
+  <td>MENG13</td>
+  <td>QUAN</td>
+  <td>13</td>
+  <td>&nbsp;</td>
+  <td>Quantity</td>
+</tr>
+<tr class="cell">
+  <td>30</td>
+  <td>MEINS</td>
+  <td>30</td>
+  <td>&nbsp;</td>
+  <td>MEINS</td>
+  <td>MEINS</td>
+  <td>UNIT</td>
+  <td>3</td>
+  <td>X</td>
+  <td>Base Unit of Measure</td>
+</tr>
+<tr class="cell">
+  <td>31</td>
+  <td>VALUT</td>
+  <td>31</td>
+  <td>&nbsp;</td>
+  <td>VALUT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>Value Date</td>
+</tr>
+<tr class="cell">
+  <td>32</td>
+  <td>ZUONR</td>
+  <td>32</td>
+  <td>&nbsp;</td>
+  <td>DZUONR</td>
+  <td>ZUONR</td>
+  <td>CHAR</td>
+  <td>18</td>
+  <td>X</td>
+  <td>Assignment Number</td>
+</tr>
+<tr class="cell">
+  <td>33</td>
+  <td>SGTXT</td>
+  <td>33</td>
+  <td>&nbsp;</td>
+  <td>SGTXT</td>
+  <td>TEXT50</td>
+  <td>CHAR</td>
+  <td>50</td>
+  <td>X</td>
+  <td>Item Text</td>
+</tr>
+<tr class="cell">
+  <td>34</td>
+  <td>KOKRS</td>
+  <td>34</td>
+  <td>&nbsp;</td>
+  <td>KOKRS</td>
+  <td>CACCD</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>Controlling Area</td>
+</tr>
+<tr class="cell">
+  <td>35</td>
+  <td>KOSTL</td>
+  <td>35</td>
+  <td>&nbsp;</td>
+  <td>KOSTL</td>
+  <td>KOSTL</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>Cost Center</td>
+</tr>
+<tr class="cell">
+  <td>36</td>
+  <td>KOSTL_TEXT</td>
+  <td>36</td>
+  <td>&nbsp;</td>
+  <td>KTEXT</td>
+  <td>TEXT20</td>
+  <td>CHAR</td>
+  <td>20</td>
+  <td>X</td>
+  <td>General Name</td>
+</tr>
+<tr class="cell">
+  <td>37</td>
+  <td>PRCTR</td>
+  <td>37</td>
+  <td>&nbsp;</td>
+  <td>PRCTR</td>
+  <td>PRCTR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>Profit Center</td>
+</tr>
+<tr class="cell">
+  <td>38</td>
+  <td>PRCTR_TEXT</td>
+  <td>38</td>
+  <td>&nbsp;</td>
+  <td>KTEXT</td>
+  <td>TEXT20</td>
+  <td>CHAR</td>
+  <td>20</td>
+  <td>X</td>
+  <td>General Name</td>
+</tr>
+<tr class="cell">
+  <td>39</td>
+  <td>ZFBDT</td>
+  <td>39</td>
+  <td>&nbsp;</td>
+  <td>DZFBDT</td>
+  <td>DATUM</td>
+  <td>DATS</td>
+  <td>8</td>
+  <td>&nbsp;</td>
+  <td>Baseline Date for Due Date Calculation</td>
+</tr>
+<tr class="cell">
+  <td>40</td>
+  <td>ZTERM</td>
+  <td>40</td>
+  <td>&nbsp;</td>
+  <td>DZTERM</td>
+  <td>ZTERM</td>
+  <td>CHAR</td>
+  <td>4</td>
+  <td>&nbsp;</td>
+  <td>Terms of Payment Key</td>
+</tr>
+<tr class="cell">
+  <td>41</td>
+  <td>HWAER</td>
+  <td>41</td>
+  <td>&nbsp;</td>
+  <td>HWAER</td>
+  <td>WAERS</td>
+  <td>CUKY</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>Local Currency</td>
+</tr>
+<tr class="cell">
+  <td>42</td>
+  <td>PSWSL</td>
+  <td>42</td>
+  <td>&nbsp;</td>
+  <td>PSWSL</td>
+  <td>WAERS</td>
+  <td>CUKY</td>
+  <td>5</td>
+  <td>&nbsp;</td>
+  <td>Update Currency for General Ledger Transaction Figures</td>
+</tr>
+<tr class="cell">
+  <td>43</td>
+  <td>VPTNR</td>
+  <td>43</td>
+  <td>&nbsp;</td>
+  <td>JV_PART</td>
+  <td>KUNNR</td>
+  <td>CHAR</td>
+  <td>10</td>
+  <td>&nbsp;</td>
+  <td>Partner Account Number</td>
+</tr>
+<tr class="cell">
+  <td>44</td>
+  <td>VPTNR_TEXT</td>
+  <td>44</td>
+  <td>&nbsp;</td>
+  <td>TEXT80</td>
+  <td>TEXT80UEB</td>
+  <td>CHAR</td>
+  <td>80</td>
+  <td>X</td>
+  <td>Text (80 Characters)</td>
+</tr>
+      </table>
+     </td>
+   </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.4.3 - E.G.Mellodew. 1998-2019. Sap Release 740</td>
+   </tr>
+</table>
+</body>
+</html>
