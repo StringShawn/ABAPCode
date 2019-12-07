@@ -272,7 +272,6 @@ endmethod.
     me->CONVERT_XSTRING_TO_STRING( exporting INPUT = request  importing OUTPUT = request1  ).
 ***dd by hand crh 20190722 end.
 
-
     "构造查询报文
     concatenate
     '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:web="http://webservice.bedp.byttersoft.com">'
