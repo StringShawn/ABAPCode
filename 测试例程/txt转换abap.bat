@@ -1,1 +1,0 @@
-ren *.txt *.prog.abap
