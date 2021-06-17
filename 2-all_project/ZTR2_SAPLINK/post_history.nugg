@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nugget name="ZTR2">
+ <FUGR AREA="ZFG_TR2_POST_HISTORY" SPRAS="1" AREAT="过账历史展示">
+  <functionGroupDocumentation/>
+  <mainprogram NAME="SAPLZFG_TR2_POST_HISTORY" VARCL="X" DBAPL="S" DBNA="D$" SUBC="F" APPL="S" RMAND="150" RLOAD="1" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+   <textPool>
+    <language SPRAS="1">
+     <textElement ID="I" KEY="T01" ENTRY="凭证过账历史" LENGTH="16 "/>
+    </language>
+   </textPool>
+   <dynpros>
+    <dynpro PROG="SAPLZFG_TR2_POST_HISTORY" DNUM="0100" FNUM="0100" BZMX="0 " BZBR="0 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="27 " NOCO="120 " VALP="0 " CUAN="G" SPRA="1" DTEXT="过账历史展示">
+     <dynprofield FNAM="GV_OKCODE" DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________" RES1="                                       00"/>
+     <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE status_0100.
+  MODULE init_0100_alv.
+
+PROCESS AFTER INPUT.
+  MODULE user_commond_0100 AT EXIT-COMMAND.
+  MODULE user_command_0100.</dynproflowsource>
+    </dynpro>
+   </dynpros>
+   <pfstatus>
+    <pfstatus_sta CODE="0100" MODAL="D" ACTCODE="000001" PFKCODE="000001" BUTCODE="0001" INT_NOTE="银行账号台帐"/>
+    <pfstatus_fun CODE="BACK" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="返回"/>
+    <pfstatus_fun CODE="CANC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="取消"/>
+    <pfstatus_fun CODE="EXIT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="退出"/>
+    <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="BACK" FUNNO="001"/>
+    <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="CANC" FUNNO="001"/>
+    <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="EXIT" FUNNO="001"/>
+    <pfstatus_set STATUS="0100" FUNCTION="BACK"/>
+    <pfstatus_set STATUS="0100" FUNCTION="CANC"/>
+    <pfstatus_set STATUS="0100" FUNCTION="EXIT"/>
+    <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="信用证台帐"/>
+    <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="D" INT_NOTE="信用证台帐"/>
+    <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="D" INT_NOTE="信用证台帐"/>
+    <pfstatus_tit CODE="0100" TEXT="&amp;"/>
+   </pfstatus>
+   <source>*******************************************************************
+*   System-defined Include-files.                                 *
+*******************************************************************
+  INCLUDE LZFG_TR2_POST_HISTORYTOP.          &quot; Global Declarations
+  INCLUDE LZFG_TR2_POST_HISTORYUXX.          &quot; Function Modules
+
+*******************************************************************
+*   User-defined Include-files (if necessary).                    *
+*******************************************************************
+* INCLUDE LZFG_TR2_POST_HISTORYF...          &quot; Subroutines
+* INCLUDE LZFG_TR2_POST_HISTORYO...          &quot; PBO-Modules
+* INCLUDE LZFG_TR2_POST_HISTORYI...          &quot; PAI-Modules
+* INCLUDE LZFG_TR2_POST_HISTORYE...          &quot; Events
+* INCLUDE LZFG_TR2_POST_HISTORYP...          &quot; Local class implement.
+* INCLUDE LZFG_TR2_POST_HISTORYT99.          &quot; ABAP Unit tests
+
+INCLUDE lzfg_tr2_post_historyo01.
+
+INCLUDE lzfg_tr2_post_historyi01.
+
+INCLUDE lzfg_tr2_post_historyf01.
+
+INCLUDE lzfg_tr2_post_historyp01.</source>
+  </mainprogram>
+  <includeprograms>
+   <include NAME="LZFG_TR2_POST_HISTORYD01" VARCL="X" SUBC="I" APPL="S" RMAND="150" RLOAD="1" UCCHECK="X">
+    <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZFG_TR2_POST_HISTORYD01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;       Class lcl_event_receiver_100
+*&amp;---------------------------------------------------------------------*
+*        Text
+*----------------------------------------------------------------------*
+CLASS lcl_event_receiver_100 DEFINITION.
+  PUBLIC SECTION.
+    DATA: ucomm_enter TYPE sy-ucomm.
+
+    METHODS:
+      &quot;EO-抬头按钮
+*      handle_toolbar for event toolbar of cl_gui_alv_grid
+*        importing
+*            e_object
+*            e_interactive,
+
+      handle_double_click FOR EVENT double_click OF cl_gui_alv_grid
+        IMPORTING
+            e_row
+            e_column.
+
+*      handle_user_command for event user_command of cl_gui_alv_grid
+*        importing
+*            e_ucomm,
+*
+*      handle_hotspot_click for event hotspot_click of cl_gui_alv_grid
+*        importing
+*            e_row_id
+*            e_column_id
+*            es_row_no,
+*
+*
+*      handle_button_click  for event button_click of cl_gui_alv_grid
+*        importing
+*            es_col_id
+*            es_row_no.
+ENDCLASS.</include_source>
+   </include>
+   <include NAME="LZFG_TR2_POST_HISTORYF01" VARCL="X" SUBC="I" APPL="S" RMAND="150" RLOAD="1" UCCHECK="X">
+    <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZFG_TR2_POST_HISTORYF01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  FRM_INIT_0100_ALV
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  --&gt;  p1        text
+*  &lt;--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_init_0100_alv .
+  DATA: lt_exclude  TYPE ui_functions,
+        lt_fieldcat TYPE lvc_t_fcat,
+        ls_variant  TYPE disvariant,
+        lt_alias    TYPE lvc_t_dral.
+
+  IF gr_container_100 IS INITIAL.
+    CREATE OBJECT gr_container_100
+      EXPORTING
+        repid     = sy-repid
+        dynnr     = sy-dynnr
+        extension = 1000
+        side      = cl_gui_docking_container=&gt;dock_at_bottom.
+
+    CREATE OBJECT gr_alv_100
+      EXPORTING
+        i_parent = gr_container_100.
+
+    PERFORM frm_build_field_100 CHANGING lt_fieldcat.
+*    perform frm_exclude_tb_functions changing lt_exclude.
+*    perform frm_set_drop_down using lt_alias.
+
+    gs_layout_100-cwidth_opt = &apos;X&apos;.
+    ls_variant-report    = sy-repid.
+
+    CALL METHOD gr_alv_100-&gt;set_table_for_first_display
+      EXPORTING
+        is_layout       = gs_layout_100
+*       it_toolbar_excluding = lt_exclude
+        i_save          = &apos;U&apos;
+        is_variant      = ls_variant
+      CHANGING
+        it_fieldcatalog = lt_fieldcat[]
+        it_outtab       = &lt;ft_alv&gt;.
+
+    &quot;设置下拉列表
+*    call method gr_alv-&gt;set_drop_down_table
+*      exporting
+*        it_drop_down_alias = lt_alias.
+*
+*
+*    call method gr_alv-&gt;set_ready_for_input
+*      exporting
+*        i_ready_for_input = 1.
+
+    &quot;刷新ALV
+*    perform frm_refresh_alv using gr_alv_200 gs_layout_200.
+
+    CREATE OBJECT gr_receiver_100.
+*    set handler gr_receiver-&gt;handle_toolbar       for gr_alv.
+*    set handler gr_receiver-&gt;handle_user_command  for gr_alv.
+    SET HANDLER gr_receiver_100-&gt;handle_double_click  FOR gr_alv_100.
+*    set handler gr_receiver-&gt;handle_hotspot_click for gr_alv.
+*    call method gr_alv-&gt;set_toolbar_interactive.
+  ELSE.
+    PERFORM frm_refresh_alv USING gr_alv_100 gs_layout_100.
+  ENDIF.
+ENDFORM.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  FRM_BUILD_FIELD_100
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      &lt;--P_LT_FIELDCAT  text
+*----------------------------------------------------------------------*
+FORM frm_build_field_100  CHANGING pt_fieldcat.
+  DATA lt_fieldcat  TYPE lvc_t_fcat.
+  FIELD-SYMBOLS &lt;ls_fieldcat&gt; TYPE lvc_s_fcat.
+
+  CALL FUNCTION &apos;LVC_FIELDCATALOG_MERGE&apos;
+    EXPORTING
+      i_structure_name = gv_stru_name
+    CHANGING
+      ct_fieldcat      = lt_fieldcat.
+  IF sy-subrc &lt;&gt; 0.
+* Implement suitable error handling here
+  ENDIF.
+
+  DELETE lt_fieldcat WHERE fieldname = &apos;MANDT&apos;.
+
+  pt_fieldcat = lt_fieldcat.
+ENDFORM.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  FRM_REFRESH_ALV
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_GR_ALV  text
+*      --&gt;P_GS_LAYOUT  text
+*----------------------------------------------------------------------*
+FORM frm_refresh_alv  USING  p_alv    TYPE REF TO cl_gui_alv_grid
+                             p_layout TYPE lvc_s_layo.
+
+  DATA: ls_stable TYPE lvc_s_stbl.
+
+  ls_stable-row = &apos;X&apos;.
+  ls_stable-col = &apos;X&apos;.
+
+  CALL METHOD p_alv-&gt;set_frontend_layout
+    EXPORTING
+      is_layout = p_layout.
+  CALL METHOD p_alv-&gt;refresh_table_display
+    EXPORTING
+      is_stable = ls_stable.
+ENDFORM.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  REFRESH_GOBAL_TYPE
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  --&gt;  p1        text
+*  &lt;--  p2        text
+*----------------------------------------------------------------------*
+FORM refresh_gobal_type .
+  UNASSIGN:&lt;ft_alv&gt;,&lt;fs_alv&gt;.
+  gr_alv_100-&gt;free( ).
+  gr_container_100-&gt;free( ).
+  CLEAR:gr_container_100,gr_alv_100,gr_receiver_100.
+ENDFORM.</include_source>
+   </include>
+   <include NAME="LZFG_TR2_POST_HISTORYI01" VARCL="X" SUBC="I" APPL="S" RMAND="150" RLOAD="1" UCCHECK="X">
+    <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZFG_TR2_POST_HISTORYI01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+  CASE gv_okcode.
+    WHEN &apos;BACK&apos;.
+      PERFORM refresh_gobal_type.
+      LEAVE TO SCREEN 0.
+
+    WHEN &apos;EXIT&apos; OR &apos;CANC&apos;.
+      PERFORM refresh_gobal_type.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
+  ENDCASE.
+ENDMODULE.</include_source>
+   </include>
+   <include NAME="LZFG_TR2_POST_HISTORYO01" VARCL="X" SUBC="I" APPL="S" RMAND="150" RLOAD="1" UCCHECK="X">
+    <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZFG_TR2_POST_HISTORYO01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0100 OUTPUT.
+  set pf-status &apos;0100&apos;.
+  set titlebar &apos;0100&apos; with text-t01.
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  INIT_0100_ALV  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE init_0100_alv OUTPUT.
+  perform frm_init_0100_alv.
+ENDMODULE.</include_source>
+   </include>
+   <include NAME="LZFG_TR2_POST_HISTORYP01" VARCL="X" SUBC="I" APPL="S" RMAND="150" RLOAD="1" UCCHECK="X">
+    <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZFG_TR2_POST_HISTORYP01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;       Class (Implementation)  lcl_event_receiver_100
+*&amp;---------------------------------------------------------------------*
+*        Text
+*----------------------------------------------------------------------*
+CLASS lcl_event_receiver_100 IMPLEMENTATION.
+  METHOD handle_double_click.
+    TYPES:BEGIN OF ly_post,
+            bukrs   TYPE bukrs,
+            gjahr   TYPE gjahr,
+            belnr   TYPE belnr_d,
+            belnr_r TYPE belnr_r,
+            gjahr_r TYPE gjahr_r,
+          END OF ly_post.
+
+    DATA:ls_post TYPE ly_post.
+
+    CHECK e_row IS NOT INITIAL.
+    CHECK e_column IS NOT INITIAL.
+
+    READ TABLE &lt;ft_alv&gt; INTO &lt;fs_alv&gt; INDEX e_row-index.
+    CHECK sy-subrc EQ 0.
+    MOVE-CORRESPONDING &lt;fs_alv&gt; TO ls_post.
+
+    CASE e_column-fieldname.
+      WHEN &apos;BELNR&apos;.
+
+        SET PARAMETER ID: &apos;BLN&apos; FIELD ls_post-belnr,
+                          &apos;BUK&apos; FIELD ls_post-bukrs,
+                          &apos;GJR&apos; FIELD ls_post-gjahr.
+
+        CALL TRANSACTION &apos;FB03&apos; WITH AUTHORITY-CHECK
+                                     AND SKIP FIRST SCREEN.
+      WHEN &apos;BELNR_R&apos;.
+        SET PARAMETER ID: &apos;BLN&apos; FIELD ls_post-belnr_r,
+                          &apos;BUK&apos; FIELD ls_post-bukrs,
+                          &apos;GJR&apos; FIELD ls_post-gjahr_r.
+
+        CALL TRANSACTION &apos;FB03&apos; WITH AUTHORITY-CHECK
+                                     AND SKIP FIRST SCREEN.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.               &quot;lcl_event_receiver_100</include_source>
+   </include>
+   <include NAME="LZFG_TR2_POST_HISTORYP01" VARCL="X" SUBC="I" APPL="S" RMAND="150" RLOAD="1" UCCHECK="X">
+    <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZFG_TR2_POST_HISTORYP01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;       Class (Implementation)  lcl_event_receiver_100
+*&amp;---------------------------------------------------------------------*
+*        Text
+*----------------------------------------------------------------------*
+CLASS lcl_event_receiver_100 IMPLEMENTATION.
+  METHOD handle_double_click.
+    TYPES:BEGIN OF ly_post,
+            bukrs   TYPE bukrs,
+            gjahr   TYPE gjahr,
+            belnr   TYPE belnr_d,
+            belnr_r TYPE belnr_r,
+            gjahr_r TYPE gjahr_r,
+          END OF ly_post.
+
+    DATA:ls_post TYPE ly_post.
+
+    CHECK e_row IS NOT INITIAL.
+    CHECK e_column IS NOT INITIAL.
+
+    READ TABLE &lt;ft_alv&gt; INTO &lt;fs_alv&gt; INDEX e_row-index.
+    CHECK sy-subrc EQ 0.
+    MOVE-CORRESPONDING &lt;fs_alv&gt; TO ls_post.
+
+    CASE e_column-fieldname.
+      WHEN &apos;BELNR&apos;.
+
+        SET PARAMETER ID: &apos;BLN&apos; FIELD ls_post-belnr,
+                          &apos;BUK&apos; FIELD ls_post-bukrs,
+                          &apos;GJR&apos; FIELD ls_post-gjahr.
+
+        CALL TRANSACTION &apos;FB03&apos; WITH AUTHORITY-CHECK
+                                     AND SKIP FIRST SCREEN.
+      WHEN &apos;BELNR_R&apos;.
+        SET PARAMETER ID: &apos;BLN&apos; FIELD ls_post-belnr_r,
+                          &apos;BUK&apos; FIELD ls_post-bukrs,
+                          &apos;GJR&apos; FIELD ls_post-gjahr_r.
+
+        CALL TRANSACTION &apos;FB03&apos; WITH AUTHORITY-CHECK
+                                     AND SKIP FIRST SCREEN.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.               &quot;lcl_event_receiver_100</include_source>
+   </include>
+   <include NAME="LZFG_TR2_POST_HISTORYTOP" VARCL="X" DBAPL="S" DBNA="D$" SUBC="I" APPL="S" RMAND="150" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+    <include_source>FUNCTION-POOL zfg_tr2_post_history.         &quot;MESSAGE-ID ..
+
+* INCLUDE LZFG_TR2_POST_HISTORYD...          &quot; Local class definition
+
+DATA: gr_container_100 TYPE REF TO cl_gui_docking_container,
+      gr_alv_100       TYPE REF TO cl_gui_alv_grid,
+      gs_layout_100    TYPE lvc_s_layo.
+INCLUDE lzfg_tr2_post_historyd01.
+DATA: gr_receiver_100    TYPE REF TO lcl_event_receiver_100.
+
+DATA:gv_stru_name TYPE dd02l-tabname.
+
+DATA:gv_okcode TYPE sy-ucomm.
+
+FIELD-SYMBOLS:&lt;ft_alv&gt; TYPE table.
+FIELD-SYMBOLS:&lt;fs_alv&gt; TYPE any .</include_source>
+   </include>
+  </includeprograms>
+  <functionmodules>
+   <functionmodule NAME="ZFM_TR2_POST_HISTORY_SHOW" STEXT="展示过账历史数据">
+    <importing PARAMETER="IV_DOCNO" REFERENCE="X" TYP="ZTR_DOCNO"/>
+    <importing PARAMETER="IV_STRU_NAME" REFERENCE="X" TYP="TYPENAME"/>
+    <documentation PARAMETER="IV_DOCNO" KIND="P" STEXT="申请单号" INDEX=" 001"/>
+    <documentation PARAMETER="IV_STRU_NAME" KIND="P" STEXT="接收名称" INDEX=" 002"/>
+    <fm_source_new>DATA:dyn_table TYPE REF TO data.
+  DATA:dyn_wa TYPE REF TO data.
+
+
+
+  CREATE DATA dyn_table TYPE TABLE OF (iv_stru_name).
+  ASSIGN dyn_table-&gt;* TO &lt;ft_alv&gt;.
+
+  CREATE DATA dyn_wa LIKE LINE OF &lt;ft_alv&gt;.
+*创建动态工作区
+  ASSIGN dyn_wa-&gt;* TO &lt;fs_alv&gt;.
+
+  gv_stru_name = iv_stru_name.
+
+  SELECT * INTO TABLE &lt;ft_alv&gt; FROM (iv_stru_name) WHERE docno = iv_docno.
+
+  CALL SCREEN 0100 STARTING AT 10 120 ENDING AT  150 250.</fm_source_new>
+    <functionModuleDocumentation/>
+   </functionmodule>
+  </functionmodules>
+ </FUGR>
+</nugget>
