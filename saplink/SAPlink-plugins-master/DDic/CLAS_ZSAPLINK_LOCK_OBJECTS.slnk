@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZSAPLINK_LOCK_OBJECTS" VERSION="0" LANGU="E" DESCRIPT="SAPlink - Data Dictionary  - Lock Objects" UUID="45268E6F1D9500D602000000A7E42BA1" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" AUTHOR="USEWH90" CREATEDON="20061008" CHANGEDON="00000000" CHGDANYON="00000000" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" R3RELEASE="640" CLSBCCAT="00" REFCLSNAME="ZSAPLINK">
+ <publicSection>class ZSAPLINK_LOCK_OBJECTS definition
+  public
+  inheriting from ZSAPLINK
+  final
+  create public .
+
+*&quot;* public components of class ZSAPLINK_LOCK_OBJECTS
+*&quot;* do not include other source files here!!!
+public section.
+
+  methods CHECKEXISTS
+    redefinition .
+  methods CREATEIXMLDOCFROMOBJECT
+    redefinition .
+  methods CREATEOBJECTFROMIXMLDOC
+    redefinition .</publicSection>
+ <protectedSection>*&quot;* protected components of class ZSAPLINK_LOCK_OBJECTS
+*&quot;* do not include other source files here!!!
+protected section.
+
+  methods DELETEOBJECT
+    redefinition .
+  methods GETOBJECTTYPE
+    redefinition .</protectedSection>
+ <privateSection>*&quot;* private components of class ZSAPLINK_LOCK_OBJECTS
+*&quot;* do not include other source files here!!!
+private section.</privateSection>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <inheritance CLSNAME="ZSAPLINK_LOCK_OBJECTS" REFCLSNAME="ZSAPLINK" VERSION="0" STATE="1" AUTHOR="USEWH90" CREATEDON="20061008" CHANGEDON="00000000">
+  <redefinition CLSNAME="ZSAPLINK_LOCK_OBJECTS" REFCLSNAME="ZSAPLINK" VERSION="0" MTDNAME="CHECKEXISTS"/>
+  <redefinition CLSNAME="ZSAPLINK_LOCK_OBJECTS" REFCLSNAME="ZSAPLINK" VERSION="0" MTDNAME="CREATEIXMLDOCFROMOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_LOCK_OBJECTS" REFCLSNAME="ZSAPLINK" VERSION="0" MTDNAME="CREATEOBJECTFROMIXMLDOC"/>
+  <redefinition CLSNAME="ZSAPLINK_LOCK_OBJECTS" REFCLSNAME="ZSAPLINK" VERSION="0" MTDNAME="DELETEOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_LOCK_OBJECTS" REFCLSNAME="ZSAPLINK" VERSION="0" MTDNAME="GETOBJECTTYPE"/>
+ </inheritance>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+METHOD CHECKEXISTS.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  DATA: l_name TYPE ddobjname,
+        dd25v_wa TYPE dd25v.
+  l_name = objname.
+
+  CALL FUNCTION &apos;DDIF_ENQU_GET&apos;
+    EXPORTING
+      name          = l_name
+    IMPORTING
+      dd25v_wa      = dd25v_wa
+    EXCEPTIONS
+      illegal_input = 1
+      OTHERS        = 2.
+  IF sy-subrc = 0 AND dd25v_wa-VIEWNAME IS NOT INITIAL.
+    exists = &apos;X&apos;.
+  ENDIF.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+METHOD CREATEIXMLDOCFROMOBJECT.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  DATA: gotstate  TYPE ddgotstate,
+        dd25v_wa  TYPE dd25v,
+        dd26e_tab TYPE STANDARD TABLE OF dd26e,
+        dd26e_wa  LIKE LINE OF dd26e_tab,
+        dd27p_tab TYPE STANDARD TABLE OF dd27p,
+        dd27p_wa  LIKE LINE OF dd27p_tab,
+        ddena_tab TYPE STANDARD TABLE OF ddena,
+        ddena_wa  LIKE LINE OF ddena_tab.
+
+*xml nodes
+  DATA rootnode   TYPE REF TO if_ixml_element.
+  DATA dd26e_node TYPE REF TO if_ixml_element.
+  DATA dd27p_node TYPE REF TO if_ixml_element.
+  DATA ddena_node TYPE REF TO if_ixml_element.
+  DATA rc         TYPE sysubrc.
+  DATA _enquname  TYPE ddobjname.
+  _enquname = objname.
+
+  CALL FUNCTION &apos;DDIF_ENQU_GET&apos;
+    EXPORTING
+      name          = _enquname
+      langu         = sy-langu
+    IMPORTING
+      gotstate      = gotstate
+      dd25v_wa      = dd25v_wa
+    TABLES
+      dd26e_tab     = dd26e_tab
+      dd27p_tab     = dd27p_tab
+      ddena_tab     = ddena_tab
+    EXCEPTIONS
+      illegal_input = 1
+      OTHERS        = 2.
+
+  IF sy-subrc &lt;&gt; 0 OR dd25v_wa-viewname IS INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING textid = zcx_saplink=&gt;not_found.
+  ENDIF.
+
+* Create parent node
+  DATA _objtype TYPE string.
+  _objtype = getobjecttype( ).
+  rootnode = xmldoc-&gt;create_element( _objtype ).
+  setattributesfromstructure( node = rootnode structure = dd25v_wa ).
+
+  LOOP AT dd26e_tab INTO dd26e_wa.
+    dd26e_node = xmldoc-&gt;create_element( &apos;dd26e&apos; ).
+    setattributesfromstructure( node = dd26e_node structure = dd26e_wa ).
+    rc = rootnode-&gt;append_child( dd26e_node ).
+  ENDLOOP.
+
+  LOOP AT dd27p_tab INTO dd27p_wa.
+    dd27p_node = xmldoc-&gt;create_element( &apos;dd27p&apos; ).
+    setattributesfromstructure( node = dd27p_node structure = dd27p_wa ).
+    rc = rootnode-&gt;append_child( dd27p_node ).
+  ENDLOOP.
+
+  LOOP AT ddena_tab INTO ddena_wa.
+    ddena_node = xmldoc-&gt;create_element( &apos;ddena&apos; ).
+    setattributesfromstructure( node = ddena_node structure = ddena_wa ).
+    rc = rootnode-&gt;append_child( ddena_node ).
+  ENDLOOP.
+
+*\--------------------------------------------------------------------/
+  rc = xmldoc-&gt;append_child( rootnode ).
+  ixmldocument = xmldoc.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+METHOD CREATEOBJECTFROMIXMLDOC.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  DATA: gotstate  TYPE ddgotstate,
+        dd25v_wa  TYPE dd25v,
+        dd26e_tab TYPE STANDARD TABLE OF dd26e,
+        dd26e_wa  LIKE LINE OF dd26e_tab,
+        dd27p_tab TYPE STANDARD TABLE OF dd27p,
+        dd27p_wa  LIKE LINE OF dd27p_tab,
+        ddena_tab TYPE STANDARD TABLE OF ddena,
+        ddena_wa  LIKE LINE OF ddena_tab.
+
+*xml nodes
+  DATA rootnode    TYPE REF TO if_ixml_element.
+  DATA dd26e_node  TYPE REF TO if_ixml_element.
+  DATA dd27p_node  TYPE REF TO if_ixml_element.
+  DATA ddena_node  TYPE REF TO if_ixml_element.
+  DATA node        TYPE REF TO if_ixml_element.
+  DATA filter      TYPE REF TO if_ixml_node_filter.
+  DATA iterator    TYPE REF TO if_ixml_node_iterator.
+  DATA rc          TYPE sysubrc.
+  DATA _enquname   TYPE ddobjname.
+  DATA _devclass   TYPE devclass.
+  DATA checkexists TYPE flag.
+  DATA _objtype    TYPE string.
+
+  _devclass = devclass.
+  _objtype = getobjecttype( ).
+
+  xmldoc = ixmldocument.
+  rootnode = xmldoc-&gt;find_from_name( _objtype ).
+
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node      = rootnode
+    CHANGING
+      structure = dd25v_wa.
+
+  objname = dd25v_wa-viewname.
+
+  checkexists = checkexists( ).
+  IF checkexists IS NOT INITIAL.
+    IF overwrite IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING textid = zcx_saplink=&gt;existing.
+    ELSE.
+*     delete object for new install
+      deleteobject( ).
+    ENDIF.
+  ENDIF.
+
+* retrieve Tabl details
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;dd26e&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  WHILE node IS NOT INITIAL.
+    CLEAR dd26e_node.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node      = node
+      CHANGING
+        structure = dd26e_wa.
+    APPEND dd26e_wa TO dd26e_tab.
+    node ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;dd27p&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  WHILE node IS NOT INITIAL.
+    CLEAR dd27p_node.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node      = node
+      CHANGING
+        structure = dd27p_wa.
+    APPEND dd27p_wa TO dd27p_tab.
+    node ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;ddena&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  WHILE node IS NOT INITIAL.
+    CLEAR ddena_node.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node      = node
+      CHANGING
+        structure = ddena_wa.
+    APPEND ddena_wa TO ddena_tab.
+    node ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+
+  DATA : l_pgmid         TYPE tadir-pgmid,
+           l_object      TYPE tadir-object,
+           l_obj_name    TYPE tadir-obj_name,
+           l_dd_objname  TYPE ddobjname,
+           l_srcsystem   TYPE tadir-srcsystem,
+           l_author      TYPE tadir-author,
+           l_devclass    TYPE tadir-devclass,
+           l_masterlang  TYPE tadir-masterlang.
+
+
+  l_pgmid      = &apos;R3TR&apos;.
+  l_object     = _objtype.
+  l_obj_name   = objname.
+  l_dd_objname = objname.
+  l_srcsystem  = sy-sysid.
+  l_author     = sy-uname.
+  l_devclass   = _devclass.
+  l_masterlang = sy-langu.
+
+  DATA: itadir TYPE tadir.
+  itadir-pgmid      = l_pgmid.
+  itadir-object     = l_object.
+  itadir-obj_name   = l_obj_name.
+  itadir-srcsystem  = l_srcsystem.
+  itadir-author     = l_author.
+  itadir-devclass   = l_devclass.
+  itadir-masterlang = l_masterlang.
+  MODIFY tadir FROM itadir.
+
+  CALL FUNCTION &apos;TR_TADIR_INTERFACE&apos;
+    EXPORTING
+      wi_test_modus                  = &apos; &apos;
+      wi_delete_tadir_entry          = &apos;X&apos;
+      wi_tadir_pgmid                 = l_pgmid
+      wi_tadir_object                = l_object
+      wi_tadir_obj_name              = l_obj_name
+      wi_tadir_srcsystem             = l_srcsystem
+      wi_tadir_author                = l_author
+      wi_tadir_devclass              = l_devclass
+      wi_tadir_masterlang            = l_masterlang
+      iv_set_edtflag                 = &apos;&apos;
+    EXCEPTIONS
+      tadir_entry_not_existing       = 1
+      tadir_entry_ill_type           = 2
+      no_systemname                  = 3
+      no_systemtype                  = 4
+      original_system_conflict       = 5
+      object_reserved_for_devclass   = 6
+      object_exists_global           = 7
+      object_exists_local            = 8
+      object_is_distributed          = 9
+      obj_specification_not_unique   = 10
+      no_authorization_to_delete     = 11
+      devclass_not_existing          = 12
+      simultanious_set_remove_repair = 13
+      order_missing                  = 14
+      no_modification_of_head_syst   = 15
+      pgmid_object_not_allowed       = 16
+      masterlanguage_not_specified   = 17
+      devclass_not_specified         = 18
+      specify_owner_unique           = 19
+      loc_priv_objs_no_repair        = 20
+      gtadir_not_reached             = 21
+      object_locked_for_order        = 22
+      change_of_class_not_allowed    = 23
+      no_change_from_sap_to_tmp      = 24
+      OTHERS                         = 25.
+  IF sy-subrc NE 0.
+    CASE sy-subrc.
+      WHEN 1 OR 9 OR 7 OR 8. &quot;OK! - Doesn&apos;t exist yet
+      WHEN 11 OR 23 OR 24.
+        RAISE EXCEPTION TYPE zcx_saplink
+          EXPORTING textid = zcx_saplink=&gt;not_authorized.
+      WHEN 22.
+        RAISE EXCEPTION TYPE zcx_saplink
+          EXPORTING textid = zcx_saplink=&gt;locked.
+      WHEN OTHERS.
+        RAISE EXCEPTION TYPE zcx_saplink
+          EXPORTING textid = zcx_saplink=&gt;system_error.
+    ENDCASE.
+  ENDIF.
+
+  CALL FUNCTION &apos;DDIF_ENQU_PUT&apos;
+    EXPORTING
+      name              = l_dd_objname
+      dd25v_wa          = dd25v_wa
+    TABLES
+      dd26e_tab         = dd26e_tab
+      dd27p_tab         = dd27p_tab
+    EXCEPTIONS
+      enqu_not_found    = 1
+      name_inconsistent = 2
+      enqu_inconsistent = 3
+      put_failure       = 4
+      put_refused       = 5
+      OTHERS            = 6.
+
+  IF sy-subrc &lt;&gt; 0.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  DATA: trobjtype  TYPE trobjtype,
+        trobj_name TYPE trobj_name.
+  trobjtype  = l_object.
+  trobj_name = l_obj_name.
+  CALL FUNCTION &apos;RS_INSERT_INTO_WORKING_AREA&apos;
+    EXPORTING
+      object            = trobjtype
+      obj_name          = trobj_name
+    EXCEPTIONS
+      wrong_object_name = 1.
+
+  name = objName.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+method DELETEOBJECT.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+method GETOBJECTTYPE.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  objecttype = &apos;ENQU&apos;.  &quot;Lock Objects
+endmethod.</source>
+ </method>
+</CLAS>

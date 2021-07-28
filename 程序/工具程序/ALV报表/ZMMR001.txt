@@ -1,0 +1,238 @@
+*&---------------------------------------------------------------------*
+*& Program ID    : ZMMR001
+*& Program Text  : 退货更新EKET
+*& Overview      : 退货更新EKET
+*& Created by    : HANDYXH
+*& Creation Date : 2021/04/07
+*& Issue Number  :
+*&---------------------------------------------------------------------*
+
+REPORT  zmmr001.
+
+TABLES:zsmm_report_001_alv.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME TITLE TEXT-t01.
+SELECT-OPTIONS:s_ebeln FOR zsmm_report_001_alv-ebeln,
+               s_ebelp FOR zsmm_report_001_alv-ebelp,
+               s_matnr FOR zsmm_report_001_alv-matnr,
+               s_eindt FOR zsmm_report_001_alv-eindt.
+SELECTION-SCREEN END OF BLOCK blk1.
+
+SELECTION-SCREEN SKIP 1.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk2 WITH FRAME TITLE TEXT-t02.
+PARAMETERS:p_front TYPE c RADIOBUTTON GROUP 1,
+           p_back  TYPE c RADIOBUTTON GROUP 1.
+SELECTION-SCREEN END OF BLOCK blk2.
+*&---------------------------------------------------------------------*
+*&数据定义模块
+*&---------------------------------------------------------------------*
+
+TYPES BEGIN OF:ty_alv.
+INCLUDE STRUCTURE zsmm_report_001_alv.
+TYPES: END OF ty_alv.
+
+DATA:gr_grid TYPE REF TO cl_gui_alv_grid.
+
+DATA:gt_alv TYPE TABLE OF ty_alv,
+     gs_alv TYPE ty_alv.
+
+DATA:gt_fcat TYPE lvc_t_fcat,
+     gs_layo TYPE lvc_s_layo.
+
+FIELD-SYMBOLS: <fs_alv>  TYPE ty_alv,
+               <fs_fcat> TYPE lvc_s_fcat.
+
+START-OF-SELECTION.
+
+  CASE 'X'.
+    WHEN p_front.
+
+      PERFORM frm_get_data.
+
+      PERFORM frm_layout.
+
+      PERFORM frm_bulid_filedcat.
+
+      PERFORM frm_alv_display.
+
+    WHEN p_back.
+
+      PERFORM frm_get_data.
+
+      PERFORM update_eket.
+
+    WHEN OTHERS.
+  ENDCASE.
+
+
+
+*&---------------------------------------------------------------------*
+*&      Form  FRM_LAYOUT
+*&---------------------------------------------------------------------*
+*       ALV布局
+*----------------------------------------------------------------------*
+FORM frm_layout .
+  gs_layo-cwidth_opt = 'X'."列优化
+  gs_layo-zebra      = 'X'."斑马线
+ENDFORM.                    " FRM_LAYOUT
+*&---------------------------------------------------------------------*
+*&      Form  FRM_BULID_FILEDCAT
+*&---------------------------------------------------------------------*
+*       填充字段
+*----------------------------------------------------------------------*
+FORM frm_bulid_filedcat .
+  CLEAR:gt_fcat.
+  CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'
+    EXPORTING
+      i_structure_name       = 'ZSMM_REPORT_001_ALV'
+    CHANGING
+      ct_fieldcat            = gt_fcat
+    EXCEPTIONS
+      inconsistent_interface = 1
+      program_error          = 2
+      OTHERS                 = 3.
+  IF sy-subrc <> 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+  LOOP AT gt_fcat ASSIGNING <fs_fcat>.
+    CASE <fs_fcat>-fieldname.
+      WHEN 'FDGRV'.
+        <fs_fcat>-coltext = TEXT-f01.
+      WHEN 'BSTNK'.
+        <fs_fcat>-coltext = TEXT-f02.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDLOOP.
+
+ENDFORM.                    " FRM_BULID_FILEDCAT
+*&---------------------------------------------------------------------*
+*&      Form  FRM_ALV_DISPLAY
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+FORM frm_alv_display .
+
+  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY_LVC'
+    EXPORTING
+      i_callback_program       = sy-repid
+      i_callback_pf_status_set = 'FRM_STATUS'
+      i_callback_user_command  = 'FRM_UCOMM'
+      is_layout_lvc            = gs_layo
+      it_fieldcat_lvc          = gt_fcat
+*     I_CALLBACK_HTML_TOP_OF_PAGE = 'FM_TOP_OF_PAGE'
+      i_save                   = 'A'
+    TABLES
+      t_outtab                 = gt_alv
+    EXCEPTIONS
+      program_error            = 1
+      OTHERS                   = 2.
+  IF sy-subrc <> 0.
+    MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 DISPLAY LIKE 'E'.
+    LEAVE LIST-PROCESSING.
+  ENDIF.
+ENDFORM.                    " FRM_ALV_DISPLAY
+*&---------------------------------------------------------------------*
+*&      Form  FRM_GET_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM frm_get_data .
+
+  SELECT ekpo~ebeln
+         ekpo~ebelp
+         etenr
+         matnr
+         eindt
+         eket~menge
+         wemng
+         fixkz
+         nodisp
+   INTO CORRESPONDING FIELDS OF TABLE gt_alv
+   FROM ekpo JOIN eket
+     ON ekpo~ebeln = eket~ebeln AND ekpo~ebelp = eket~ebelp
+   WHERE ekpo~ebeln IN s_ebeln
+     AND matnr IN s_matnr
+     AND eindt IN s_eindt
+     AND nodisp = 'X'
+     AND ekpo~ebelp IN s_ebelp.
+
+  LOOP AT gt_alv ASSIGNING <fs_alv>.
+    <fs_alv>-difference = <fs_alv>-menge - <fs_alv>-wemng.
+    IF <fs_alv>-difference <= 0.
+      DELETE gt_alv.
+    ENDIF.
+  ENDLOOP.
+
+  IF gt_alv IS INITIAL.
+    MESSAGE '无数据被选中' TYPE 'S' DISPLAY LIKE 'E'.
+    STOP.
+  ENDIF.
+
+
+ENDFORM.                    " FRM_GET_DATA
+*----------------------------------------------------------------------*
+*  FORM FRM_STATUS
+*----------------------------------------------------------------------*
+*  ALV GUI状态
+*----------------------------------------------------------------------*
+FORM frm_status USING extab TYPE slis_t_extab.
+  SET PF-STATUS 'STANDARD'. " EXCLUDING EXTAB.
+  CALL FUNCTION 'GET_GLOBALS_FROM_SLVC_FULLSCR'
+    IMPORTING
+      e_grid = gr_grid.
+ENDFORM.                    "FRM_STATUS
+*----------------------------------------------------------------------*
+*  FORM FRM_UCOMM
+*----------------------------------------------------------------------*
+*  ALV GUI状态 用户自定义处理
+*----------------------------------------------------------------------*
+FORM frm_ucomm USING r_ucomm LIKE sy-ucomm
+                      ps_sel TYPE slis_selfield.
+
+  CALL METHOD gr_grid->check_changed_data.
+  ps_sel-refresh = 'X'.
+  ps_sel-col_stable = 'X'.
+  ps_sel-row_stable = 'X'.
+
+  DATA stbl TYPE lvc_s_stbl.
+  DATA l_str(200) TYPE c.
+  CASE r_ucomm.
+    WHEN '&UPDATE'.
+      PERFORM update_eket.
+    WHEN OTHERS.
+  ENDCASE.
+
+  CALL METHOD gr_grid->check_changed_data.
+  ps_sel-refresh = 'X'.
+  ps_sel-col_stable = 'X'.
+  ps_sel-row_stable = 'X'.
+ENDFORM.                    "FRM_UCOMM
+*&---------------------------------------------------------------------*
+*& Form UPDATE_EKET
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM update_eket .
+  DATA:lt_ekpo_key TYPE TABLE OF zsmm_ekpo_key.
+
+  lt_ekpo_key = CORRESPONDING #( gt_alv ).
+
+  CALL FUNCTION 'ZFM_MM_CHANGE_EKET_NODISP'
+    TABLES
+      t_ekpo = lt_ekpo_key.
+
+  COMMIT WORK AND WAIT.
+
+  MESSAGE '更新成功'  TYPE 'S'.
+
+ENDFORM.

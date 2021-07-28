@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSAPLINK_SVN" VARCL="X" SUBC="1" RSTAT="T" RMAND="000" RLOAD="E" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="ACT" ENTRY="Action" LENGTH="15 "/>
+   <textElement ID="I" KEY="PAR" ENTRY="Parameters" LENGTH="30 "/>
+   <textElement ID="I" KEY="VCS" ENTRY="Version Controll Program" LENGTH="44 "/>
+   <textElement ID="R" ENTRY="Checkin/Checkout to SVN and Build SAPLink Installer Nugget" LENGTH="58 "/>
+   <textElement ID="S" KEY="BUILD" ENTRY="        Build Nugget" LENGTH="20 "/>
+   <textElement ID="S" KEY="CHECKIN" ENTRY="        Checkin to SVN" LENGTH="22 "/>
+   <textElement ID="S" KEY="CHECKOUT" ENTRY="        Checkout from SVN" LENGTH="25 "/>
+   <textElement ID="S" KEY="COMMENT" ENTRY="        Comment" LENGTH="15 "/>
+   <textElement ID="S" KEY="EXPORT" ENTRY="        Export to Disk" LENGTH="22 "/>
+   <textElement ID="S" KEY="INCL_SVN" ENTRY="        Include ZSAPLINK_SVN in Export" LENGTH="38 "/>
+   <textElement ID="S" KEY="INSTALL" ENTRY="        Install from Disk" LENGTH="25 "/>
+   <textElement ID="S" KEY="LOCLPATH" ENTRY="        Local Path" LENGTH="18 "/>
+   <textElement ID="S" KEY="NUGGETNA" ENTRY="        Nugget Name" LENGTH="19 "/>
+   <textElement ID="S" KEY="REVISION" ENTRY="        Revision" LENGTH="16 "/>
+   <textElement ID="S" KEY="SVN" ENTRY="        Command line SVN Client" LENGTH="31 "/>
+   <textElement ID="S" KEY="SVNPATH" ENTRY="        SVN Path" LENGTH="16 "/>
+   <textElement ID="S" KEY="TESTRUN" ENTRY="        Testrun" LENGTH="15 "/>
+   <textElement ID="S" KEY="TORTOISE" ENTRY="        Tortoise SVN Client" LENGTH="27 "/>
+   <textElement ID="S" KEY="UPDATE" ENTRY="        Update from SVN" LENGTH="23 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report  Z_ZAKE_SVN_TEST
+*&amp; Checkin/Checkout to SVN and Build SAPLink Installer Nugget
+*&amp;---------------------------------------------------------------------*
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+REPORT zsaplink_svn_upd.
+
+TYPE-POOLS abap.
+
+CONSTANTS cl_svn TYPE seoclsname VALUE &apos;ZCL_ZAKE_SVN&apos;.
+CONSTANTS cl_tortoise_svn TYPE seoclsname VALUE &apos;ZCL_ZAKE_TORTOISE_SVN&apos;.
+
+DATA package TYPE devclass.
+DATA lt_packages TYPE TABLE OF devclass.
+DATA zake    TYPE REF TO zake.
+DATA objects TYPE scts_tadir.
+DATA object  LIKE LINE OF objects.
+DATA objtype TYPE string.
+DATA objname TYPE string.
+DATA nuggetname TYPE string.
+DATA comment_str TYPE string.
+DATA loclpath_str TYPE string.
+DATA svnpath_str TYPE string.
+DATA username_str TYPE string.
+DATA password_str TYPE string.
+DATA class TYPE seoclsname.
+DATA files TYPE string_table.
+DATA file LIKE LINE OF files.
+
+DATA: ex TYPE REF TO zcx_saplink,
+      message TYPE string.
+
+SELECTION-SCREEN BEGIN OF BLOCK a WITH FRAME TITLE a.
+PARAMETERS:
+  checkout TYPE flag RADIOBUTTON GROUP act,
+  update   TYPE flag RADIOBUTTON GROUP act,
+  install  TYPE flag RADIOBUTTON GROUP act,
+  export   TYPE flag RADIOBUTTON GROUP act DEFAULT &apos;X&apos;,
+  build    TYPE flag RADIOBUTTON GROUP act,
+  checkin  TYPE flag RADIOBUTTON GROUP act.
+SELECTION-SCREEN END OF BLOCK a.
+
+SELECTION-SCREEN BEGIN OF BLOCK b WITH FRAME TITLE b.
+PARAMETERS:
+  svn      TYPE flag RADIOBUTTON GROUP cl DEFAULT &apos;X&apos;,
+  tortoise TYPE flag RADIOBUTTON GROUP cl.
+SELECTION-SCREEN END OF BLOCK b.
+
+SELECTION-SCREEN BEGIN OF BLOCK c WITH FRAME TITLE c.
+PARAMETERS:
+  loclpath TYPE char512 DEFAULT &apos;C:\Projects\SAPlink\trunk\core\&apos; LOWER CASE OBLIGATORY,
+  nuggetna TYPE char512 DEFAULT &apos;C:\Projects\SAPlink\trunk\build\SAPlink_Daily.nugg&apos; LOWER CASE OBLIGATORY,
+  svnpath  TYPE char512 DEFAULT &apos;https://subversion.assembla.com/svn/saplink/trunk/&apos; LOWER CASE OBLIGATORY,
+  revision TYPE i,
+  comment  TYPE char512 DEFAULT &apos;&apos; LOWER CASE,
+  incl_svn TYPE flag,
+  testrun  TYPE flag    DEFAULT abap_true.
+SELECTION-SCREEN END OF BLOCK c.
+
+INITIALIZATION.
+  a = &apos;Action&apos;.
+  b = &apos;Version Controll Program&apos;.
+  c = &apos;Parameters&apos;.
+
+START-OF-SELECTION.
+* Loop around the Packages which are returned for the Select Options select
+  svnpath_str  = svnpath.
+  loclpath_str = loclpath.
+  TRY.
+      IF svn = abap_true.
+        class = cl_svn.
+      ELSE.
+        class = cl_tortoise_svn.
+      ENDIF.
+
+      CREATE OBJECT zake
+        TYPE
+        (class)
+        EXPORTING
+          i_svnpath   = svnpath_str
+          i_localpath = loclpath_str
+          i_username  = username_str
+          i_password  = password_str.
+
+      zake-&gt;set_package( &apos;ZSAPLINK&apos; ).
+      nuggetname = nuggetna.
+
+      &quot; Classes
+      object-object   = &apos;CLAS&apos;.
+      object-obj_name = &apos;ZCX_SAPLINK&apos;.
+      APPEND object TO objects.
+      object-obj_name = &apos;ZSAPLINK&apos;.
+      APPEND object TO objects.
+      object-obj_name = &apos;ZSAPLINK_OO&apos;.
+      APPEND object TO objects.
+      object-obj_name = &apos;ZSAPLINK_CLASS&apos;.
+      APPEND object TO objects.
+      object-obj_name = &apos;ZSAPLINK_NUGGET&apos;.
+      APPEND object TO objects.
+      object-obj_name = &apos;ZSAPLINK_PROGRAM&apos;.
+      APPEND object TO objects.
+      &quot; Program
+      object-object   = &apos;PROG&apos;.
+      object-obj_name = &apos;ZSAPLINK&apos;.
+      APPEND object TO objects.
+      IF incl_svn = abap_true.
+        object-obj_name = &apos;ZSAPLINK_SVN&apos;.
+        APPEND object TO objects.
+      ENDIF.
+      &quot; Let add ZSAPLINK_INSTALER report to the build ZIP.
+      file = &apos;C:\Projects\SAPlink\trunk\build\zsaplink_installer.txt&apos;.
+      APPEND file TO files.
+      zake-&gt;set_checkin_objects( objects ).
+      zake-&gt;add_files_to_zip( files ).
+
+      IF checkin = abap_true.
+
+        zake-&gt;create_slinkees( nuggetname ).
+
+        IF testrun IS INITIAL.
+          comment_str = comment.
+          zake-&gt;checkin( comment_str ).
+        ENDIF.
+      ELSEIF export = abap_true.
+        zake-&gt;download_slinkees_to_lm = abap_true.
+        zake-&gt;download_nugget_to_lm   = abap_false.
+        zake-&gt;download_zip_to_lm_flag = abap_false.
+        zake-&gt;create_slinkees( nuggetname ).
+      ELSEIF build = abap_true.
+        &quot; Download ZSAPLINK_INSTALLER as plain text
+        PERFORM download_program USING &apos;ZSAPLINK_INSTALLER&apos; &apos;C:\Projects\SAPlink\trunk\build\&apos;.
+*        &quot; Fill Object Table with Slinkees from Local Machine but do not install
+        zake-&gt;install_slinkees_from_lm( i_testrun = abap_true ).
+        IF incl_svn &lt;&gt; abap_true.
+          zake-&gt;unset_checkin_object_by_name(
+            EXPORTING
+              i_object      = &apos;PROG&apos;    &quot; Object Type
+              i_object_name = &apos;ZSAPLINK_SVN&apos;    &quot; Object Name in Object Directory
+          ).
+        ENDIF.
+        &quot; Change package assignment of objects
+*        zake-&gt;set_package_of_package_objects( ).
+*        &quot; Create Transport
+*        zake-&gt;create_transport_request( ).
+*        &quot; Add all Objects to the Transport
+*        zake-&gt;add_package_objects_to_tr( ).
+*        &quot; Release transport request
+*        zake-&gt;release_transport_request( ).
+        &quot; For the daily build we don&apos;t want to write Slinkee&apos;s
+        zake-&gt;download_slinkees_to_lm = abap_false.
+        &quot; Add the Nugged
+        zake-&gt;download_nugget_to_lm = abap_true.
+        &quot; Do not add transport to ZIP
+        zake-&gt;download_transport_to_lm = abap_false.
+        &quot; Write only the ZIP-File.
+        zake-&gt;create_slinkees( nuggetname ).
+      ELSEIF update = abap_true.
+        zake-&gt;update( ).
+      ELSEIF checkout = abap_true.
+        zake-&gt;checkout( revision ).
+      ELSEIF install = abap_true.
+        zake-&gt;set_package( &apos;$SAPLINK&apos; ).
+        zake-&gt;install_slinkees_from_lm( abap_false ).
+        &quot; Activate objects
+        IF testrun = abap_false.
+          zake-&gt;activate_package_objects( ).
+        ENDIF.
+      ENDIF.
+    CATCH zcx_saplink INTO ex.
+      message = ex-&gt;get_text( ).
+      IF message IS INITIAL.
+        message = ex-&gt;get_longtext( ).
+      ENDIF.
+      WRITE: / &apos;An Error occured: &apos;, message.
+  ENDTRY.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  DOWNLOAD_PROGRAM
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_LV_PROG_NAME  text
+*----------------------------------------------------------------------*
+FORM download_program
+  USING
+    p_prog_name TYPE string
+    p_path      TYPE string.
+  DATA: lo_saplink_prog TYPE REF TO zsaplink,
+        lv_source       TYPE string,
+        lv_path         TYPE string.
+  CREATE OBJECT lo_saplink_prog TYPE zsaplink_program
+    EXPORTING
+      name = p_prog_name.
+  lv_source = lo_saplink_prog-&gt;createstringfromobject( ).
+  CONCATENATE p_path p_prog_name &apos;.txt&apos; INTO lv_path.
+  zake-&gt;download_xml_to_lm(
+    EXPORTING
+      i_fullpath   = lv_path
+      i_xml_string = lv_source
+  ).
+
+ENDFORM.                    &quot; DOWNLOAD_PROGRAM</source>
+</PROG>

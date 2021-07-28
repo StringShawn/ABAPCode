@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-16"?>
+<CLAS CLSNAME="ZSAPLINK_WD_APPLICATION" VERSION="1" LANGU="E" DESCRIPT="SAPlink - Web Dynpro ABAP Application" UUID="4FC35030080301E4E1008000C008015A" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000" CHGDANYON="00000000" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" R3RELEASE="700" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="ZSAPLINK">
+ <publicSection>class ZSAPLINK_WD_APPLICATION definition
+  public
+  inheriting from ZSAPLINK
+  final
+  create public .
+
+*&quot;* public components of class ZSAPLINK_WD_APPLICATION
+*&quot;* do not include other source files here!!!
+public section.
+  type-pools WDYN .
+  type-pools WDYWB .
+
+  methods CONSTRUCTOR
+    importing
+      !NAME type STRING .
+
+  methods CHECKEXISTS
+    redefinition .
+  methods CREATEIXMLDOCFROMOBJECT
+    redefinition .
+  methods CREATEOBJECTFROMIXMLDOC
+    redefinition .</publicSection>
+ <protectedSection>*&quot;* protected components of class ZSAPLINK_WD_APPLICATION
+*&quot;* do not include other source files here!!!
+protected section.
+
+  methods DELETEOBJECT
+    redefinition .
+  methods GETOBJECTTYPE
+    redefinition .</protectedSection>
+ <privateSection>*&quot;* private components of class ZSAPLINK_WD_APPLICATION
+*&quot;* do not include other source files here!!!
+private section.
+
+  methods GET_APPLICATION
+    returning
+      value(APPLICATION) type ref to IF_WDY_MD_APPLICATION
+    raising
+      CX_WDY_MD_NOT_EXISTING
+      CX_WDY_MD_PERMISSION_FAILURE .</privateSection>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZSAPLINK_WD_APPLICATION" TYPEGROUP="WDYN" VERSION="1" TPUTYPE="0" EXPLICIT="X"/>
+ <typeUsage CLSNAME="ZSAPLINK_WD_APPLICATION" TYPEGROUP="WDYWB" VERSION="1" TPUTYPE="0" EXPLICIT="X"/>
+ <forwardDeclaration>WDYN</forwardDeclaration>
+ <forwardDeclaration>WDYWB</forwardDeclaration>
+ <inheritance CLSNAME="ZSAPLINK_WD_APPLICATION" REFCLSNAME="ZSAPLINK" VERSION="1" STATE="1" AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000">
+  <redefinition CLSNAME="ZSAPLINK_WD_APPLICATION" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CHECKEXISTS"/>
+  <redefinition CLSNAME="ZSAPLINK_WD_APPLICATION" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEIXMLDOCFROMOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_WD_APPLICATION" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEOBJECTFROMIXMLDOC"/>
+  <redefinition CLSNAME="ZSAPLINK_WD_APPLICATION" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="DELETEOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_WD_APPLICATION" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="GETOBJECTTYPE"/>
+ </inheritance>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CHECKEXISTS.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+
+
+
+  exists = abap_true.
+
+  DATA: application_name TYPE wdy_application_name.
+  data: application type wdy_application.
+  application_name = objname.
+  TRANSLATE application_name TO UPPER CASE.
+
+  SELECT SINGLE * FROM wdy_application INTO application
+    WHERE application_name = application_name.
+  IF sy-subrc NE 0.
+    CLEAR exists.
+  ENDIF.
+
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_WD_APPLICATION" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="E" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000" MTDTYPE="2" MTDDECLTYP="0" R3RELEASE="700" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_WD_APPLICATION" CMPNAME="CONSTRUCTOR" SCONAME="NAME" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000" PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD constructor.
+
+  CALL METHOD super-&gt;constructor
+    EXPORTING
+      name = name.
+
+  nugget_level = 99. &quot; WD Application should load last
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CREATEIXMLDOCFROMOBJECT.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+
+
+*xml nodes
+  DATA rootnode   TYPE REF TO if_ixml_element.
+  DATA help_desc_node          TYPE REF TO if_ixml_element.
+  DATA wdy_applicationt_node   TYPE REF TO if_ixml_element.
+  DATA wdy_app_prop_node       TYPE REF TO if_ixml_element.
+  DATA rc         TYPE sysubrc.
+
+  DATA: application TYPE REF TO if_wdy_md_application.
+  TRY.
+      application = me-&gt;get_application( ).
+    CATCH cx_wdy_md_not_existing.
+      RAISE EXCEPTION TYPE zcx_saplink EXPORTING textid = zcx_saplink=&gt;not_found.
+      RETURN.
+    CATCH cx_wdy_md_permission_failure.
+      RAISE EXCEPTION TYPE zcx_saplink EXPORTING textid = zcx_saplink=&gt;not_found.
+      RETURN.
+  ENDTRY.
+
+  DATA definition TYPE wdy_application.
+
+  application-&gt;if_wdy_md_object~get_definition(
+     IMPORTING
+       definition = definition ).
+
+* Create parent node
+  DATA _objtype TYPE string.
+  _objtype = getobjecttype( ).
+  rootnode = xmldoc-&gt;create_element( _objtype ).
+  setattributesfromstructure( node = rootnode structure = definition ).
+
+  DATA help_desc TYPE wdy_md_translatable_text.
+  help_desc = application-&gt;get_help_description( ).
+  rc = rootnode-&gt;set_attribute( name = &apos;help_desc_txt&apos; value = help_desc ).
+
+
+* copy wdy_applicationt
+  DATA wdy_applicationt_table TYPE STANDARD TABLE OF wdy_applicationt.
+  FIELD-SYMBOLS: &lt;wdy_applicationt&gt; TYPE wdy_applicationt.
+  SELECT * FROM wdy_applicationt INTO TABLE wdy_applicationt_table
+    WHERE application_name = definition-application_name.
+  LOOP AT wdy_applicationt_table ASSIGNING &lt;wdy_applicationt&gt;.
+    wdy_applicationt_node = xmldoc-&gt;create_element( &apos;wdy_applicationt&apos; ).
+    setattributesfromstructure( node = wdy_applicationt_node structure = &lt;wdy_applicationt&gt; ).
+    rc = rootnode-&gt;append_child( wdy_applicationt_node ).
+  ENDLOOP.
+
+* Application Properties
+  DATA itab_wdy_app_property TYPE wdy_app_property_table.
+  DATA prop TYPE REF TO if_wdy_md_application_property.
+  FIELD-SYMBOLS: &lt;wdy_app_prop&gt; TYPE wdy_app_property.
+  SELECT * FROM wdy_app_property INTO TABLE itab_wdy_app_property
+      WHERE application_name = definition-application_name.
+  LOOP AT itab_wdy_app_property ASSIGNING &lt;wdy_app_prop&gt;.
+    wdy_app_prop_node = xmldoc-&gt;create_element( &apos;wdy_app_prop&apos; ).
+    setattributesfromstructure( node = wdy_app_prop_node structure = &lt;wdy_app_prop&gt; ).
+    rc = rootnode-&gt;append_child( wdy_app_prop_node ).
+  ENDLOOP.
+
+*\--------------------------------------------------------------------/
+  rc = xmldoc-&gt;append_child( rootnode ).
+  ixmldocument = xmldoc.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CREATEOBJECTFROMIXMLDOC.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+*
+*
+*xml nodes
+  DATA rootnode   TYPE REF TO if_ixml_element.
+*  DATA wdy_application TYPE wdy_application.
+  DATA wdy_applicationt_node   TYPE REF TO if_ixml_element.
+  DATA wdy_app_prop_node       TYPE REF TO if_ixml_element.
+  DATA node        TYPE REF TO if_ixml_element.
+  DATA filter      TYPE REF TO if_ixml_node_filter.
+  DATA iterator    TYPE REF TO if_ixml_node_iterator.
+  DATA rc          TYPE sysubrc.
+  DATA _devclass   TYPE devclass.
+  DATA checkexists TYPE flag.
+  DATA _objtype    TYPE string.
+  DATA definition  TYPE wdy_application.
+
+  DATA: application TYPE REF TO if_wdy_md_application.
+
+  _devclass = devclass.
+  _objtype = getobjecttype( ).
+
+  xmldoc = ixmldocument.
+  rootnode = xmldoc-&gt;find_from_name( _objtype ).
+
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node            = rootnode
+      preserveversion = abap_true
+    CHANGING
+      structure       = definition.
+
+  objname = definition-application_name.
+  DATA help_desc TYPE wdy_md_translatable_text.
+  help_desc = rootnode-&gt;get_attribute( &apos;help_desc_txt&apos; ).
+
+  checkexists = checkexists( ).
+  IF checkexists IS NOT INITIAL.
+    IF overwrite IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING textid = zcx_saplink=&gt;existing.
+    ELSE.
+*     delete object for new install
+      deleteobject( ).
+    ENDIF.
+  ENDIF.
+
+  application =  cl_wdy_md_application=&gt;create(
+  name = definition-application_name
+  devclass = _devclass ).
+
+* copy relevant parts of wdy_application
+  DATA component TYPE REF TO if_wdy_md_component.
+  CALL METHOD cl_wdy_md_component=&gt;get_object_by_key
+    EXPORTING
+      name      = definition-component
+    RECEIVING
+      component = component.
+  application-&gt;set_component( component ).
+
+
+  application-&gt;set_help_description( help_desc ).
+  application-&gt;set_help_link( definition-help_link ).
+  application-&gt;set_message_display_mode( definition-msg_disp_mode ).
+  DATA startup_plug TYPE REF TO if_wdy_md_inbound_plug.
+  DATA startup_view TYPE REF TO if_wdy_md_abstract_view.
+  startup_view = cl_wdy_md_view=&gt;get_object_by_key(
+      component_name = definition-component
+      view_name      = definition-startup_view  ).
+  startup_plug = startup_view-&gt;get_inbound_plug( definition-startup_plug ).
+  application-&gt;set_startup_plug( startup_plug ).
+
+  application-&gt;save_to_database( ).
+
+
+  application-&gt;unlock( ).
+  application-&gt;reload( ).
+
+* copy wdy_applicationt
+  DATA wdy_applicationt_table TYPE STANDARD TABLE OF wdy_applicationt.
+  DATA wdy_applicationt TYPE wdy_applicationt.
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;wdy_applicationt&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  WHILE node IS NOT INITIAL.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node            = node
+        preserveversion = abap_true
+      CHANGING
+        structure       = wdy_applicationt.
+    APPEND wdy_applicationt TO wdy_applicationt_table.
+    node ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+  MODIFY wdy_applicationt FROM TABLE wdy_applicationt_table.
+
+* copy wdy_app_property
+  DATA wdy_app_property_table TYPE STANDARD TABLE OF wdy_app_property.
+  DATA wdy_app_property TYPE wdy_app_property.
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;wdy_app_prop&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  WHILE node IS NOT INITIAL.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node            = node
+        preserveversion = abap_true
+      CHANGING
+        structure       = wdy_app_property.
+    APPEND wdy_app_property TO wdy_app_property_table.
+    node ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+  MODIFY wdy_app_property FROM TABLE wdy_app_property_table.
+
+  cl_wdy_md_application=&gt;generate_sicf(
+    EXPORTING
+      p_applname            = definition-display_name
+      p_devclass            = _devclass
+    EXCEPTIONS
+      invalid_name          = 1
+      parent_not_existing   = 2
+      enqueue_error         = 3
+      node_already_existing = 4
+      transport_error       = 5
+      tadir_error           = 6
+      package_not_found     = 7
+      alternate_name_exist  = 8
+      error_occured         = 9 ).
+  IF sy-subrc &lt;&gt; 0.
+  ENDIF.
+
+
+  COMMIT WORK.
+  name = objname.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method DELETEOBJECT.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+
+  DATA: application TYPE REF TO if_wdy_md_application.
+  TRY.
+      DATA: application_name TYPE wdy_application_name.
+      application_name = objname.
+      TRANSLATE application_name TO UPPER CASE.
+      application = me-&gt;get_application( ).
+    CATCH cx_wdy_md_not_existing.
+      RAISE EXCEPTION TYPE zcx_saplink EXPORTING textid = zcx_saplink=&gt;not_found.
+      RETURN.
+    CATCH cx_wdy_md_permission_failure.
+      RAISE EXCEPTION TYPE zcx_saplink EXPORTING textid = zcx_saplink=&gt;not_found.
+      RETURN.
+  ENDTRY.
+
+  application-&gt;if_wdy_md_lockable_object~lock( ).
+  application-&gt;if_wdy_md_object~delete( ).
+*  cl_wdy_md_application=&gt;delete_sicf( p_applname = application_name  ).
+  application-&gt;if_wdy_md_lockable_object~save_to_database( ).
+  application-&gt;if_wdy_md_lockable_object~unlock( ).
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " CREATEDON="00000000" CHANGEDON="00000000" MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method GETOBJECTTYPE.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   SAPlink is free software; you can redistribute it and/or modify   |
+*|   it under the terms of the GNU General Public License as published |
+*|   by the Free Software Foundation; either version 2 of the License, |
+*|   or (at your option) any later version.                            |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*|   You should have received a copy of the GNU General Public License |
+*|   along with SAPlink; if not, write to the                          |
+*|   Free Software Foundation, Inc.,                                   |
+*|   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA          |
+*\---------------------------------------------------------------------/
+
+
+  objecttype = wdyn_r3tr_application.  &quot;Web Dynpro Application
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_WD_APPLICATION" CMPNAME="GET_APPLICATION" VERSION="1" LANGU="E" DESCRIPT="Get Application Object" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDBY="RTURNHEIM" CHANGEDON="20120528" MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" R3RELEASE="700" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_WD_APPLICATION" CMPNAME="GET_APPLICATION" SCONAME="APPLICATION" VERSION="1" LANGU="E" DESCRIPT="Web Dynpro: Application" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000" PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_WDY_MD_APPLICATION"/>
+  <exception CLSNAME="ZSAPLINK_WD_APPLICATION" CMPNAME="GET_APPLICATION" SCONAME="CX_WDY_MD_NOT_EXISTING" VERSION="1" LANGU="E" DESCRIPT="Web Dynpro : Objekt existiert nicht" MTDTYPE="0" EDITORDER="1 " AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000"/>
+  <exception CLSNAME="ZSAPLINK_WD_APPLICATION" CMPNAME="GET_APPLICATION" SCONAME="CX_WDY_MD_PERMISSION_FAILURE" VERSION="1" LANGU="E" MTDTYPE="0" EDITORDER="2 " AUTHOR="RTURNHEIM" CREATEDON="20120528" CHANGEDON="00000000"/>
+  <source>method GET_APPLICATION.
+
+  DATA: application_name TYPE wdy_application_name.
+  application_name = objname.
+  TRANSLATE application_name TO UPPER CASE.
+
+  DATA: tr_objtype     TYPE trobjtype,
+         inactive_vers  TYPE char1,
+         working_item   TYPE char1,
+         l_obj_key      TYPE e071-obj_name.
+  DATA: version TYPE r3state.
+
+  CALL FUNCTION &apos;RS_WORKING_AREA_INIT&apos;.
+
+  tr_objtype = wdyn_r3tr_application.
+  l_obj_key = application_name.
+  TRANSLATE l_obj_key TO UPPER CASE.                      &quot;#EC SYNTCHAR
+  CALL FUNCTION &apos;RS_OBJECT_IN_WORKING_AREA&apos;
+    EXPORTING
+      object                        = tr_objtype
+      obj_name                      = l_obj_key
+*     GLOBAL_CHECK                  = &apos; &apos;
+      mode                          = &apos;S&apos; &quot;Display
+    IMPORTING
+      object_is_work_item           = working_item
+      object_inactive_version       = inactive_vers.
+
+
+  IF working_item IS INITIAL.
+    version = wdywb_version_active.
+  ELSE.
+    version = wdywb_version_inactive.
+  ENDIF.
+
+  TRY.
+      CALL METHOD cl_wdy_md_application=&gt;get_object_by_key
+        EXPORTING
+          name        = application_name
+          version     = version
+        RECEIVING
+          application = application.
+    CATCH cx_wdy_md_not_existing.
+      IF version = wdywb_version_active.
+        version     = wdywb_version_inactive.
+      ELSE.
+        version      = wdywb_version_active.
+      ENDIF.
+      TRY.
+        CALL METHOD cl_wdy_md_application=&gt;get_object_by_key
+          EXPORTING
+            name        = application_name
+            version     = version
+          RECEIVING
+            application = application.
+      ENDTRY.
+  ENDTRY.
+endmethod.</source>
+ </method>
+</CLAS>

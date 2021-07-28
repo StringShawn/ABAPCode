@@ -1,0 +1,1830 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZSAPLINK_PROGRAM" VERSION="1" LANGU="E" DESCRIPT="SAPlink - Programs" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" WITH_UNIT_TESTS="X" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk" REFCLSNAME="ZSAPLINK">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <localTestClasses>*----------------------------------------------------------------------*
+*       CLASS lc_Zsaplink_Program_Test DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lc_zsaplink_program_test DEFINITION FOR TESTING
+  &quot; DURATION SHORT
+  &quot; RISK LEVEL HARMLESS
+  &quot;#AU Duration Medium
+  &quot;#AU Risk_Level Harmless
+.
+*?ï»¿&lt;asx:abap xmlns:asx=&quot;http://www.sap.com/abapxml&quot; version=&quot;1.0&quot;&gt;
+*?&lt;asx:values&gt;
+*?&lt;TESTCLASS_OPTIONS&gt;
+*?&lt;TEST_CLASS&gt;lc_Zsaplink_Program_Test
+*?&lt;/TEST_CLASS&gt;
+*?&lt;TEST_MEMBER&gt;f_Cut
+*?&lt;/TEST_MEMBER&gt;
+*?&lt;OBJECT_UNDER_TEST&gt;ZSAPLINK_PROGRAM
+*?&lt;/OBJECT_UNDER_TEST&gt;
+*?&lt;OBJECT_IS_LOCAL/&gt;
+*?&lt;GENERATE_FIXTURE/&gt;
+*?&lt;GENERATE_CLASS_FIXTURE/&gt;
+*?&lt;GENERATE_INVOCATION/&gt;
+*?&lt;GENERATE_ASSERT_EQUAL/&gt;
+*?&lt;/TESTCLASS_OPTIONS&gt;
+*?&lt;/asx:values&gt;
+*?&lt;/asx:abap&gt;
+  PRIVATE SECTION.
+* ================
+    DATA:
+      f_cut TYPE REF TO zsaplink_program.  &quot;class under test
+
+    METHODS: createstringfromobject FOR TESTING.
+ENDCLASS.       &quot;lc_Zsaplink_Program_Test
+
+
+*----------------------------------------------------------------------*
+*       CLASS lc_Zsaplink_Program_Test IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lc_zsaplink_program_test IMPLEMENTATION.
+* ==============================================
+
+  METHOD createstringfromobject.
+    CONSTANTS: object_name TYPE string VALUE &apos;SFLIGHT_DATA_GEN&apos;.
+    DATA: source_string TYPE string.
+
+    CREATE OBJECT f_cut
+      EXPORTING
+        name = object_name.
+
+    source_string = f_cut-&gt;createstringfromobject( ).
+    cl_aunit_assert=&gt;assert_not_initial(
+        act = source_string               &quot; Actual Data Object
+        msg = &apos;No source string found&apos;    &quot; Message in Case of Error
+    ).
+  ENDMETHOD.       &quot;createstringfromobject
+
+
+
+
+ENDCLASS.       &quot;lc_Zsaplink_Program_Test</localTestClasses>
+ <inheritance CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CHECKEXISTS" EXPOSURE="2"/>
+  <redefinition CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEIXMLDOCFROMOBJECT" EXPOSURE="2"/>
+  <redefinition CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEOBJECTFROMIXMLDOC" EXPOSURE="2"/>
+  <redefinition CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATESTRINGFROMOBJECT" EXPOSURE="2"/>
+  <redefinition CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="DELETEOBJECT" EXPOSURE="1"/>
+  <redefinition CLSNAME="ZSAPLINK_PROGRAM" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="GETOBJECTTYPE" EXPOSURE="1"/>
+ </inheritance>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CHECKEXISTS.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+  select single name from trdir into objName where NAME = objName.
+  if sy-subrc = 0.
+    exists = &apos;X&apos;.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CREATEIXMLDOCFROMOBJECT.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data rootNode type ref to if_ixml_element.
+data sourceNode type ref to if_ixml_element.
+data textPoolNode type ref to if_ixml_element.
+data docNode type ref to if_ixml_element.
+data dynproNode type ref to if_ixml_element.
+data statusNode type ref to if_ixml_element.
+data rc type sysubrc.
+data progAttribs type trdir.
+data progSource type RSWSOURCET.
+data sourceString type string.
+data _objType type string.
+
+  _objType = getObjectType( ).
+  rootNode = xmlDoc-&gt;create_element( _objType ).
+  sourceNode = xmlDoc-&gt;create_element( &apos;source&apos; ).
+  select single * from trdir into progAttribs where NAME = objName.
+  if sy-subrc = 0.
+    setAttributesFromStructure( node = rootNode structure =  progAttribs ).
+    progSource = me-&gt;get_source( ).
+    sourceString = buildSourceString( sourceTable = progSource ).
+    rc = sourceNode-&gt;IF_IXML_NODE~SET_VALUE( sourceString ).
+    textPoolNode = get_textPool( ).
+    rc = rootNOde-&gt;append_child( textPoolNode ).
+    docNode = get_documentation( ).
+    rc = rootNOde-&gt;append_child( docNode ).
+    dynproNode = get_dynpro( ).
+    rc = rootNode-&gt;append_child( dynproNode ).
+    statusNode = get_pfstatus( ).
+    rc = rootNode-&gt;append_child( statusNode ).
+    rc = rootNode-&gt;append_child( sourceNode ).
+    rc = xmldoc-&gt;append_child( rootNode ).
+    ixmlDocument = xmlDoc.
+  else.
+    clear ixmlDocument.
+    raise exception type zcx_saplink
+      exporting
+        textid = zcx_saplink=&gt;not_found
+        object = objname.
+  endif.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CREATEOBJECTFROMIXMLDOC.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data rootnode type ref to if_ixml_element.
+  data progattribs type trdir.
+  data sourcenode type ref to if_ixml_element.
+  data textnode type ref to if_ixml_element.
+  data docnode type ref to if_ixml_element.
+  data dynpnode type ref to if_ixml_element.
+  data statnode type ref to if_ixml_element.
+  data source type string.
+  data sourcetable type table_of_strings.
+  data _objname(30) type c.
+  data aobjname type trobj_name.
+  data _objtype type string.
+  data checkexists type flag.
+
+*if sy-uname &lt;&gt; &apos;USDWM01&apos;.
+*    _objType = getObjectType( ).
+*    xmlDoc = ixmlDocument.
+*    rootNode = xmlDoc-&gt;find_from_name( _objType ).
+*    call method GETSTRUCTUREFROMATTRIBUTES
+*          exporting
+*            node = rootNode
+*          changing
+*            structure = progAttribs.
+*    objName = progAttribs-NAME.
+*
+**   check existing
+*    select single name from trdir into objName where NAME = objName.
+*    if sy-subrc = 0.
+*      raise exception type zcx_saplink
+*        exporting textid = zcx_saplink=&gt;existing.
+*    endif.
+*
+*    sourceNode = rootNode-&gt;find_from_name( &apos;source&apos; ).
+*    source = sourceNode-&gt;get_value( ).
+*    sourceTable = BUILDTABLEFROMSTRING( source ).
+*    insert report progAttribs-NAME from sourceTable.
+*
+*    commit work.
+*
+*    call function &apos;RS_INSERT_INTO_WORKING_AREA&apos;
+*      EXPORTING
+*        object            = &apos;REPS&apos;
+*        obj_name          = aobjName
+*      EXCEPTIONS
+*        wrong_object_name = 1.
+*    if sy-subrc &lt;&gt; 0.
+*
+*    endif.
+*
+*else.
+
+  _objtype = getobjecttype( ).
+  xmldoc = ixmldocument.
+  rootnode = xmldoc-&gt;find_from_name( _objtype ).
+  call method getstructurefromattributes
+    exporting
+      node      = rootnode
+    changing
+      structure = progattribs.
+  objname = progattribs-name.
+
+*  check if object exists
+*  select single name from trdir into objName where NAME = objName.
+*  if sy-subrc = 0 and overwrite &lt;&gt; &apos;X&apos;.
+*    raise exception type zcx_saplink
+*      exporting textid = zcx_saplink=&gt;existing.
+*  endif.
+
+  checkexists = checkexists( ).
+  if checkexists is not initial.
+    if overwrite is initial.
+      raise exception type zcx_saplink
+        exporting textid = zcx_saplink=&gt;existing.
+    else.
+*     delete object for new install
+      deleteobject( ).
+    endif.
+  endif.
+
+
+  enqueue_abap( ).
+  transport_copy( author = progattribs-cnam devclass = devclass ).
+  sourcenode = rootnode-&gt;find_from_name( &apos;source&apos; ).
+  source = sourcenode-&gt;get_value( ).
+  sourcetable = buildtablefromstring( source ).
+  create_source( source = sourcetable attribs = progattribs ).
+  textnode = rootnode-&gt;find_from_name( &apos;textPool&apos; ).
+  create_textpool( textnode ).
+  docnode = rootnode-&gt;find_from_name( &apos;programDocumentation&apos; ).
+  create_documentation( docnode ).
+  dynpnode = rootnode-&gt;find_from_name( &apos;dynpros&apos; ).
+  create_dynpro( dynpnode ).
+  statnode = rootnode-&gt;find_from_name( &apos;pfstatus&apos; ).
+  create_pfstatus( statnode ).
+
+  dequeue_abap( ).
+  update_wb_tree( ).
+*endif.
+
+* successful install
+  name = objname.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATESTRINGFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CREATESTRINGFROMOBJECT.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data progSource type RSWSOURCET.
+  progsource = me-&gt;get_source( ).
+  string = buildsourcestring( sourcetable = progsource ).
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_DOCUMENTATION" VERSION="1" LANGU="E" DESCRIPT="Create Documentation" EXPOSURE="0" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_DOCUMENTATION" SCONAME="DOCNODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method CREATE_DOCUMENTATION.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  DATA txtline_node     TYPE REF TO if_ixml_element.
+  DATA txtline_filter   TYPE REF TO if_ixml_node_filter.
+  DATA txtline_iterator TYPE REF TO if_ixml_node_iterator.
+
+  DATA lang_node     TYPE REF TO if_ixml_element.
+  DATA lang_filter   TYPE REF TO if_ixml_node_filter.
+  DATA lang_iterator TYPE REF TO if_ixml_node_iterator.
+
+  data obj_name type DOKHL-OBJECT.
+  data prog_name type string.
+  data language  type string.
+  data obj_langu type DOKHL-LANGU.
+  data lv_str type string.
+  data rc type sy-subrc.
+
+  DATA lt_lines  TYPE TABLE OF tline.
+  FIELD-SYMBOLS: &lt;ls_lines&gt; LIKE LINE OF lt_lines.
+
+  if docnode is not bound.
+    return.
+  endif.
+
+  prog_name = docNode-&gt;get_attribute( name = &apos;OBJECT&apos; ).
+  obj_name = prog_name.
+
+* If no prog name, then there was no program documenation, just return.
+  if prog_name is initial.
+    return.
+  endif.
+
+* Get languages from XML
+  FREE: lang_filter, lang_iterator, lang_node.
+  lang_filter = docNode-&gt;create_filter_name( `language` ).
+  lang_iterator = docNode-&gt;create_iterator_filtered( lang_filter ).
+  lang_node ?= lang_iterator-&gt;get_next( ).
+  WHILE lang_node IS NOT INITIAL.
+
+    refresh lt_lines.
+    language = lang_node-&gt;get_attribute( name = &apos;SPRAS&apos; ).
+    obj_langu = language.
+
+* Get TextLines from XML
+    FREE: txtline_filter, txtline_iterator, txtline_node.
+    txtline_filter = lang_node-&gt;create_filter_name( `textLine` ).
+    txtline_iterator = lang_node-&gt;create_iterator_filtered( txtline_filter ).
+    txtline_node ?= txtline_iterator-&gt;get_next( ).
+    WHILE txtline_node IS NOT INITIAL.
+      APPEND INITIAL LINE TO lt_lines ASSIGNING &lt;ls_lines&gt;.
+      me-&gt;getstructurefromattributes(
+              EXPORTING   node      = txtline_node
+              CHANGING    structure = &lt;ls_lines&gt; ).
+      txtline_node ?= txtline_iterator-&gt;get_next( ).
+    ENDWHILE.
+
+* Delete any documentation that may currently exist.
+    CALL FUNCTION &apos;DOCU_DEL&apos;
+      EXPORTING
+        id       = &apos;RE&apos;   &quot;&lt;-- Report/program documentation
+        langu    = obj_langu
+        object   = obj_name
+        typ      = &apos;E&apos;
+      EXCEPTIONS
+        ret_code = 1
+        OTHERS   = 2.
+
+* Now update with new documentation text
+    CALL FUNCTION &apos;DOCU_UPD&apos;
+      EXPORTING
+        id       = &apos;RE&apos;
+        langu    = obj_langu
+        object   = obj_name
+        typ      = &apos;E&apos;
+      TABLES
+        line     = lt_lines
+      EXCEPTIONS
+        ret_code = 1
+        OTHERS   = 2.
+    IF sy-subrc &lt;&gt; 0.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;error_message
+          msg    = `Program Documentation object import failed`.
+    ENDIF.
+
+    lang_node ?= lang_iterator-&gt;get_next( ).
+  ENDWHILE.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_DYNPRO" VERSION="1" LANGU="E" DESCRIPT="Create Dynpro(Screen)" EXPOSURE="0" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_DYNPRO" SCONAME="DYNP_NODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method CREATE_DYNPRO.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  types: begin of tdyn_head_temp.
+         include type d020s.
+  types: dtext type d020t-dtxt.
+  types: end of tdyn_head_temp.
+
+  data: idyn_fldl type table of d021s,
+        idyn_flow type table of d022s,
+        idyn_mcod type table of d023s.
+
+  data: xdyn_head type  d020s,
+        xdyn_fldl type  d021s,
+        xdyn_flow type  d022s,
+        xdyn_mcod type  d023s.
+
+  data: xdyn_text_string type string.
+  data: xdyn_text        type d020t-dtxt .
+  data: xdyn_head_temp   type tdyn_head_temp.
+
+  data _objname type trobj_name.
+
+  data dynpros_node       type ref to if_ixml_element.
+  data dynpros_filter     type ref to if_ixml_node_filter.
+  data dynpros_iterator   type ref to if_ixml_node_iterator.
+
+  data dynpro_node        type ref to if_ixml_element.
+  data dynpro_filter      type ref to if_ixml_node_filter.
+  data dynpro_iterator    type ref to if_ixml_node_iterator.
+
+  data dynfldl_node       type ref to if_ixml_element.
+  data dynfldl_filter     type ref to if_ixml_node_filter.
+  data dynfldl_iterator   type ref to if_ixml_node_iterator.
+
+  data dynmcod_node       type ref to if_ixml_element.
+  data dynmcod_filter     type ref to if_ixml_node_filter.
+  data dynmcod_iterator   type ref to if_ixml_node_iterator.
+
+  data dynflow_node       type ref to if_ixml_element.
+
+  data xdynpro_flow_source type string.
+  data idynpro_flow_source type table_of_strings.
+
+  _objname = objname.
+
+  dynpros_node =  dynp_node.
+  check dynpros_node is not initial.
+
+  free: dynpro_filter, dynpro_iterator, dynpro_node.
+  dynpro_filter = dynpros_node-&gt;create_filter_name( &apos;dynpro&apos; ).
+  dynpro_iterator =
+        dynpros_node-&gt;create_iterator_filtered( dynpro_filter ).
+  dynpro_node ?= dynpro_iterator-&gt;get_next( ).
+
+  while dynpro_node is not initial.
+
+    clear:    xdyn_head, xdyn_fldl, xdyn_flow, xdyn_mcod.
+    refresh:  idyn_fldl, idyn_flow, idyn_mcod.
+
+* Get the header data for the screen.
+    call method getstructurefromattributes
+      exporting
+        node      = dynpro_node
+      changing
+        structure = xdyn_head_temp.
+
+    xdyn_head    = xdyn_head_temp.
+    xdyn_text    = xdyn_head_temp-dtext.
+
+* Retrieve field list
+    free: dynfldl_filter, dynfldl_iterator, dynfldl_node.
+    dynfldl_filter = dynpro_node-&gt;create_filter_name( &apos;dynprofield&apos; ).
+    dynfldl_iterator =
+        dynpro_node-&gt;create_iterator_filtered( dynfldl_filter ).
+    dynfldl_node ?= dynfldl_iterator-&gt;get_next( ).
+    while dynfldl_node is not initial.
+      call method getstructurefromattributes
+        exporting
+          node      = dynfldl_node
+        changing
+          structure = xdyn_fldl.
+      append xdyn_fldl to idyn_fldl.
+      dynfldl_node ?= dynfldl_iterator-&gt;get_next( ).
+    endwhile.
+
+* Retrieve matchcode data.
+    free: dynmcod_filter, dynmcod_iterator, dynmcod_node.
+    dynmcod_filter = dynpro_node-&gt;create_filter_name( &apos;dynprofield&apos; ).
+    dynmcod_iterator =
+         dynpro_node-&gt;create_iterator_filtered( dynmcod_filter ).
+    dynmcod_node ?= dynmcod_iterator-&gt;get_next( ).
+    while dynmcod_node is not initial.
+      call method getstructurefromattributes
+        exporting
+          node      = dynmcod_node
+        changing
+          structure = xdyn_mcod.
+      append xdyn_mcod to idyn_mcod.
+      dynmcod_node ?= dynmcod_iterator-&gt;get_next( ).
+    endwhile.
+
+* retieve flow logic source.
+    clear xdynpro_flow_source.  refresh idynpro_flow_source.
+    clear xdyn_flow.            refresh idyn_flow.
+    free dynflow_node.
+    dynflow_node = dynpro_node-&gt;find_from_name( &apos;dynproflowsource&apos; ).
+    xdynpro_flow_source  = dynflow_node-&gt;get_value( ).
+    idynpro_flow_source = buildtablefromstring( xdynpro_flow_source ).
+    loop at idynpro_flow_source into xdyn_flow.
+      append xdyn_flow  to idyn_flow.
+    endloop.
+
+* Build dynpro from data
+    call function &apos;RPY_DYNPRO_INSERT_NATIVE&apos;
+      exporting
+*       suppress_corr_checks           = &apos; &apos;
+*       CORRNUM                        = &apos; &apos;
+        header                         = xdyn_head
+        dynprotext                     = xdyn_text
+*       SUPPRESS_EXIST_CHECKS          = &apos; &apos;
+*       USE_CORRNUM_IMMEDIATEDLY       = &apos; &apos;
+*       SUPPRESS_COMMIT_WORK           = &apos; &apos;
+      tables
+        fieldlist                      = idyn_fldl
+        flowlogic                      = idyn_flow
+        params                         = idyn_mcod
+     exceptions
+        cancelled                      = 1
+        already_exists                 = 2
+        program_not_exists             = 3
+        not_executed                   = 4
+        others                         = 5.
+    if sy-subrc &lt;&gt; 0.
+      raise exception type zcx_saplink
+        exporting textid = zcx_saplink=&gt;system_error.
+    endif.
+
+    dynpro_node ?= dynpro_iterator-&gt;get_next( ).
+
+  endwhile.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_PFSTATUS" VERSION="1" LANGU="E" DESCRIPT="Create Gui Status" EXPOSURE="0" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_PFSTATUS" SCONAME="PFSTAT_NODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method CREATE_PFSTATUS.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data: ista type table of rsmpe_stat,
+        ifun type table of rsmpe_funt,
+        imen type table of rsmpe_men,
+        imtx type table of rsmpe_mnlt,
+        iact type table of rsmpe_act,
+        ibut type table of rsmpe_but,
+        ipfk type table of rsmpe_pfk,
+        iset type table of rsmpe_staf,
+        idoc type table of rsmpe_atrt,
+        itit type table of rsmpe_titt,
+        ibiv type table of rsmpe_buts.
+
+  data: xsta type rsmpe_stat,
+        xfun type rsmpe_funt,
+        xmen type rsmpe_men,
+        xmtx type rsmpe_mnlt,
+        xact type rsmpe_act,
+        xbut type rsmpe_but,
+        xpfk type rsmpe_pfk,
+        xset type rsmpe_staf,
+        xdoc type rsmpe_atrt,
+        xtit type rsmpe_titt,
+        xbiv type rsmpe_buts.
+
+  data xtrkey type trkey.
+  data xadm   type rsmpe_adm.
+  data _program type  trdir-name.
+  data _objname type trobj_name.
+
+  data stat_node  type ref to if_ixml_element.
+  data node       type ref to if_ixml_element.
+  data filter     type ref to if_ixml_node_filter.
+  data iterator   type ref to if_ixml_node_iterator.
+
+  data: ls_iact type rsmpe_act,
+        ls_ipfk type rsmpe_pfk,
+        ls_imen type rsmpe_men.
+
+  _objname = objname.
+
+  stat_node =  pfstat_node.
+  check stat_node is not initial.
+
+* read pfstatus_sta node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_sta&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xsta.
+    append xsta to ista.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_fun node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_fun&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xfun.
+    append xfun to ifun.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_men node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_men&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xmen.
+    append xmen to imen.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_mtx node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_mtx&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xmtx.
+    append xmtx to imtx.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_act node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_act&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xact.
+    append xact to iact.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_but node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_but&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xbut.
+    append xbut to ibut.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_pfk node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_pfk&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xpfk.
+    append xpfk to ipfk.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_set node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_set&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xset.
+    append xset to iset.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_doc node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_doc&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xdoc.
+    append xdoc to idoc.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_tit node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_tit&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xtit.
+    append xtit to itit.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* read pfstatus_biv node
+  free: filter, iterator, node.
+  filter = stat_node-&gt;create_filter_name( &apos;pfstatus_biv&apos; ).
+  iterator = stat_node-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+  while node is not initial.
+    call method getstructurefromattributes
+      exporting
+        node      = node
+      changing
+        structure = xbiv.
+    append xbiv to ibiv.
+    node ?= iterator-&gt;get_next( ).
+  endwhile.
+
+* Update the gui status
+  _program = _objname.
+
+  xtrkey-obj_type = &apos;PROG&apos;.
+  xtrkey-obj_name = _program.
+  xtrkey-sub_type = &apos;CUAD&apos;.
+  xtrkey-sub_name = _program.
+
+  loop at iact into ls_iact.
+    xadm-actcode = ls_iact-code.
+  endloop.
+  loop at ipfk into ls_ipfk.
+    xadm-pfkcode = ls_ipfk-code.
+  endloop.
+  loop at imen into ls_imen.
+    xadm-mencode = ls_imen-code.
+  endloop.
+
+  call function &apos;RS_CUA_INTERNAL_WRITE&apos;
+    exporting
+      program   = _program
+      language  = sy-langu
+      tr_key    = xtrkey
+      adm       = xadm
+      state     = &apos;I&apos;
+    tables
+      sta       = ista
+      fun       = ifun
+      men       = imen
+      mtx       = imtx
+      act       = iact
+      but       = ibut
+      pfk       = ipfk
+      set       = iset
+      doc       = idoc
+      tit       = itit
+      biv       = ibiv
+    exceptions
+      not_found = 1
+      others    = 2.
+
+  if sy-subrc &lt;&gt; 0.
+    raise exception type zcx_saplink
+      exporting textid = zcx_saplink=&gt;system_error.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_SOURCE" VERSION="1" LANGU="E" DESCRIPT="Create Source" EXPOSURE="0" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_SOURCE" SCONAME="SOURCE" VERSION="1" LANGU="E" DESCRIPT="Table of Strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_SOURCE" SCONAME="ATTRIBS" VERSION="1" LANGU="E" DESCRIPT="Generated Table for View TRDIR" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TRDIR"/>
+  <source>method CREATE_SOURCE.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+  data _objName type TROBJ_NAME.
+  data progLine type PROGDIR.
+  data titleInfo type trdirti.
+  data reportLine type string.
+  data miniReport type table_of_strings.
+
+  _objName = objName.
+  call function &apos;RS_INSERT_INTO_WORKING_AREA&apos;
+        exporting
+             OBJECT   = &apos;REPS&apos;
+             OBJ_NAME = _objName
+        exceptions
+             WRONG_OBJECT_NAME = 1.
+   INSERT REPORT _objName FROM source STATE &apos;I&apos;
+     program type attribs-subc.  &quot;added to handle includes, etc.
+   MOVE &apos;I&apos; TO progline-STATE.
+   move-corresponding attribs to progline.
+   progline-idate = sy-datum.
+   progline-itime = sy-uzeit.
+   progline-CDAT  = sy-datum.
+   progline-UDAT  = sy-datum.
+   progline-SDATE = sy-datum.
+   modify progdir from progline.
+*  Are you kidding me?!?  No idea why you need to do this!!
+   CONCATENATE &apos;REPORT&apos; _objName &apos;.&apos; INTO reportLine SEPARATED BY SPACE.
+   append reportline to miniReport.
+   INSERT REPORT _objName FROM miniReport STATE &apos;A&apos;
+     program type attribs-subc. &quot;added to handle includes, etc.
+   MOVE &apos;A&apos; TO progline-STATE.
+   modify progdir from progline.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_TEXTPOOL" VERSION="1" LANGU="E" DESCRIPT="Create Text Pool" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="CREATE_TEXTPOOL" SCONAME="TEXTPOOLNODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method CREATE_TEXTPOOL.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data textPoolTable type standard table of textPool.
+  data textPoolRow type textPool.
+  data langIterator type ref to if_ixml_node_iterator.
+  data filter type ref to if_ixml_node_filter.
+  data textFilter type ref to if_ixml_node_filter.
+  data textIterator type ref to if_ixml_node_iterator.
+  data langNode type ref to if_ixml_element.
+  data aTextNode type ref to if_ixml_element.
+  data _objName type TROBJ_NAME.
+  data lang type spras.
+  data langNodeExists type flag.
+  data logonLanguageExists type flag.
+  data _state(1) type c.
+
+  _objName = objName.
+  CHECK textPoolNode IS NOT INITIAL.
+
+  filter = textPoolNode-&gt;create_filter_name( &apos;language&apos; ).
+  langIterator = textPoolNode-&gt;create_iterator_filtered( filter ).
+  langNode ?= langIterator-&gt;get_next( ).
+
+  while langNode is not initial.
+    langNodeExists = &apos;X&apos;.
+    CALL FUNCTION &apos;RS_INSERT_INTO_WORKING_AREA&apos;
+         EXPORTING
+              OBJECT   = &apos;REPT&apos;
+              OBJ_NAME = _objName
+         EXCEPTIONS
+              OTHERS   = 0.
+
+    refresh textPoolTable.
+    textIterator = langNode-&gt;create_iterator( ).
+    aTextNode ?= textIterator-&gt;get_next( ).
+*For some reason the 1st one is blank... not sure why.
+    aTextNode ?= textIterator-&gt;get_next( ).
+    while aTextNode is not initial.
+      call method GETSTRUCTUREFROMATTRIBUTES
+            exporting
+              node = aTextNode
+            changing
+              structure = textPoolRow.
+      append textPoolRow to textPoolTable.
+      aTextNode ?= textIterator-&gt;get_next( ).
+    endwhile.
+    if textPoolTable is not initial.
+      lang = langNode-&gt;get_attribute( &apos;SPRAS&apos; ).
+      if lang = sy-langu.
+        logonLanguageExists = &apos;X&apos;.
+        _state = &apos;I&apos;.
+      else.
+*       seems that if a textpool is inserted as inactive for language
+*       other than the logon language, it is lost upon activation
+*       not sure inserting as active is best solution,but seems to work
+        _state = &apos;A&apos;.
+      endif.
+      insert textpool _objName
+        from textPooltable
+        language lang
+        state    _state.
+    endif.
+    langNode ?= langIterator-&gt;get_next( ).
+  endwhile.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method DELETEOBJECT.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data program type sy-repid.
+
+program = objName.
+
+CALL FUNCTION &apos;RS_DELETE_PROGRAM&apos;
+  EXPORTING
+*   CORRNUMBER                       =
+    program                          = program
+*   SUPPRESS_CHECKS                  = &apos; &apos;
+*   SUPPRESS_COMMIT                  = &apos; &apos;
+    SUPPRESS_POPUP                   = &apos;X&apos;
+*   MASS_DELETE_CALL                 = &apos; &apos;
+*   WITH_CUA                         = &apos;X&apos;
+*   WITH_DOCUMENTATION               = &apos;X&apos;
+*   WITH_DYNPRO                      = &apos;X&apos;
+*   WITH_INCLUDES                    = &apos; &apos;
+*   WITH_TEXTPOOL                    = &apos;X&apos;
+*   WITH_VARIANTS                    = &apos;X&apos;
+*   TADIR_DEVCLASS                   =
+*   SKIP_PROGRESS_IND                = &apos; &apos;
+*   FORCE_DELETE_USED_INCLUDES       = &apos; &apos;
+* IMPORTING
+*   CORRNUMBER                       =
+*   PROGRAM                          =
+* EXCEPTIONS
+*   ENQUEUE_LOCK                     = 1
+*   OBJECT_NOT_FOUND                 = 2
+*   PERMISSION_FAILURE               = 3
+*   REJECT_DELETION                  = 4
+*   OTHERS                           = 5
+          .
+IF sy-subrc &lt;&gt; 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*         WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="DEQUEUE_ABAP" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <exception CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="DEQUEUE_ABAP" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method DEQUEUE_ABAP.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  call function &apos;RS_ACCESS_PERMISSION&apos;
+       exporting
+            global_lock              = &apos;X&apos;
+            mode                     = &apos;FREE&apos;
+            object                   = objName
+            object_class             = &apos;ABAP&apos;
+       exceptions
+            canceled_in_corr         = 1
+            enqueued_by_user         = 3
+            enqueue_system_failure   = 4
+            locked_by_author         = 5
+            illegal_parameter_values = 6
+            no_modify_permission     = 7
+            no_show_permission       = 8
+            permission_failure       = 9.
+
+  if sy-subrc &lt;&gt; 0.
+    case sy-subrc.
+      when 7 or 8 or 9.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;not_authorized.
+      when 5.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;error_message
+            msg = &apos;object locked&apos;.
+      when others.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;system_error.
+    endcase.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="ENQUEUE_ABAP" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <exception CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="ENQUEUE_ABAP" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method ENQUEUE_ABAP.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  call function &apos;RS_ACCESS_PERMISSION&apos;
+       exporting
+*            authority_check          = authority_check
+            global_lock              = &apos;X&apos;
+            mode                     = &apos;INSERT&apos;
+*            master_language          = trdir-rload
+            object                   = objName
+            object_class             = &apos;ABAP&apos;
+*       importing
+*            transport_key            = trkey_global
+*            new_master_language      = trdir-rload
+*            devclass                 = devclass_local
+       exceptions
+            canceled_in_corr         = 1
+            enqueued_by_user         = 3
+            enqueue_system_failure   = 4
+            locked_by_author         = 5
+            illegal_parameter_values = 6
+            no_modify_permission     = 7
+            no_show_permission       = 8
+            permission_failure       = 9.
+
+  if sy-subrc &lt;&gt; 0.
+    case sy-subrc.
+      when 7 or 8 or 9.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;not_authorized.
+      when 5.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;error_message
+            msg = &apos;object locked&apos;.
+      when others.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;system_error.
+    endcase.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method GETOBJECTTYPE.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  objectType = &apos;PROG&apos;. &quot;ABAP Program
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_DOCUMENTATION" VERSION="1" LANGU="E" DESCRIPT="Get Documentation" EXPOSURE="0" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_DOCUMENTATION" SCONAME="DOCNODE" VERSION="1" LANGU="E" DESCRIPT="Documentation Node" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method GET_DOCUMENTATION.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data languageNode   type ref to if_ixml_element.
+  DATA txtlines_node TYPE REF TO if_ixml_element.
+  DATA rc            TYPE sysubrc.
+  DATA _objtype      TYPE string.
+
+  Types: BEGIN OF t_dokhl,
+          id          TYPE dokhl-id,
+          object      TYPE dokhl-object,
+          langu       type dokhl-langu,
+          typ         TYPE dokhl-typ,
+          dokversion  TYPE dokhl-dokversion,
+         END OF t_dokhl.
+
+  data lt_dokhl type table of t_dokhl.
+  data ls_dokhl like line of lt_dokhl.
+
+  DATA lt_lines TYPE TABLE OF tline.
+  DATA ls_lines LIKE LINE OF lt_lines.
+
+  data lv_str type string.
+  DATA _objname TYPE e071-obj_name.
+
+  _objname = objname.
+
+* Check against database
+  SELECT  id object langu typ dokversion
+        INTO corresponding fields of table lt_dokhl
+           FROM dokhl
+             WHERE id = &apos;RE&apos;
+                AND object = _objname.
+
+* Use only most recent version.
+  sort lt_dokhl by id object langu typ ascending dokversion descending.
+  delete adjacent duplicates from lt_dokhl comparing id object typ langu.
+
+* Make sure there is at least one record here.
+  clear ls_dokhl.
+  read table lt_dokhl into ls_dokhl index 1.
+  if sy-subrc &lt;&gt; 0.
+    return.
+  endif.
+
+  docNode = xmlDoc-&gt;create_element( &apos;programDocumentation&apos; ).
+
+* Set docNode object attribute
+  lv_str = ls_dokhl-object.
+  rc = docNode-&gt;set_attribute( name = &apos;OBJECT&apos; value = lv_Str ).
+
+  Loop at lt_dokhl into ls_dokhl.
+
+* Create language node, and set attribute
+    languageNode = xmlDoc-&gt;create_element( &apos;language&apos; ).
+    lv_str = ls_dokhl-langu.
+    rc = languageNode-&gt;set_attribute( name = &apos;SPRAS&apos; value = lv_Str ).
+
+* Read the documentation text
+    CALL FUNCTION &apos;DOCU_READ&apos;
+      EXPORTING
+        id      = ls_dokhl-id
+        langu   = ls_dokhl-langu
+        object  = ls_dokhl-object
+        typ     = ls_dokhl-typ
+        version = ls_dokhl-dokversion
+      TABLES
+        line    = lt_lines.
+
+* Write records to XML node
+    LOOP AT lt_lines INTO ls_lines.
+      txtlines_node = xmlDoc-&gt;create_element( `textLine` ).
+      me-&gt;setattributesfromstructure( node = txtlines_node structure = ls_lines ).
+      rc = languageNode-&gt;append_child( txtlines_node ).
+    ENDLOOP.
+    rc = docNode-&gt;append_child( languageNode ) .
+  Endloop.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_DYNPRO" VERSION="1" LANGU="E" DESCRIPT="Get Dynpro(Screen)" EXPOSURE="0" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_DYNPRO" SCONAME="DYNP_NODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method GET_DYNPRO.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  types: begin of tdynp,
+         prog type d020s-prog,
+         dnum type d020s-dnum,
+         end of tdynp.
+
+  data: idyn_fldl type table of d021s,
+        idyn_flow type table of d022s,
+        idyn_mcod type table of d023s.
+
+  data: xdyn_head type  d020s,
+        xdyn_fldl type  d021s,
+        xdyn_flow type  d022s,
+        xdyn_mcod type  d023s.
+
+  data idynp type table of tdynp.
+  data xdynp type tdynp.
+
+  data xdyn_text type d020t-dtxt.
+  data xdyn_text_string type string.
+
+  data _objname type trobj_name.
+  data rc type sy-subrc .
+
+  data iflowsource type rswsourcet.
+  data xflowsource like line of iflowsource.
+  data flowsourcestring type string.
+
+  data dynnr_node type ref to if_ixml_element.
+  data dynpromatchnode type ref to if_ixml_element.
+  data dynprofieldsnode type ref to if_ixml_element.
+  data dynproflownode type ref to if_ixml_element.
+
+  _objname = objname.
+
+* Get all dynpros for program object
+  clear xdynp.  refresh idynp.
+  select prog dnum into table idynp
+                from d020s
+                   where prog = _objname
+                     and type &lt;&gt; &apos;S&apos;    &quot; No Selection Screens
+                     and type &lt;&gt; &apos;J&apos;.   &quot; No selection subscreens
+  check sy-subrc  = 0 .
+
+  dynp_node = xmldoc-&gt;create_element( &apos;dynpros&apos; ).
+
+  loop at idynp into xdynp.
+
+* Retrieve dynpro imformation
+    dynnr_node =  xmldoc-&gt;create_element( &apos;dynpro&apos; ).
+
+    clear:    xdyn_head, xdyn_fldl, xdyn_flow, xdyn_mcod.
+    refresh:  idyn_fldl, idyn_flow, idyn_mcod.
+
+    call function &apos;RPY_DYNPRO_READ_NATIVE&apos;
+      exporting
+        progname                    = xdynp-prog
+        dynnr                       = xdynp-dnum
+*       SUPPRESS_EXIST_CHECKS       = &apos; &apos;
+*       SUPPRESS_CORR_CHECKS        = &apos; &apos;
+    importing
+        HEADER                      = xdyn_head
+        dynprotext                  = xdyn_text
+     tables
+        fieldlist                   = idyn_fldl
+        flowlogic                   = idyn_flow
+        params                      = idyn_mcod
+*       FIELDTEXTS                  =
+     exceptions
+        cancelled                   = 1
+        not_found                   = 2
+        permission_error            = 3
+        others                      = 4.
+
+    check sy-subrc = 0.
+
+* Add heading information for screen.
+    setattributesfromstructure(
+                     node = dynnr_node structure =  xdyn_head  ).
+* Add the dynpro text also.
+    xdyn_text_string =  xdyn_text.
+    rc = dynnr_node-&gt;set_attribute(
+               name = &apos;DTEXT&apos;  value = xdyn_text_string ).
+    rc = dynp_node-&gt;append_child( dynnr_node ).
+
+* Add fields information for screen.
+    if not idyn_fldl[] is initial.
+      loop at idyn_fldl into xdyn_fldl.
+        dynprofieldsnode = xmldoc-&gt;create_element( &apos;dynprofield&apos; ).
+        setattributesfromstructure(
+                 node = dynprofieldsnode structure =  xdyn_fldl ).
+        rc = dynnr_node-&gt;append_child( dynprofieldsnode ).
+      endloop.
+    endif.
+
+* Add flow logic of screen
+    if not idyn_flow[] is initial.
+      clear xflowsource. refresh  iflowsource.
+      loop at idyn_flow into xdyn_flow.
+        xflowsource  = xdyn_flow.
+        append xflowsource to iflowsource.
+      endloop.
+
+      dynproflownode = xmldoc-&gt;create_element( &apos;dynproflowsource&apos; ).
+      flowsourcestring = buildsourcestring( sourcetable = iflowsource ).
+      rc = dynproflownode-&gt;if_ixml_node~set_value( flowsourcestring ).
+      rc = dynnr_node-&gt;append_child( dynproflownode  ).
+    endif.
+
+* Add matchcode information for screen.
+    if not idyn_mcod[] is initial.
+      loop at idyn_mcod into xdyn_mcod.
+        check not xdyn_mcod-type is initial
+          and not xdyn_mcod-content is initial.
+        dynpromatchnode = xmldoc-&gt;create_element( &apos;dynpromatchcode&apos; ).
+        setattributesfromstructure(
+                 node = dynpromatchnode structure =  xdyn_mcod ).
+        rc = dynnr_node-&gt;append_child( dynpromatchnode ).
+      endloop.
+    endif.
+
+  endloop.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_PFSTATUS" VERSION="1" LANGU="E" DESCRIPT="Get Gui Status" EXPOSURE="0" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_PFSTATUS" SCONAME="PFSTAT_NODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method GET_PFSTATUS.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data: ista type table of rsmpe_stat,
+        ifun type table of rsmpe_funt,
+        imen type table of rsmpe_men,
+        imtx type table of rsmpe_mnlt,
+        iact type table of rsmpe_act,
+        ibut type table of rsmpe_but,
+        ipfk type table of rsmpe_pfk,
+        iset type table of rsmpe_staf,
+        idoc type table of rsmpe_atrt,
+        itit type table of rsmpe_titt,
+        ibiv type table of rsmpe_buts.
+
+  data: xsta type rsmpe_stat,
+        xfun type rsmpe_funt,
+        xmen type rsmpe_men,
+        xmtx type rsmpe_mnlt,
+        xact type rsmpe_act,
+        xbut type rsmpe_but,
+        xpfk type rsmpe_pfk,
+        xset type rsmpe_staf,
+        xdoc type rsmpe_atrt,
+        xtit type rsmpe_titt,
+        xbiv type rsmpe_buts.
+
+  data sta_node type ref to if_ixml_element.
+  data fun_node type ref to if_ixml_element.
+  data men_node type ref to if_ixml_element.
+  data mtx_node type ref to if_ixml_element.
+  data act_node type ref to if_ixml_element.
+  data but_node type ref to if_ixml_element.
+  data pfk_node type ref to if_ixml_element.
+  data set_node type ref to if_ixml_element.
+  data doc_node type ref to if_ixml_element.
+  data tit_node type ref to if_ixml_element.
+  data biv_node type ref to if_ixml_element.
+
+  data _objname type trobj_name.
+  data _program type  trdir-name.
+  data rc type sy-subrc.
+
+  _objname = objname.
+  _program = objname.
+
+  call function &apos;RS_CUA_INTERNAL_FETCH&apos;
+    exporting
+      program         = _program
+      language        = sy-langu
+    tables
+      sta             = ista
+      fun             = ifun
+      men             = imen
+      mtx             = imtx
+      act             = iact
+      but             = ibut
+      pfk             = ipfk
+      set             = iset
+      doc             = idoc
+      tit             = itit
+      biv             = ibiv
+    exceptions
+      not_found       = 1
+      unknown_version = 2
+      others          = 3.
+
+  check sy-subrc = 0.
+
+* if there is a gui status or gui title present, then
+* create pfstatus node.
+  if ista[] is not initial
+     or itit[] is not initial.
+    pfstat_node = xmldoc-&gt;create_element( &apos;pfstatus&apos; ).
+  endif.
+
+
+* if ista is filled, assume there are one or more
+* gui statuses
+  if ista[] is not initial.
+
+    loop at ista into xsta.
+      sta_node = xmldoc-&gt;create_element( &apos;pfstatus_sta&apos; ).
+      setattributesfromstructure(
+               node = sta_node
+               structure =  xsta ).
+      rc = pfstat_node-&gt;append_child( sta_node ).
+    endloop.
+
+    loop at ifun into xfun.
+      fun_node = xmldoc-&gt;create_element( &apos;pfstatus_fun&apos; ).
+      setattributesfromstructure(
+               node = fun_node
+               structure =  xfun ).
+      rc = pfstat_node-&gt;append_child( fun_node ).
+    endloop.
+
+    loop at imen into xmen.
+      men_node = xmldoc-&gt;create_element( &apos;pfstatus_men&apos; ).
+      setattributesfromstructure(
+               node = men_node
+               structure =  xmen ).
+      rc = pfstat_node-&gt;append_child( men_node ).
+    endloop.
+
+    loop at imtx into xmtx.
+      mtx_node = xmldoc-&gt;create_element( &apos;pfstatus_mtx&apos; ).
+      setattributesfromstructure(
+               node = mtx_node
+               structure =  xmtx ).
+      rc = pfstat_node-&gt;append_child( mtx_node ).
+    endloop.
+
+    loop at iact into xact.
+      act_node = xmldoc-&gt;create_element( &apos;pfstatus_act&apos; ).
+      setattributesfromstructure(
+               node = act_node
+               structure =  xact ).
+      rc = pfstat_node-&gt;append_child( act_node ).
+    endloop.
+
+    loop at ibut into xbut.
+      but_node = xmldoc-&gt;create_element( &apos;pfstatus_but&apos; ).
+      setattributesfromstructure(
+               node = but_node
+               structure =  xbut ).
+      rc = pfstat_node-&gt;append_child( but_node ).
+    endloop.
+
+    loop at ipfk into xpfk.
+      pfk_node = xmldoc-&gt;create_element( &apos;pfstatus_pfk&apos; ).
+      setattributesfromstructure(
+               node = pfk_node
+               structure =  xpfk ).
+      rc = pfstat_node-&gt;append_child( pfk_node ).
+    endloop.
+
+    loop at iset into xset.
+      set_node = xmldoc-&gt;create_element( &apos;pfstatus_set&apos; ).
+      setattributesfromstructure(
+               node = set_node
+               structure =  xset ).
+      rc = pfstat_node-&gt;append_child( set_node ).
+    endloop.
+
+    loop at idoc into xdoc.
+      doc_node = xmldoc-&gt;create_element( &apos;pfstatus_doc&apos; ).
+      setattributesfromstructure(
+               node = doc_node
+               structure =  xdoc ).
+      rc = pfstat_node-&gt;append_child( doc_node ).
+    endloop.
+
+
+    loop at ibiv into xbiv.
+      biv_node = xmldoc-&gt;create_element( &apos;pfstatus_biv&apos; ).
+      setattributesfromstructure(
+               node = biv_node
+               structure =  xbiv ).
+      rc = pfstat_node-&gt;append_child( biv_node ).
+    endloop.
+
+  endif.
+
+
+* It itit is filled, assume one or more titles
+  if itit[] is not initial.
+
+    loop at itit into xtit.
+      tit_node = xmldoc-&gt;create_element( &apos;pfstatus_tit&apos; ).
+      setattributesfromstructure(
+               node = tit_node
+               structure =  xtit ).
+      rc = pfstat_node-&gt;append_child( tit_node ).
+    endloop.
+
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_SOURCE" VERSION="1" LANGU="E" DESCRIPT="Get Report Sourcecode" EXPOSURE="0" STATE="1" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_SOURCE" SCONAME="PROGSOURCE" VERSION="1" LANGU="E" DESCRIPT="ABAP Source" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSWSOURCET"/>
+  <source>method GET_SOURCE.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+  data _objName(30) type c.
+
+  _objName = me-&gt;objName.
+  read report _objName into progSource.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_TEXTPOOL" VERSION="1" LANGU="E" DESCRIPT="Get Text Pool" EXPOSURE="0" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="GET_TEXTPOOL" SCONAME="TEXTNODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method GET_TEXTPOOL.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data aText type ref to if_ixml_element.
+data textPoolTable type standard table of TEXTPOOL.
+data textPoolRow type textPool.
+data languageList type instLang.
+data aLanguage type SPRAS.
+data _objName(30) type c.
+data rc type i.
+data sTemp type string.
+data languageNode type ref to if_ixml_element.
+data firstLoop type flag.
+
+  _objName = objName.
+
+
+  CALL FUNCTION &apos;RS_TEXTLOG_GET_PARAMETERS&apos;
+        changing
+          INSTALLED_LANGUAGES = languageList.
+
+  firstLoop = abap_true.
+
+  loop at languageList into aLanguage.
+    read textpool _objName into textPoolTable language aLanguage.
+    if sy-subrc = 0.
+      if firstLoop = abap_true.
+        textNode = xmlDoc-&gt;create_element( &apos;textPool&apos; ).
+        firstLoop = abap_false.
+      endif.
+      languageNode = xmlDoc-&gt;create_Element( &apos;language&apos; ).
+      sTemp = aLanguage.
+      rc = languageNode-&gt;set_attribute( name = &apos;SPRAS&apos; value = sTemp ).
+      loop at textPoolTable into textPoolRow.
+        aText = xmlDoc-&gt;create_element( &apos;textElement&apos; ).
+        setAttributesFromStructure( node = aText structure =
+        textPoolRow ).
+        rc = languageNode-&gt;append_child( aText ).
+      endloop.
+      rc = textNode-&gt;append_child( languageNode ).
+    endif.
+  endloop.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="TRANSPORT_COPY" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="TRANSPORT_COPY" SCONAME="AUTHOR" VERSION="1" LANGU="E" DESCRIPT="SAP System, User Logon Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYUNAME"/>
+  <parameter CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="TRANSPORT_COPY" SCONAME="DEVCLASS" VERSION="1" LANGU="E" DESCRIPT="Package" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DEVCLASS"/>
+  <exception CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="TRANSPORT_COPY" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method TRANSPORT_COPY.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  CALL FUNCTION &apos;RS_CORR_INSERT&apos;
+       EXPORTING
+            AUTHOR              = author
+            GLOBAL_LOCK         = &apos;X&apos;
+            OBJECT              = objName
+            OBJECT_CLASS        = &apos;ABAP&apos;
+            DEVCLASS            = devClass
+*            KORRNUM             = CORRNUMBER_LOCAL
+            MASTER_LANGUAGE     = sy-langu
+*            PROGRAM             = PROGRAM_LOCAL
+            MODE                = &apos;INSERT&apos;
+*       IMPORTING
+*            AUTHOR              = UNAME
+*            KORRNUM             = CORRNUMBER_LOCAL
+*            DEVCLASS            = DEVCLASS_LOCAL
+       EXCEPTIONS
+            CANCELLED           = 1
+            PERMISSION_FAILURE  = 2
+            UNKNOWN_OBJECTCLASS = 3.
+
+  if sy-subrc &lt;&gt; 0.
+    case sy-subrc.
+      when 2.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;not_authorized.
+      when others.
+        raise exception type zcx_saplink
+          exporting
+            textid = zcx_saplink=&gt;system_error.
+    endcase.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK_PROGRAM" CMPNAME="UPDATE_WB_TREE" VERSION="1" LANGU="E" DESCRIPT="Update Workbench Tree" EXPOSURE="0" STATE="1" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method UPDATE_WB_TREE.
+
+  DATA: BEGIN OF pname,
+          root(3) VALUE &apos;PG_&apos;,
+          program(27),
+        END OF pname.
+
+  DATA: trdir TYPE trdir.
+
+  pname-program = me-&gt;objname.
+
+  CALL FUNCTION &apos;WB_TREE_ACTUALIZE&apos;
+    EXPORTING
+      tree_name = pname.
+
+  trdir-name    = me-&gt;objname.
+
+  CALL FUNCTION &apos;RS_TREE_OBJECT_PLACEMENT&apos;
+    EXPORTING
+      object    = trdir-name
+      program   = trdir-name
+      operation = &apos;INSERT&apos;
+      type      = &apos;CP&apos;.
+
+endmethod.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,1131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZSAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink main class" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSABSTRCT="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" WITH_UNIT_TESTS="X" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk">
+ <types CLSNAME="ZSAPLINK" CMPNAME="T_OBJECTTABLE" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="6 " SRCCOLUMN1="4 " SRCROW2="10 " SRCCOLUMN2="28 " TYPESRC_LENG="0 " TYPESRC="BEGIN OF t_objecttable,
+           classname TYPE string,
+           object TYPE ko100-object,
+           text TYPE ko100-text,
+         END OF t_objecttable
+"/>
+ <types CLSNAME="ZSAPLINK" CMPNAME="GTS_VERSION_INFO" VERSION="1" LANGU="E" DESCRIPT="Version information" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="11 " SRCCOLUMN1="4 " SRCROW2="27 " SRCCOLUMN2="33 " TYPESRC_LENG="0 " TYPESRC="BEGIN OF  gts_version_info,
+*     Change this if import or export is incompatible to older major versions or if enhancements are so important to force the new version of the plugin
+*     Please comment changes in major version in class documentation
+             zsaplink_plugin_major_version TYPE i,
+*     Change this if bugfixes are being done but the basic structure and im- and exportbehaviour don&apos;t change.  Reset to 0 when incrementing major version
+*     Please comment changes in minor version in class documentation
+             zsaplink_plugin_minor_version TYPE i,
+*     Change this if cosmetic changes are being done or if internal handling changed but no change to import- or exportbehaviour
+*    ( i.e. speeding up the plugin will fall into this ).  Reset to 0 when incrementeing major or minor version
+             zsaplink_plugin_build_version TYPE i,
+*
+             zsaplink_plugin_info1  TYPE string,  &quot; Plugin info - part 1    -  See demoimplementation how this may be used
+             zsaplink_plugin_info2  TYPE string,  &quot; Plugin info - part 2
+             zsaplink_plugin_info3  TYPE string,  &quot; Plugin info - part 3
+             zsaplink_plugin_info4  TYPE string,  &quot; Plugin info - part 4
+             zsaplink_plugin_info5  TYPE string,  &quot; Plugin info - part 5
+           END OF gts_version_info
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes
+
+  TYPES: BEGIN OF t_objecttable,
+           classname TYPE string,
+           object TYPE ko100-object,
+           text TYPE ko100-text,
+         END OF t_objecttable.</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class
+*    .-&quot;-.
+*  .&apos;=^=^=&apos;.
+* /=^=^=^=^=\
+*:^=SAPLINK=^;
+*|^ EASTER  ^|
+*:^=^EGG^=^=^:
+* \=^=^=^=^=/
+*  `.=^=^=.&apos;
+*    `~~~`
+* Wow, you made it!
+* Thanks for actually LOOKING at the source code to this, simply
+* by doing so you may keep this project alive.  It&apos;s up to all of
+* us now to make sure we can help SAP Code Exchange grow by
+* sharing code and collaborating on projects.</localMacros>
+ <localTestClasses>*----------------------------------------------------------------------*
+*       CLASS lc_Zsaplink_Test DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lc_zsaplink_test DEFINITION FOR TESTING
+  &quot; DURATION SHORT
+  &quot; RISK LEVEL HARMLESS
+  &quot;#AU Duration Medium
+  &quot;#AU Risk_Level Harmless
+.
+*?&lt;asx:abap xmlns:asx=&quot;http://www.sap.com/abapxml&quot; version=&quot;1.0&quot;&gt;
+*?&lt;asx:values&gt;
+*?&lt;TESTCLASS_OPTIONS&gt;
+*?&lt;TEST_CLASS&gt;lc_Zsaplink_Test
+*?&lt;/TEST_CLASS&gt;
+*?&lt;TEST_MEMBER&gt;f_Cut
+*?&lt;/TEST_MEMBER&gt;
+*?&lt;OBJECT_UNDER_TEST&gt;ZSAPLINK
+*?&lt;/OBJECT_UNDER_TEST&gt;
+*?&lt;OBJECT_IS_LOCAL/&gt;
+*?&lt;GENERATE_FIXTURE/&gt;
+*?&lt;GENERATE_CLASS_FIXTURE/&gt;
+*?&lt;GENERATE_INVOCATION/&gt;
+*?&lt;GENERATE_ASSERT_EQUAL/&gt;
+*?&lt;/TESTCLASS_OPTIONS&gt;
+*?&lt;/asx:values&gt;
+*?&lt;/asx:abap&gt;
+  PRIVATE SECTION.
+* ================
+    DATA:
+      f_cut TYPE REF TO zsaplink.  &quot;class under test
+
+    METHODS: convertixmldoctostring FOR TESTING.
+ENDCLASS.       &quot;lc_Zsaplink_Test
+
+
+*----------------------------------------------------------------------*
+*       CLASS lc_Zsaplink_Test IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lc_zsaplink_test IMPLEMENTATION.
+* ======================================
+
+  METHOD convertixmldoctostring.
+    CONSTANTS value TYPE string VALUE &apos;German - Umlaute: öäü ÖÄÜ ß, Special characters - slowenian: ##### #####&apos;.
+    DATA ixml     TYPE REF TO if_ixml.
+    DATA ixmldoc  TYPE REF TO if_ixml_document.
+    DATA rootnode TYPE REF TO if_ixml_element.
+    DATA xmlstring TYPE string.
+    DATA value_from_xml TYPE string.
+
+    &quot; Instanciate ixml
+    ixml = cl_ixml=&gt;create( ).
+    ixmldoc = ixml-&gt;create_document( ).
+    &quot; Add content
+    rootnode = ixmldoc-&gt;create_element( &apos;test&apos; ).
+    rootnode-&gt;set_value( value ).
+    ixmldoc-&gt;append_child( rootNode ).
+
+    &quot; Convert to String
+    xmlstring = zsaplink=&gt;convertixmldoctostring( ixmldoc ).
+
+    &quot; Convert back
+    FREE: ixmldoc, rootnode.
+    ixmldoc = zsaplink=&gt;convertstringtoixmldoc( xmlstring ).
+
+    rootnode = ixmldoc-&gt;get_root_element( ).
+    value_from_xml = rootnode-&gt;get_value( ).
+    cl_aunit_assert=&gt;assert_equals(
+      EXPORTING
+        exp                  = value          &quot; Data Object with Expected Type
+        act                  = value_from_xml &quot; Data Object with Current Value
+        msg                  = &apos;XML Input and Output not equal&apos;    &quot; Message in Case of Error
+    ).
+  ENDMETHOD.       &quot;convertixmldoctostring
+
+
+
+
+ENDCLASS.       &quot;lc_Zsaplink_Test</localTestClasses>
+ <classDocumentation OBJECT="ZSAPLINK">
+  <language SPRAS="E">
+   <textLine TDFORMAT="U1" TDLINE="&amp;FUNCTIONALITY&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;RELATIONS&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;EXAMPLE&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;HINTS&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;FURTHER_SOURCES_OF_INF&amp;"/>
+   <textLine TDFORMAT="AS" TDLINE="Version 1.0.0:  Added functionality to pass version information"/>
+  </language>
+ </classDocumentation>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="IXML" VERSION="1" LANGU="E" DESCRIPT="IF_IXML" EXPOSURE="1" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_IXML" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="NUGGET_LEVEL" VERSION="1" LANGU="E" DESCRIPT="Nugget create sequence" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTRDONLY="X" ATTVALUE="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="INT4" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="OBJECTTABLE" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="4" SRCROW1="15 " SRCCOLUMN1="4 " SRCROW2="15 " SRCCOLUMN2="42 " TYPESRC_LENG="40 " TYPESRC="objecttable TYPE TABLE OF t_objecttable
+"/>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="OBJNAME" VERSION="1" LANGU="E" DESCRIPT="IF_IXML" EXPOSURE="1" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="STREAMFACTORY" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_STREAM_FACTORY" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_IXML_STREAM_FACTORY" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="XMLDATA" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_STREAM_FACTORY" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZSAPLINK" CMPNAME="XMLDOC" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" EXPOSURE="1" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZSAPLINK" CMPNAME="BUILDSOURCESTRING" VERSION="1" LANGU="E" EXPOSURE="1" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="BUILDSOURCESTRING" SCONAME="SOURCETABLE" VERSION="1" LANGU="E" DESCRIPT="Table of Strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSWSOURCET" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="BUILDSOURCESTRING" SCONAME="PAGETABLE" VERSION="1" LANGU="E" DESCRIPT="O2: Oxygen Page Table" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="O2PAGELINE_TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="BUILDSOURCESTRING" SCONAME="SOURCESTRING" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method BUILDSOURCESTRING.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data sTemp type string.
+data pageLine type O2PAGELINE.
+
+  if sourceTable is not initial.
+    loop at sourceTable into sTemp.
+      concatenate sourceString sTemp CL_ABAP_CHAR_UTILITIES=&gt;NEWLINE
+        into sourceString.
+    endloop.
+  elseif pageTable is not initial.
+    loop at pageTable into pageLine.
+      concatenate sourceString pageLine-line
+        CL_ABAP_CHAR_UTILITIES=&gt;NEWLINE
+        into sourceString.
+    endloop.
+  endif.
+
+* remove extra newline characters for conversion comparison consistency
+  shift sourceString left deleting leading
+    CL_ABAP_CHAR_UTILITIES=&gt;NEWLINE.
+  shift sourceString right deleting trailing
+    CL_ABAP_CHAR_UTILITIES=&gt;NEWLINE.
+  shift sourceString left deleting leading space.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="BUILDTABLEFROMSTRING" VERSION="1" LANGU="E" DESCRIPT="Build a table" EXPOSURE="1" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="BUILDTABLEFROMSTRING" SCONAME="SOURCE" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="BUILDTABLEFROMSTRING" SCONAME="SOURCETABLE" VERSION="1" LANGU="E" DESCRIPT="Table of Strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>method BUILDTABLEFROMSTRING.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  split source at CL_ABAP_CHAR_UTILITIES=&gt;NEWLINE
+    into table sourceTable.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="1" LANGU="E" DESCRIPT="Check if object exists" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" SCONAME="EXISTS" VERSION="1" LANGU="E" DESCRIPT="object exists flag" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="FLAG"/>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" SCONAME="I_IXMLDOCUMENT" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" SCONAME="E_OBJTYPE" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" SCONAME="E_OBJNAME" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" SCONAME="E_PLUGINEXISTS" VERSION="1" LANGU="E" DESCRIPT="General Flag" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="FLAG"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" SCONAME="E_OBJECTEXISTS" VERSION="1" LANGU="E" DESCRIPT="General Flag" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="FLAG"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CHECKOBJECT" SCONAME="E_TARGETOBJECT" VERSION="1" LANGU="E" DESCRIPT="SAPlink main class" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="ZSAPLINK"/>
+  <source>METHOD checkobject.
+  DATA l_objtable LIKE objecttable.
+  DATA l_objline  LIKE LINE OF objecttable.
+
+  CLEAR: e_objtype, e_objname, e_pluginexists, e_objectexists.
+  TRY.
+      CALL METHOD zsaplink=&gt;getobjectinfofromixmldoc
+        EXPORTING
+          ixmldocument = i_ixmldocument
+        IMPORTING
+          objtypename  = e_objtype
+          objname      = e_objname.
+    CATCH zcx_saplink.
+  ENDTRY.
+
+  CALL METHOD zsaplink=&gt;getplugins( CHANGING objecttable = l_objtable ).
+
+  READ TABLE l_objtable INTO l_objline WITH KEY object = e_objtype.
+
+  IF sy-subrc = 0.
+    e_pluginexists = &apos;X&apos;.
+    CREATE OBJECT e_targetobject
+      TYPE
+        (l_objline-classname)
+      EXPORTING
+        name                  = e_objname.
+
+    e_objectexists = e_targetobject-&gt;checkexists( ).
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="E" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CONSTRUCTOR" SCONAME="NAME" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>method CONSTRUCTOR.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+*  data meTypeDescr type ref to CL_ABAP_TYPEDESCR.
+*  clear className.
+*
+*  objName = name.
+*  meTypeDescr = CL_ABAP_TYPEDESCR=&gt;DESCRIBE_BY_OBJECT_REF( me ).
+*  className = meTypeDescr-&gt;get_relative_name( ).
+
+  objName = name.
+  translate objName to upper case.
+
+  ixml = cl_ixml=&gt;create( ).
+  xmlDoc = ixml-&gt;create_document( ).
+  streamFactory = ixml-&gt;CREATE_STREAM_FACTORY( ).
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CONVERTIXMLDOCTOSTRING" VERSION="1" LANGU="E" DESCRIPT="Converts any IF_IXML_DOCUMENT to a String" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CONVERTIXMLDOCTOSTRING" SCONAME="IXMLDOCUMENT" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CONVERTIXMLDOCTOSTRING" SCONAME="XMLSTRING" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method CONVERTIXMLDOCTOSTRING.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data _ixml type ref to if_ixml.
+  data _encoding   type ref to if_ixml_encoding.
+  data _streamFactory type ref to IF_IXML_STREAM_FACTORY.
+  data _outputStream type ref to IF_IXML_OSTREAM.
+  data _renderer type ref to IF_IXML_RENDERER.
+  data _tempString  type string.
+  data _tempStringx type xstring.
+  data _printXMLDoc type ref to cl_xml_document.
+  data _rc type sysubrc.
+
+  _ixml = cl_ixml=&gt;create( ).
+  _encoding = _ixml-&gt;create_encoding(
+      byte_order    = if_ixml_encoding=&gt;co_none
+      character_set = &apos;utf-8&apos; ).
+  _streamFactory = _ixml-&gt;CREATE_STREAM_FACTORY( ).
+  _outputStream = _streamFactory-&gt;create_ostream_xstring( _tempStringx ).
+  _outputstream-&gt;set_encoding( encoding = _encoding ).
+  _renderer = _ixml-&gt;CREATE_RENDERER(
+                DOCUMENT = ixmlDocument
+                OSTREAM  = _outputStream
+              ).
+  _renderer-&gt;SET_NORMALIZING( ).
+  _rc = _renderer-&gt;render( ).
+  create object _printXMLDoc.
+  _rc = _printXMLDoc-&gt;parse_string( _tempString ).
+
+  CALL FUNCTION &apos;ECATT_CONV_XSTRING_TO_STRING&apos;
+    EXPORTING
+      im_xstring  = _tempstringx
+      im_encoding = &apos;UTF-8&apos;
+    IMPORTING
+      ex_string   = _tempstring.
+
+  xmlString = _tempString.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CONVERTSTRINGTOIXMLDOC" VERSION="1" LANGU="E" DESCRIPT="Converts any String into an IF_IXML_DOCUMENT" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CONVERTSTRINGTOIXMLDOC" SCONAME="XMLSTRING" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CONVERTSTRINGTOIXMLDOC" SCONAME="IXMLDOCUMENT" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT"/>
+  <source>method CONVERTSTRINGTOIXMLDOC.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data ixml type ref to if_ixml.
+  data streamFactory type ref to IF_IXML_STREAM_FACTORY.
+  data iStream type ref to if_ixml_istream.
+  data ixmlParser type ref to if_ixml_parser.
+  data xmlDoc type ref to if_ixml_document.
+
+  &quot; Make sure to convert Windows Line Break to Unix as
+  &quot; this linebreak is used to get a correct import
+  REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=&gt;cr_lf
+    IN xmlString WITH cl_abap_char_utilities=&gt;newline.
+
+  ixml = cl_ixml=&gt;create( ).
+  xmlDoc = ixml-&gt;create_document( ).
+  streamFactory = ixml-&gt;CREATE_STREAM_FACTORY( ).
+  iStream = streamFactory-&gt;CREATE_ISTREAM_STRING( xmlString ).
+  iXMLParser = iXML-&gt;create_parser(  stream_factory = streamFactory
+                                     istream        = iStream
+                                     document       = xmlDoc ).
+  iXMLParser-&gt;parse( ).
+  ixmlDocument = xmlDoc.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="1" LANGU="E" DESCRIPT="Creates an IF_IXML_DOCUMENT from the OBJNAME Attribute" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" SCONAME="IXMLDOCUMENT" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT"/>
+  <exception CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATENODEFROMOTR" VERSION="1" LANGU="E" DESCRIPT="Creates an XML node from an OTR object" EXPOSURE="1" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATENODEFROMOTR" SCONAME="OTRGUID" VERSION="1" LANGU="E" DESCRIPT="Key for Logical Object in the OTR" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOTR_CONC"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATENODEFROMOTR" SCONAME="NODE" VERSION="1" LANGU="E" DESCRIPT="xml Element" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <source>method CREATENODEFROMOTR.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  DATA rootnode TYPE REF TO if_ixml_element.
+  DATA txtnode TYPE REF TO if_ixml_element.
+  DATA rc TYPE sysubrc.
+
+  DATA sotrheader TYPE sotr_head.
+  DATA sotrtextline TYPE sotr_text.
+  DATA sotrtexttable TYPE TABLE OF sotr_text.
+
+  DATA _ixml TYPE REF TO if_ixml.
+  DATA _xmldoc TYPE REF TO if_ixml_document.
+
+  CALL FUNCTION &apos;SOTR_GET_CONCEPT&apos;
+    EXPORTING
+      concept        = otrguid
+    IMPORTING
+      header         = sotrheader
+    TABLES
+      entries        = sotrtexttable
+    EXCEPTIONS
+      no_entry_found = 1
+      OTHERS         = 2.
+  IF sy-subrc &lt;&gt; 0.
+    EXIT.
+  ENDIF.
+
+  sotrheader-paket = &apos;$TMP&apos;. &quot;change devclass to $TMP for exports
+
+* Create xml doc
+*  _ixml = cl_ixml=&gt;create( ).
+*  _xmldoc = _ixml-&gt;create_document( ).
+*  streamfactory = _ixml-&gt;create_stream_factory( ).
+
+* Create parent node
+  rootnode = xmldoc-&gt;create_element( zsaplink_oo=&gt;c_xml_key_sotr ). &quot;OTR object type
+  CLEAR sotrheader-concept.                                 &quot;ewH:33
+  setattributesfromstructure( node = rootnode structure = sotrheader ).
+
+* Create nodes for texts
+  LOOP AT sotrtexttable INTO sotrtextline.
+    txtnode = xmldoc-&gt;create_element( zsaplink_oo=&gt;c_xml_key_sotrtext ).
+    CLEAR: sotrtextline-concept, sotrtextline-object.       &quot;ewH:33
+    setattributesfromstructure(
+      node = txtnode structure = sotrtextline ).
+    rc = rootnode-&gt;append_child( txtnode ).
+  ENDLOOP.
+
+  node = rootnode.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="1" LANGU="E" DESCRIPT="Creates Object on System from IXMLDocument passed in" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" SCONAME="IXMLDOCUMENT" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" SCONAME="DEVCLASS" VERSION="1" LANGU="E" DESCRIPT="Development class/package" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DEVCLASS" PARVALUE="&apos;$TMP&apos;"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" SCONAME="OVERWRITE" VERSION="1" LANGU="E" DESCRIPT="Overwrite original objects" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FLAG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" SCONAME="NAME" VERSION="1" LANGU="E" DESCRIPT="Installed object name" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <exception CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOTRFROMNODE" VERSION="1" LANGU="E" DESCRIPT="Get an OTR object from XML node" EXPOSURE="1" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOTRFROMNODE" SCONAME="NODE" VERSION="1" LANGU="E" DESCRIPT="xml Element" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOTRFROMNODE" SCONAME="DEVCLASS" VERSION="1" LANGU="E" DESCRIPT="Development class/package" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DEVCLASS" PARVALUE="&apos;$TMP&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEOTRFROMNODE" SCONAME="CONCEPT" VERSION="1" LANGU="E" DESCRIPT="Key for Logical Object in the OTR" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SOTR_TEXT-CONCEPT"/>
+  <exception CLSNAME="ZSAPLINK" CMPNAME="CREATEOTRFROMNODE" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method CREATEOTRFROMNODE.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  DATA txtnode TYPE REF TO if_ixml_element.
+  DATA filter TYPE REF TO if_ixml_node_filter.
+  DATA iterator TYPE REF TO if_ixml_node_iterator.
+
+  DATA sotrheader TYPE sotr_head.
+  DATA sotrtextline TYPE sotr_text.
+  DATA sotrtexttable TYPE TABLE OF sotr_text.
+  DATA sotrpaket TYPE sotr_pack.
+
+* get OTR header info
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node      = node
+    CHANGING
+      structure = sotrheader.
+
+* get OTR text info
+  filter = node-&gt;create_filter_name( zsaplink_oo=&gt;c_xml_key_sotrText ).
+  iterator = node-&gt;create_iterator_filtered( filter ).
+  txtnode ?= iterator-&gt;get_next( ).
+
+  WHILE txtnode IS NOT INITIAL.
+    CLEAR sotrtextline.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node      = txtnode
+      CHANGING
+        structure = sotrtextline.
+    CLEAR: sotrtextline-concept, sotrtextline-object.       &quot;ewH:33
+    APPEND sotrtextline TO sotrtexttable.
+    txtnode ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+
+* ewH:issue 33--&gt; in 6.40 and above, you cannot pass a default concept
+*  (otr) guid, so we will always create new
+*  CALL FUNCTION &apos;SOTR_GET_CONCEPT&apos;
+*    EXPORTING
+*      concept              = sotrHeader-concept
+**   IMPORTING
+**     HEADER               =
+**   TABLES
+**     ENTRIES              =
+*   EXCEPTIONS
+*     NO_ENTRY_FOUND       = 1
+*     OTHERS               = 2
+*            .
+*  IF sy-subrc &lt;&gt; 1.
+**   delete OTR if exists already
+*    CALL FUNCTION &apos;SOTR_DELETE_CONCEPT&apos;
+*      EXPORTING
+*        concept                     = sotrHeader-concept
+*     EXCEPTIONS
+*       NO_AUTHORIZATION            = 1
+*       NO_ENTRY_FOUND              = 2. &quot;who cares
+**       CONCEPT_USED                = 3
+**       NO_MASTER_LANGUAGE          = 4
+**       NO_SOURCE_SYSTEM            = 5
+**       NO_TADIR_ENTRY              = 6
+**       ERROR_IN_CORRECTION         = 7
+**       USER_CANCELLED              = 8
+**       OTHERS                      = 9
+**              .
+*    if sy-subrc = 1.
+*      raise exception type zcx_saplink
+*        exporting textid = zcx_saplink=&gt;not_authorized.
+*    endif.
+*  ENDIF.
+
+
+  DATA objecttable TYPE sotr_objects.
+  DATA objecttype TYPE LINE OF sotr_objects.
+* Retrieve object type of OTR
+  CALL FUNCTION &apos;SOTR_OBJECT_GET_OBJECTS&apos;
+    EXPORTING
+      object_vector    = sotrheader-objid_vec
+    IMPORTING
+      OBJECTS          = objecttable
+    EXCEPTIONS
+      object_not_found = 1
+      OTHERS           = 2.
+
+  READ TABLE objecttable INTO objecttype INDEX 1.
+
+* create OTR
+  sotrpaket-paket = devclass.
+  CALL FUNCTION &apos;SOTR_CREATE_CONCEPT&apos;
+    EXPORTING
+      paket                               = sotrpaket
+      crea_lan                            = sotrheader-crea_lan
+      alias_name                          = sotrheader-alias_name
+*      CATEGORY                            =
+      object                              = objecttype
+      entries                             = sotrtexttable
+*     FLAG_CORRECTION_ENTRY               =
+*     IN_UPDATE_TASK                      =
+*      CONCEPT_DEFAULT                     = sotrHeader-concept &quot;ewH:33
+    IMPORTING
+      concept                             = concept         &quot;ewH:33
+    EXCEPTIONS
+      package_missing                     = 1
+      crea_lan_missing                    = 2
+      object_missing                      = 3
+      paket_does_not_exist                = 4
+      alias_already_exist                 = 5
+      object_type_not_found               = 6
+      langu_missing                       = 7
+      identical_context_not_allowed       = 8
+      text_too_long                       = 9
+      error_in_update                     = 10
+      no_master_langu                     = 11
+      error_in_concept_id                 = 12
+      alias_not_allowed                   = 13
+      tadir_entry_creation_failed         = 14
+      internal_error                      = 15
+      error_in_correction                 = 16
+      user_cancelled                      = 17
+      no_entry_found                      = 18
+      OTHERS                              = 19
+            .
+  IF sy-subrc &lt;&gt; 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*           WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATESTRINGFROMOBJECT" VERSION="1" LANGU="E" DESCRIPT="Creates a String from the OBJNAME Attribute" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATESTRINGFROMOBJECT" SCONAME="STRING" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <exception CLSNAME="ZSAPLINK" CMPNAME="CREATESTRINGFROMOBJECT" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method CREATESTRINGFROMOBJECT.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEXMLSTRING" VERSION="1" LANGU="E" DESCRIPT="converts data stored in iXML to a string" EXPOSURE="1" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDFINAL="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="CREATEXMLSTRING" SCONAME="XML" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method CREATEXMLSTRING.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data streamFactory type ref to IF_IXML_STREAM_FACTORY.
+data outputStream type ref to IF_IXML_OSTREAM.
+data renderer type ref to IF_IXML_RENDERER.
+data tempString type string.
+data printXMLDoc type ref to cl_xml_document.
+data rc type sysubrc.
+
+  streamFactory = ixml-&gt;CREATE_STREAM_FACTORY( ).
+  outputStream = streamFactory-&gt;CREATE_OSTREAM_CSTRING( tempString ).
+  renderer = ixml-&gt;CREATE_RENDERER(
+    DOCUMENT = xmlDoc OSTREAM = outputStream ).
+  rc = renderer-&gt;render( ).
+  create object printXMLDoc.
+  rc = printXMLDoc-&gt;parse_string( tempString ).
+  xml = tempString.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="1" LANGU="E" DESCRIPT="Delete object" EXPOSURE="1" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <exception CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTINFOFROMIXMLDOC" VERSION="1" LANGU="E" DESCRIPT="Gets the info of the Object that the XMLDOCUMENT describes" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTINFOFROMIXMLDOC" SCONAME="IXMLDOCUMENT" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_DOCUMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_DOCUMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTINFOFROMIXMLDOC" SCONAME="OBJTYPENAME" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTINFOFROMIXMLDOC" SCONAME="OBJNAME" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <exception CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTINFOFROMIXMLDOC" SCONAME="ZCX_SAPLINK" VERSION="1" LANGU="E" DESCRIPT="SAPlink exception class" MTDTYPE="0" EDITORDER="1 "/>
+  <source>METHOD getobjectinfofromixmldoc.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  DATA rootnode TYPE REF TO if_ixml_node.
+  DATA rootattr TYPE REF TO if_ixml_named_node_map.
+  DATA attrnode TYPE REF TO if_ixml_node.
+  DATA nodename TYPE string.
+
+  rootnode ?= ixmldocument-&gt;get_root_element( ).
+* Check whether got a valid ixmldocument
+  IF rootnode IS NOT BOUND.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING textid = zcx_saplink=&gt;incorrect_file_format.
+  ENDIF.
+
+* get object type
+  objtypename = rootnode-&gt;get_name( ).
+  TRANSLATE objtypename TO UPPER CASE.
+
+* get object name
+  rootattr = rootnode-&gt;get_attributes( ).
+  attrnode = rootattr-&gt;get_item( 0 ).
+  objname = attrnode-&gt;get_value( ).
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="1" LANGU="E" DESCRIPT="Get object type of plugin" EXPOSURE="1" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" SCONAME="OBJECTTYPE" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETPLUGINS" VERSION="1" LANGU="E" DESCRIPT="Get installed saplink plugins" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETPLUGINS" SCONAME="OBJECTTABLE" VERSION="1" LANGU="E" DESCRIPT="Installed Plugin Table" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE"/>
+  <source>method GETPLUGINS.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  DATA classlist TYPE seo_inheritances.
+  DATA classline TYPE vseoextend.
+  DATA classobject TYPE REF TO zsaplink.
+  DATA objectline TYPE t_objecttable.
+  DATA tabletypeline TYPE ko105.
+  DATA tabletypesin TYPE TABLE OF ko105.
+  DATA tabletypesout TYPE tr_object_texts.
+  DATA tabletypeoutline TYPE ko100.
+  DATA clsname TYPE string.
+  DATA objtype TYPE trobjtype.
+
+  REFRESH objecttable.
+
+  SELECT * FROM vseoextend INTO TABLE classlist
+    WHERE refclsname like &apos;ZSAPLINK%&apos;
+    AND version = &apos;1&apos;.
+
+  LOOP AT classlist INTO classline.
+    clsname = classline-clsname.
+    TRY.
+        CREATE OBJECT classobject
+          TYPE
+            (clsname)
+          EXPORTING
+            name      = &apos;foo&apos;.
+        objtype = classobject-&gt;getobjecttype( ).
+      CATCH cx_root.
+        CONTINUE.
+    ENDTRY.
+    CLEAR tabletypeline.
+    REFRESH tabletypesin.
+
+    tabletypeline-object = objtype.
+    APPEND tabletypeline TO tabletypesin.
+
+    CALL FUNCTION &apos;TRINT_OBJECT_TABLE&apos;
+      TABLES
+        tt_types_in  = tabletypesin
+        tt_types_out = tabletypesout.
+
+    LOOP AT tabletypesout INTO tabletypeoutline.
+      objectline-classname = clsname.
+      MOVE-CORRESPONDING tabletypeoutline TO objectline.
+      APPEND objectline TO objecttable.
+    ENDLOOP.
+  ENDLOOP.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETSTRUCTUREFROMATTRIBUTES" VERSION="1" LANGU="E" DESCRIPT="Updates a structure with node attributes" EXPOSURE="1" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETSTRUCTUREFROMATTRIBUTES" SCONAME="NODE" VERSION="1" LANGU="E" DESCRIPT="IF_IXML_ELEMENT" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETSTRUCTUREFROMATTRIBUTES" SCONAME="PRESERVEVERSION" VERSION="1" LANGU="E" DESCRIPT="Preserve version field" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FLAG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GETSTRUCTUREFROMATTRIBUTES" SCONAME="STRUCTURE" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="DATA"/>
+  <source>method GETSTRUCTUREFROMATTRIBUTES.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data attributeList type ref to IF_IXML_NAMED_NODE_MAP.
+data nodeIterator type ref to IF_IXML_NODE_ITERATOR.
+data attributeNode type ref to if_ixml_node.
+data value type string.
+data name type string.
+field-symbols &lt;value&gt; type any.
+
+  clear structure.
+  attributeList = node-&gt;GET_ATTRIBUTES( ).
+  nodeIterator = attributeList-&gt;create_iterator( ).
+  attributeNode = nodeIterator-&gt;get_next( ).
+  while attributeNode is not initial.
+    name = attributeNode-&gt;get_name( ).
+    if name = &apos;VERSION&apos; and preserveVersion is initial. &quot;ewh:issue 45
+*    if name = &apos;VERSION&apos;.
+      value = &apos;0&apos;.
+    else.
+      value = attributeNode-&gt;get_value( ).
+    endif.
+    assign component name of structure structure to &lt;value&gt;.
+    if sy-subrc = 0.
+      &lt;value&gt; = value.
+    endif.
+    attributeNode = nodeIterator-&gt;get_next( ).
+  endwhile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*    .-&quot;-.
+*  .&apos;=^=^=&apos;.
+* /=^=^=^=^=\
+*:^=SAPLINK=^;
+*|^ EASTER  ^|
+*:^=^EGG^=^=^:
+* \=^=^=^=^=/
+*  `.=^=^=.&apos;
+*    `~~~`
+* Don&apos;t like the way we did something?
+* Help us fix it!  Tell us what you think!
+* http://saplink.org
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GET_VERSION_INFO" VERSION="1" LANGU="E" DESCRIPT="Get version info for this class - redefinable by child class" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GET_VERSION_INFO" SCONAME="RS_VERSION_INFO" VERSION="1" LANGU="E" DESCRIPT="Version informatino" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="GTS_VERSION_INFO"/>
+  <source>METHOD GET_VERSION_INFO.
+
+*--------------------------------------------------------------------*
+* Please use the following 6 lines of code when versioning a
+* SAPLINK-Plugin.  See documentation of Type GTS_VERSION_INFO
+* what should be put here
+*--------------------------------------------------------------------*
+  rs_version_info-zsaplink_plugin_major_version = 0.  &quot; Default for all child classes, that have not been updated to return a version info.
+  rs_version_info-zsaplink_plugin_minor_version = 0.  &quot; Default for all child classes, that have not been updated to return a version info.
+  rs_version_info-zsaplink_plugin_build_version = 0.  &quot; Default for all child classes, that have not been updated to return a version info.
+
+  rs_version_info-zsaplink_plugin_info1         = &apos;&apos;. &quot; Sufficient to set this the first time a child class is being updated
+  rs_version_info-zsaplink_plugin_info2         = &apos;&apos;. &quot; Sufficient to set this the first time a child class is being updated
+  rs_version_info-zsaplink_plugin_info3         = &apos;&apos;. &quot; Sufficient to set this the first time a child class is being updated
+  rs_version_info-zsaplink_plugin_info4         = &apos;&apos;. &quot; Sufficient to set this the first time a child class is being updated
+  rs_version_info-zsaplink_plugin_info5         = &apos;&apos;. &quot; Sufficient to set this the first time a child class is being updated
+
+* Hint - see redefinition of this class in ZSAPLINK_CLASS how information may be set
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GET_VERSION_INFO_STATIC" VERSION="1" LANGU="E" DESCRIPT="Get version info for this class" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GET_VERSION_INFO_STATIC" SCONAME="IV_CLASSNAME" VERSION="1" LANGU="E" DESCRIPT="Name of class" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CLIKE"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="GET_VERSION_INFO_STATIC" SCONAME="RS_VERSION_INFO" VERSION="1" LANGU="E" DESCRIPT="Version informatino" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="GTS_VERSION_INFO"/>
+  <source>METHOD get_version_info_static.
+
+  DATA: lo_zsaplink TYPE REF TO zsaplink.
+
+  TRY.
+      CREATE OBJECT lo_zsaplink TYPE (iv_classname)
+         EXPORTING
+           name = &apos;Not needed for versio info&apos;.
+      rs_version_info = lo_zsaplink-&gt;get_version_info( ).
+    CATCH cx_root.  &quot; Don&apos;t pass version info for unknown or abstract classes
+  ENDTRY.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="SETATTRIBUTESFROMSTRUCTURE" VERSION="1" LANGU="E" DESCRIPT="Creates an XML Attribute list from any structure" EXPOSURE="1" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="SETATTRIBUTESFROMSTRUCTURE" SCONAME="NODE" VERSION="1" LANGU="E" DESCRIPT="xml Element" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_IXML_ELEMENT"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="SETATTRIBUTESFROMSTRUCTURE" SCONAME="STRUCTURE" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATA"/>
+  <source>method SETATTRIBUTESFROMSTRUCTURE.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+  data int type i.
+  int = int.
+  data structDescr type ref to cl_abap_structDescr.
+  data aComponent type abap_compdescr.
+  field-symbols &lt;fieldValue&gt; type any.
+  data rc type sysubrc.
+  data sName type string.
+  data sValue type string.
+
+  structDescr ?= cl_abap_structDescr=&gt;describe_by_data( structure ).
+  loop at structDescr-&gt;components into aComponent.
+    assign component aComponent-name of structure
+      structure to &lt;fieldValue&gt;.
+    if sy-subrc = 0.
+      sName = aComponent-name.
+*      sValue = &lt;fieldValue&gt;.
+*     for certain attributes, set to a standard for exporting
+      case sName.
+*        when &apos;VERSION&apos;. &quot;version should always export as inactive
+*          sValue = &apos;0&apos;. &quot;commented by ewH: issue 45
+        when &apos;DEVCLASS&apos;. &quot;development class should always be $TMP
+          sValue = &apos;$TMP&apos;.
+        &quot; Developer, Date and Time Metadata has to be removed to
+        &quot; not clutter diffs
+        &quot;
+        &quot; Meta Attributes for DDIC Types
+        when &apos;AS4USER&apos;.
+          clear sValue.
+        when &apos;AS4DATE&apos;.
+          clear sValue.
+        when &apos;AS4TIME&apos;.
+          clear sValue.
+        &quot; Meta Attributes for PROG
+        when &apos;CNAM&apos;.
+          clear sValue.
+        when &apos;CDAT&apos;.
+          clear sValue.
+        when &apos;UNAM&apos;.
+          clear sValue.
+        when &apos;UDAT&apos;.
+          clear sValue.
+        when &apos;VERN&apos;.
+          clear sValue.
+        when &apos;SDATE&apos;.
+          clear sValue.
+        when &apos;STIME&apos;.
+          clear sValue.
+        when &apos;IDATE&apos;.
+          clear sValue.
+        when &apos;ITIME&apos;.
+          clear sValue.
+        &quot; Meta Attributes for CLAS
+        when &apos;AUTHOR&apos;.
+          clear sValue.
+        when &apos;CREATEDON&apos;.
+          clear sValue.
+        when &apos;CHANGEDBY&apos;.
+          clear sValue.
+        when &apos;CHANGEDON&apos;.
+          clear sValue.
+        when &apos;CHANGETIME&apos;.
+          clear sValue.
+        when &apos;CHGDANYON&apos;.
+          clear sValue.
+        when &apos;R3RELEASE&apos;.
+          clear sValue.
+        when &apos;UUID&apos;.
+          clear sValue.
+        &quot; SOTR
+        when &apos;CREA_NAME&apos;.
+          clear sValue.
+        when &apos;CHAN_NAME&apos;.
+          clear sValue.
+        when &apos;CREA_TSTUT&apos;.
+          clear sValue.
+        when &apos;CHAN_TSTUT&apos;.
+          clear sValue.
+        &quot; MSAG
+        when &apos;LASTUSER&apos;.
+          clear sValue.
+        when &apos;LDATE&apos;.
+          clear sValue.
+        when &apos;LTIME&apos;.
+          clear sValue.
+        when &apos;DGEN&apos;.
+          clear sValue.
+        when &apos;TGEN&apos;.
+          clear sValue.
+        when &apos;GENDATE&apos;.
+          clear sValue.
+        when &apos;GENTIME&apos;.
+          clear sValue.
+        &quot; BSP
+        when &apos;IMPLCLASS&apos;.
+          clear sValue.
+        when others.
+          sValue = &lt;fieldValue&gt;.
+      endcase.
+      if sValue is not initial.
+        rc = Node-&gt;set_attribute( name = sName value = sValue ).
+      endif.
+    else.
+* WHAT?&gt;!??
+    endif.
+  endloop.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="UPLOADXML" VERSION="1" LANGU="E" DESCRIPT="Upload XML" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDFINAL="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="UPLOADXML" SCONAME="XMLDATA" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>method UPLOADXML.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+data iStream type ref to if_ixml_istream.
+data ixmlParser type ref to if_ixml_parser.
+
+  iStream = streamFactory-&gt;CREATE_ISTREAM_STRING( xmlData ).
+  iXMLParser = iXML-&gt;create_parser(  stream_factory = streamFactory
+                                     istream        = iStream
+                                     document       = XMLdoc ).
+  iXMLParser-&gt;parse( ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="VALUEHELP" VERSION="1" LANGU="E" DESCRIPT="Get Value help..default is DDIC types...over Wright for BI" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="VALUEHELP" SCONAME="I_OBJTYPE" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZSAPLINK" CMPNAME="VALUEHELP" SCONAME="E_OBJNAME" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method VALUEHELP.
+*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+DATA l_object_type type  euobj-id.
+data objname(40) type c.
+
+l_object_type = i_objType.
+
+
+  CALL FUNCTION &apos;REPOSITORY_INFO_SYSTEM_F4&apos;
+     EXPORTING
+       object_type           = l_object_type
+       object_name           = objname
+       suppress_selection    = &apos;X&apos;
+       use_alv_grid          = &apos;&apos;
+       without_personal_list = &apos;&apos;
+     IMPORTING
+       object_name_selected  = objname
+     EXCEPTIONS
+       cancel                = 1.
+
+  e_objname = objname.
+endmethod.</source>
+ </method>
+</CLAS>

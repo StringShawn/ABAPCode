@@ -1,0 +1,47 @@
+interface ZIF_ELEC_RECEIPT
+  public .
+
+
+  data GO_MESSAGE type ref to ZCL_TR2_CHECK_COMMON .
+  constants MANUAL_UPLOAD type ZTR2_SOURCE value '1' ##NO_TEXT.
+  constants AUTO_UPLOAD type ZTR2_SOURCE value '2' ##NO_TEXT.
+  constants FILE_TYPE_MYRZ type ZTR2_DZHD_FILE_TYPE value '01' ##NO_TEXT.
+  constants FILE_TYPE_SFK type ZTR2_DZHD_FILE_TYPE value '02' ##NO_TEXT.
+  constants FILE_TYPE_DZHD type ZTR2_DZHD_FILE_TYPE value '03' ##NO_TEXT.
+
+  methods CHECK_SINGLE_FILE_NAME
+    importing
+      !IV_FILE_NAME type STRING
+    exporting
+      !EV_PURE_FILE_NAME type STRING
+      !EV_EXTENSION type SDBAD-FUNCT .
+  methods RUN_CORE
+    importing
+      !IT_FILE type ZTR2S_DZHD_FILE_TAB
+    returning
+      value(ET_OUT) type ZLTTR2_ZTRE03103_ALV_OUT .
+  methods UPLOAD_FILE
+    importing
+      !IV_FILE type ZTR2S_DZHD_FILE
+    exporting
+      !EV_FILE_LENGTH type NUM12
+      !ET_XTAB type ZTR2_TBL1024 .
+  methods SEND_2_OPENTEXT
+    importing
+      !IV_DOC_TYPE type TOADD-DOC_TYPE
+      !IV_FILE_LENGTH type NUM12
+      !IV_FILE_NAME type STRING
+      !IT_FILE type ZTR2_TBL1024 .
+  methods XML_TRANSFORMATION
+    importing
+      !IT_XTAB type ZTR2_TBL1024
+      !IV_FILE_LENGTH type I .
+  methods CHECK_AND_SAVE_XML
+    importing
+      !IV_FILE_NAME type STRING optional .
+  methods RUN_XML
+    importing
+      !IT_XTAB type ZTR2_TBL1024
+      !IV_FILE_LENGTH type I
+      !IV_FILE_NAME type STRING optional .
+endinterface.

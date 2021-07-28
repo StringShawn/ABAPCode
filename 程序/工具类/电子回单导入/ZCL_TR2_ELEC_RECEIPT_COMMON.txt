@@ -1,0 +1,85 @@
+class ZCL_TR2_ELEC_RECEIPT_COMMON definition
+  public
+  final
+  create public .
+
+public section.
+
+  class-methods DISPATH_ELEC_RECEIPT
+    importing
+      !IV_FILE_NAME type STRING
+    returning
+      value(EV_UPLOAD_TYPE) type ZTR2_DZHD_FILE_TYPE .
+  class-methods CONVERT_DIRECTORY_TO_BUKRS
+    importing
+      !IV_DICTIONARY type STRING
+    returning
+      value(RV_BUKRS) type BUKRS .
+  class-methods MATCH_BUKRS_CBI
+    importing
+      !IV_BUKRS_CBI type STRING
+    returning
+      value(RV_BUKRS) type BUKRS .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_TR2_ELEC_RECEIPT_COMMON IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_TR2_ELEC_RECEIPT_COMMON=>CONVERT_DIRECTORY_TO_BUKRS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DICTIONARY                  TYPE        STRING
+* | [<-()] RV_BUKRS                       TYPE        BUKRS
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD convert_directory_to_bukrs.
+*    cl_bcs_utilities=>split_name( EXPORTING iv_name = iv_dictionary iv_delimiter = '/'  IMPORTING ev_name = rv_bukrs ).
+    SPLIT iv_dictionary AT '/' INTO TABLE DATA(lt_split).
+*    DATA(lines) = lines( lt_split ).
+    IF lt_split IS NOT INITIAL.
+      rv_bukrs = match_bukrs_cbi( lt_split[ 2 ] ).
+    ENDIF.
+
+*    rv_bukrs = lt_split[ lines ].
+*    rv_bukrs = iv_dictionary.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_TR2_ELEC_RECEIPT_COMMON=>DISPATH_ELEC_RECEIPT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FILE_NAME                   TYPE        STRING
+* | [<-()] EV_UPLOAD_TYPE                 TYPE        ZTR2_DZHD_FILE_TYPE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD dispath_elec_receipt.
+    DATA:full_file_name TYPE string,
+         long_file_name TYPE string,
+         lv_filename    TYPE string,
+         lv_extension   TYPE string.
+    cl_bcs_utilities=>split_name( EXPORTING iv_name = iv_file_name IMPORTING ev_name = lv_filename ev_extension = lv_extension ).
+    TRANSLATE lv_extension TO UPPER CASE.
+    CASE lv_extension.
+      WHEN 'XML'.
+        ev_upload_type = SWITCH #( lv_filename+13(3) WHEN 'TFS' THEN '01'
+                                                    WHEN 'REM' THEN '02' ).
+*    	WHEN .
+      WHEN OTHERS.
+        ev_upload_type = '03'.
+    ENDCASE.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_TR2_ELEC_RECEIPT_COMMON=>MATCH_BUKRS_CBI
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_BUKRS_CBI                   TYPE        STRING
+* | [<-()] RV_BUKRS                       TYPE        BUKRS
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD match_bukrs_cbi.
+    SELECT SINGLE bukrs INTO rv_bukrs FROM ztrt9514
+      WHERE bukrs_cbi = iv_bukrs_cbi.
+  ENDMETHOD.
+ENDCLASS.

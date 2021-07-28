@@ -1,0 +1,283 @@
+class ZCL_TR2_CHECK_COMMON definition
+  public
+  final
+  create public .
+
+public section.
+
+  methods CONSTRUCTOR .
+  methods CHECK_BUKRS
+    importing
+      !IV_BUKRS type BUKRS
+    returning
+      value(EV_FLAG) type BOOLEAN .
+  methods DISPLAY_MESSAGE .
+  methods CHECK_BANK_IND
+    importing
+      !IV_BANK_IND type ZTR_BANK_IND
+    returning
+      value(EV_FLAG) type BOOLEAN .
+  methods EXIST_ERROR
+    returning
+      value(EV_EXIST) type BOOLEAN .
+  methods ADD_MESSAGE
+    importing
+      !X_MSGID type SYMSGID
+      !X_MSGTY type SYMSGTY
+      !X_MSGNO type SYMSGNO
+      !X_MSGV1 type C optional
+      !X_MSGV2 type C optional
+      !X_MSGV3 type C optional
+      !X_MSGV4 type C optional .
+  methods AUTH_CHECK
+    importing
+      !IV_AUTHORITY_OBJECT type XUOBJECT
+      !IV_BUKRS type C
+      !IV_AUTHORITY_FIELD type FIELDNAME optional
+      !IV_AUTHORITY_DESC type C
+      !IV_AUTHORITY_VALUE type C optional
+    returning
+      value(EV_ERROR) type WDY_BOOLEAN .
+  methods CLEAR .
+  methods CONVERT_MESSAGE_TO_STRING
+    returning
+      value(EV_MESSAGE) type STRING .
+  methods SINGLE_MESSAGE_TO_STRING
+    importing
+      !X_MSGID type SYMSGID
+      !X_MSGTY type SYMSGTY
+      !X_MSGNO type SYMSGNO
+      !X_MSGV1 type C optional
+      !X_MSGV2 type C optional
+      !X_MSGV3 type C optional
+      !X_MSGV4 type C optional
+    returning
+      value(EV_MESSAGE) type STRING .
+  methods ADD_BAPIRET2_MESSAGE
+    importing
+      !IT_BAPIRET2 type BAPIRET2_T .
+protected section.
+private section.
+
+  data GV_ERROR type BOOLEAN .
+  data GT_MESSAGE type TISU00_MESSAGE .
+  data AUTH_CHECK_FLAG type WDY_BOOLEAN value 'X' ##NO_TEXT.
+ENDCLASS.
+
+
+
+CLASS ZCL_TR2_CHECK_COMMON IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->ADD_BAPIRET2_MESSAGE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_BAPIRET2                    TYPE        BAPIRET2_T
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD add_bapiret2_message.
+    DATA:lt_message LIKE gt_message.
+
+    lt_message = CORRESPONDING #( it_bapiret2 MAPPING  msgid = id
+                                                       msgno = number
+                                                       msgty = type
+                                                       msgv1 = message_v1
+                                                       msgv2 = message_v2
+                                                       msgv3 = message_v3
+                                                       msgv4 = message_v4 ).
+
+    APPEND LINES OF lt_message TO gt_message.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->ADD_MESSAGE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] X_MSGID                        TYPE        SYMSGID
+* | [--->] X_MSGTY                        TYPE        SYMSGTY
+* | [--->] X_MSGNO                        TYPE        SYMSGNO
+* | [--->] X_MSGV1                        TYPE        C(optional)
+* | [--->] X_MSGV2                        TYPE        C(optional)
+* | [--->] X_MSGV3                        TYPE        C(optional)
+* | [--->] X_MSGV4                        TYPE        C(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD add_message.
+
+    APPEND VALUE #(  msgid = x_msgid
+                     msgty = x_msgty
+                     msgno = x_msgno
+                     msgv1 = x_msgv1
+                     msgv2 = x_msgv2
+                     msgv3 = x_msgv3
+                     msgv4 = x_msgv4 ) TO gt_message.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->AUTH_CHECK
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_AUTHORITY_OBJECT            TYPE        XUOBJECT
+* | [--->] IV_BUKRS                       TYPE        C
+* | [--->] IV_AUTHORITY_FIELD             TYPE        FIELDNAME(optional)
+* | [--->] IV_AUTHORITY_DESC              TYPE        C
+* | [--->] IV_AUTHORITY_VALUE             TYPE        C(optional)
+* | [<-()] EV_ERROR                       TYPE        WDY_BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD auth_check.
+    IF auth_check_flag = abap_true.
+      AUTHORITY-CHECK OBJECT iv_authority_object
+           ID 'BUKRS' FIELD iv_bukrs
+           ID iv_authority_field FIELD iv_authority_value.
+      IF sy-subrc = 0.
+        DATA(lv_authority_flag) = abap_true.
+      ENDIF.
+
+      IF lv_authority_flag <> abap_true.
+        add_message( x_msgid = 'ZTR202'
+                     x_msgty = 'E'
+                     x_msgno = '009'
+                     x_msgv1 = iv_bukrs
+                     x_msgv2 = iv_authority_desc ).
+        ev_error = abap_true.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->CHECK_BANK_IND
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_BANK_IND                    TYPE        ZTR_BANK_IND
+* | [<-()] EV_FLAG                        TYPE        BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD check_bank_ind.
+    DATA lv_bank_ind  TYPE ztr_bank_indicator.
+
+    SELECT SINGLE bank_ind INTO  lv_bank_ind
+      FROM ztrt_bankt
+     WHERE bank_ind = iv_bank_ind
+       AND spras    = sy-langu.
+
+
+    IF sy-subrc <> 0.
+      ev_flag = 'X'.
+      add_message( x_msgid = 'ZTR201'
+                   x_msgty = 'E'
+                   x_msgno = '171'
+                   x_msgv1 = TEXT-m02 ).
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->CHECK_BUKRS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_BUKRS                       TYPE        BUKRS
+* | [<-()] EV_FLAG                        TYPE        BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD check_bukrs.
+    DATA lv_bukrs TYPE bukrs.
+    CHECK iv_bukrs IS NOT INITIAL.
+    SELECT SINGLE bukrs INTO lv_bukrs
+      FROM t001
+     WHERE bukrs = iv_bukrs.
+
+
+    IF sy-subrc <> 0.
+      ev_flag = 'X'.
+      add_message( x_msgid = 'ZTR201'
+                  x_msgty = 'E'
+                  x_msgno = '171'
+                  x_msgv1 = TEXT-m01 ).
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->CLEAR
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD clear.
+    CLEAR gt_message.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->CONSTRUCTOR
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD constructor.
+    GET PARAMETER ID 'ZTR2_NOAUTH' FIELD DATA(no_auth).
+    IF no_auth = 'X'.
+      auth_check_flag = ''.
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->CONVERT_MESSAGE_TO_STRING
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] EV_MESSAGE                     TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD convert_message_to_string.
+    ev_message = REDUCE #( INIT lv_message = VALUE #( ) FOR wa IN gt_message LET temp_message = single_message_to_string( x_msgno = wa-msgno
+                                                                                                                          x_msgty = wa-msgty
+                                                                                                                          x_msgid = wa-msgid
+                                                                                                                          x_msgv1 = wa-msgv1
+                                                                                                                          x_msgv2 = wa-msgv2
+                                                                                                                          x_msgv3 = wa-msgv3
+                                                                                                                          x_msgv4 = wa-msgv4 )
+                           IN NEXT lv_message = COND #( WHEN lv_message IS INITIAL THEN temp_message
+                                                        ELSE |{ lv_message }/{ temp_message }| ) ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->DISPLAY_MESSAGE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD display_message.
+    DATA(gr_message) = NEW cl_isu_error_log( ).
+    LOOP AT gt_message INTO DATA(ls_message).
+      gr_message->add_message( x_msgid = ls_message-msgid
+                               x_msgty = ls_message-msgty
+                               x_msgno = ls_message-msgno
+                               x_msgv1 = ls_message-msgv1
+                               x_msgv2 = ls_message-msgv2
+                               x_msgv3 = ls_message-msgv3
+                               x_msgv4 = ls_message-msgv4 ).
+    ENDLOOP.
+    gr_message->display_messages( ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->EXIST_ERROR
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] EV_EXIST                       TYPE        BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD exist_error.
+    LOOP AT gt_message TRANSPORTING NO FIELDS WHERE msgty = 'E' OR msgty = 'A' OR msgty = 'X'.
+    ENDLOOP.
+    IF sy-subrc = 0.
+      ev_exist = 'X'.
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TR2_CHECK_COMMON->SINGLE_MESSAGE_TO_STRING
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] X_MSGID                        TYPE        SYMSGID
+* | [--->] X_MSGTY                        TYPE        SYMSGTY
+* | [--->] X_MSGNO                        TYPE        SYMSGNO
+* | [--->] X_MSGV1                        TYPE        C(optional)
+* | [--->] X_MSGV2                        TYPE        C(optional)
+* | [--->] X_MSGV3                        TYPE        C(optional)
+* | [--->] X_MSGV4                        TYPE        C(optional)
+* | [<-()] EV_MESSAGE                     TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD single_message_to_string.
+    MESSAGE ID x_msgid TYPE x_msgty NUMBER x_msgno WITH x_msgv1 x_msgv2 x_msgv3 x_msgv4 INTO ev_message.
+  ENDMETHOD.
+ENDCLASS.

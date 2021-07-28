@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSAPLINK_INSTALLER_TEMPLATE" VARCL="X" SUBC="1" RMAND="321" RLOAD="E" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="Program ZSAPLINK_INSTALLER_BASE" LENGTH="31 "/>
+  </language>
+ </textPool>
+ <source>*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+REPORT  ZSAPLINK_INSTALLER_TEMPLATE.
+
+type-pools: seor, abap, icon.
+data retFileTable type FILETABLE.
+data retRc type sysubrc.
+data retUserAction type i.
+
+data tempXMLString type string.
+data ixmlNugget type ref to if_ixml_document.
+
+data pluginExists type flag.
+data objectExists type flag.
+data flag type flag.
+data statusMsg type string.
+DATA  y2all type flag.
+selection-screen begin of Line.
+  SELECTION-SCREEN COMMENT 1(20) fileCom FOR FIELD NUGGFIL.
+  parameters NUGGFIL(300) type c modif id did obligatory.
+selection-screen end of Line.
+
+selection-screen begin of Line.
+  SELECTION-SCREEN COMMENT 1(20) checkCom FOR FIELD NUGGFIL.
+  parameters overwrt type c as checkbox default &apos;X&apos;.
+selection-screen end of Line.
+
+
+
+start-of-selection.
+clear tempXMLString.
+perform uploadXMLFromLM using NUGGFIL tempXMLString.
+perform CONVERTSTRINGTOIXMLDOC using tempXMLString changing ixmlNugget.
+perform installNugget using ixmlNugget overwrt.
+
+
+*/--------------------------------------------------------------------\
+*| Selection screen events                                            |
+initialization.
+  fileCom = &apos;Installation Nugget&apos;.
+  checkCom = &apos;Overwrite Originals&apos;.
+
+
+at selection-screen on value-request for NUGGFIL.
+  call method CL_GUI_FRONTEND_SERVICES=&gt;FILE_OPEN_DIALOG
+      exporting
+        MULTISELECTION = abap_false
+        FILE_FILTER = &apos;*.nugg&apos;
+        DEFAULT_EXTENSION = &apos;nugg&apos;
+      changing
+        FILE_TABLE = retFileTable
+        rc = retRc
+        user_Action = retUserAction.
+  read table retFileTable into NUGGFIL index 1.
+  refresh retFileTable.
+
+*\--------------------------------------------------------------------/
+
+
+*/--------------------------------------------------------------------\
+*| Forms from the SAPLink Installer                                   |
+*|                                                                     |
+form uploadXMLFromLM using p_filename xmlString type string .
+  DATA retfiletable TYPE filetable.
+  DATA retrc TYPE sysubrc.
+  DATA retuseraction TYPE i.
+  DATA temptable TYPE table_of_strings.
+  DATA temptable_bin TYPE TABLE OF x255.
+  DATA filelength TYPE i.
+  DATA l_filename TYPE string.
+
+  l_filename = p_filename.
+  CALL METHOD cl_gui_frontend_services=&gt;gui_upload
+    EXPORTING
+      filename                = l_filename
+      filetype                = &apos;BIN&apos;       &quot; File Type Binary
+    IMPORTING
+      filelength              = filelength
+    CHANGING
+      data_tab                = temptable_bin
+    EXCEPTIONS
+      file_open_error         = 1
+      file_read_error         = 2
+      no_batch                = 3
+      gui_refuse_filetransfer = 4
+      invalid_type            = 5
+      no_authority            = 6
+      unknown_error           = 7
+      bad_data_format         = 8
+      header_not_allowed      = 9
+      separator_not_allowed   = 10
+      header_too_long         = 11
+      unknown_dp_error        = 12
+      access_denied           = 13
+      dp_out_of_memory        = 14
+      disk_full               = 15
+      dp_timeout              = 16
+      not_supported_by_gui    = 17
+      error_no_gui            = 18
+      OTHERS                  = 19.
+  IF sy-subrc &lt;&gt; 0.
+    CASE sy-subrc.
+      WHEN &apos;1&apos;.
+        PERFORM writemessage USING &apos;E&apos; &apos;File Open Error&apos;.
+      WHEN OTHERS.
+        PERFORM writemessage USING &apos;E&apos; &apos;Unknown Error occured&apos;.
+    ENDCASE.
+  ENDIF.
+
+  CALL FUNCTION &apos;SCMS_BINARY_TO_STRING&apos;
+    EXPORTING
+      input_length = filelength
+    IMPORTING
+      text_buffer  = xmlstring
+    TABLES
+      binary_tab   = temptable_bin.
+  IF sy-subrc &lt;&gt; 0.
+    &quot; Just catch the sy-subrc when there was nothing replaced
+    sy-subrc = 0.
+  ENDIF.
+*  call method CL_GUI_FRONTEND_SERVICES=&gt;GUI_UPLOAD
+*        exporting
+*          FILENAME = l_fileName
+*        changing
+*          data_tab = tempTable.
+*  PERFORM createstring USING temptable CHANGING xmlstring.
+endform.
+*\--------------------------------------------------------------------/
+form createString
+      using
+        tempTable type table_of_strings
+      changing
+        bigString type string.
+
+data sTemp type string.
+  loop at tempTable into sTemp.
+    concatenate bigString sTemp CL_ABAP_CHAR_UTILITIES=&gt;NEWLINE into
+    bigString.
+  endloop.
+
+endform.
+*/----------------------------------------------------------------------
+
+
+
+*/--------------------------------------------------------------------\
+*| Forms from the SAPLink Root Class                                  |
+form CONVERTSTRINGTOIXMLDOC
+      using
+        i_xmlString type string
+      changing
+        ixmlDocument type ref to if_ixml_document.
+
+  data xmlString type string.
+  data ixml type ref to if_ixml.
+  data streamFactory type ref to IF_IXML_STREAM_FACTORY.
+  data iStream type ref to if_ixml_istream.
+  data ixmlParser type ref to if_ixml_parser.
+  data xmlDoc type ref to if_ixml_document.
+
+  xmlString = i_xmlString.
+  &quot; Make sure to convert Windows Line Break to Unix as
+  &quot; this linebreak is used to get a correct import
+  REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=&gt;cr_lf
+    IN xmlString WITH cl_abap_char_utilities=&gt;newline.
+
+  ixml = cl_ixml=&gt;create( ).
+  xmlDoc = ixml-&gt;create_document( ).
+  streamFactory = ixml-&gt;CREATE_STREAM_FACTORY( ).
+  iStream = streamFactory-&gt;CREATE_ISTREAM_STRING( xmlString ).
+  iXMLParser = iXML-&gt;create_parser(  stream_factory = streamFactory
+                                     istream        = iStream
+                                     document       = xmlDoc ).
+  iXMLParser-&gt;parse( ).
+  ixmlDocument = xmlDoc.
+
+endform.
+
+*|                                                                     |
+*|                                                                     |
+
+FORM GETOBJECTInfoFROMIXMLDOC
+      using ixmlDocument type ref to if_ixml_document
+      changing objTypeName type string objName type string.
+data rootNode type ref to IF_IXML_NODE.
+data rootAttr type ref to IF_IXML_NAMED_NODE_MAP.
+data AttrNode type ref to IF_IXML_NODE.
+data nodeName type string.
+
+  rootNode ?= ixmlDocument-&gt;GET_ROOT_ELEMENT( ).
+
+* get object type
+  objTypeName = rootNode-&gt;GET_NAME( ).
+  translate objTypeName to upper case.
+
+* get object name
+  rootAttr = rootNode-&gt;GET_ATTRIBUTES( ).
+  AttrNode = rootAttr-&gt;GET_ITEM( 0 ).
+  objName = AttrNode-&gt;GET_VALUE( ).
+
+ENDFORM.
+
+*/--------------------------------------------------------------------\
+*|  Nugget Class                                                      |
+form     installNugget
+      using xmlDoc type ref to if_ixml_document overwrite type c.
+types: begin of t_objectTable,
+         classname type string,
+         object type ko100-object,
+         text type ko100-text,
+       end of t_objectTable.
+
+
+data iterator type ref to IF_IXML_NODE_ITERATOR.
+data ixml type ref to if_ixml.
+data Namefilter type ref to IF_IXML_NODE_FILTER.
+data parentFilter type ref to IF_IXML_NODE_FILTER.
+data currentNode type ref to if_ixml_node.
+data newNode type ref to if_ixml_node.
+data rval type i.
+data ixmlDocument type ref to if_ixml_document.
+data _objName type string.
+data objType type string.
+data objectTable type table of t_objectTable.
+data objectLine type t_objectTable.
+data exists type flag.
+data sTemp type string.
+data nameCollision type flag.
+data l_targetObject type ref to zsaplink.
+data l_installObject type string.
+data l_excClass type ref to ZCX_SAPLINK.
+data tempcname type string.
+
+  ixml = cl_ixml=&gt;create( ).
+  nameFilter = xmlDoc-&gt;create_filter_name( name = &apos;nugget&apos; ).
+  parentFilter = xmlDoc-&gt;create_filter_parent( nameFilter ).
+  iterator = xmlDoc-&gt;create_iterator_filtered( parentFilter ).
+
+  currentNode ?= iterator-&gt;get_next( ).
+  while currentNode is not initial.
+    clear exists.
+    ixmlDocument = ixml-&gt;create_document( ).
+    newNode = currentNode-&gt;clone( ).
+    rval = ixmlDocument-&gt;append_child( newNode ).
+
+    call method zsaplink=&gt;GETOBJECTInfoFROMIXMLDOC
+      exporting
+        ixmlDocument = ixmlDocument
+      importing
+        objtypename = objType
+        objname     = _objName.
+
+*  call method zsaplink=&gt;getplugins( changing objectTable = objectTable )
+*.
+*
+*  read table objectTable into objectLine with key object = objType.
+*
+*  if sy-subrc = 0.
+
+    translate objType to upper case.
+    case objtype.
+      when &apos;CLAS&apos;.
+        tempcname = &apos;ZSAPLINK_CLASS&apos;.
+      when &apos;PROG&apos;.
+        tempcname = &apos;ZSAPLINK_PROGRAM&apos;.
+      when others.
+    endcase.
+
+    create object l_targetObject type (tempcname)
+      exporting name = _objName.
+
+    objectExists = l_targetObject-&gt;checkexists( ).
+
+    if objectExists = &apos;X&apos; and overWrt = &apos;&apos;.
+      write :/  objType, _objName,
+      &apos; exists on this system , if you wish to install this Nugget &apos;
+      &amp; &apos;please set the Overwrite Originals checkbox.&apos;
+          .
+    elseif objectExists = &apos;X&apos; and overWrt = &apos;X&apos;.
+
+      if l_targetObject is not initial.
+
+      if y2all &lt;&gt; &apos;X&apos;.
+        concatenate objType _objName into sTemp separated by space.
+        perform confirmOverwrite using sTemp
+                              changing flag.
+        if flag = &apos;1&apos;. &quot;yes
+        elseif flag = &apos;2&apos;. &quot;yes to all
+          y2all = &apos;X&apos;.
+        elseif flag = &apos;A&apos;. &quot;cancel
+          write / &apos;Import cancelled by user&apos;.
+*          Flag = &apos;X&apos;.
+          exit.
+        endif.
+       endif.
+        try.
+          l_installObject = l_targetObject-&gt;createObjectfromiXMLDoc(
+                                          ixmlDocument = ixmlDocument
+                                          overwrite = overWrt ).
+
+          catch ZCX_SAPLINK into l_excClass.
+            statusMsg = l_excClass-&gt;get_text( ).
+            Flag = &apos;X&apos;.
+        endtry.
+        if l_installObject is not initial.
+          concatenate &apos;Installed: &apos; objType l_installObject
+           into statusMsg separated by space.
+        endif.
+      else.
+        statusMsg = &apos;an undetermined error occured&apos;.
+        Flag = &apos;X&apos;.
+      endif.
+
+    else.
+        try.
+          l_installObject = l_targetObject-&gt;createObjectfromiXMLDoc(
+                                          ixmlDocument = ixmlDocument
+                                          overwrite = overWrt ).
+
+          catch ZCX_SAPLINK into l_excClass.
+            statusMsg = l_excClass-&gt;get_text( ).
+            Flag = &apos;X&apos;.
+        endtry.
+        if l_installObject is not initial.
+          concatenate &apos;Installed: &apos; objType l_installObject
+           into statusMsg separated by space.
+        endif.
+    endif.
+  currentNode ?= iterator-&gt;get_next( ).
+  write: / Statusmsg.
+endwhile.
+endform.
+
+*/----------------------confirmOverwrite------------------------------\
+form confirmOverwrite using l_objInfo type string
+                   changing l_answer type flag.
+
+data l_message type string.
+data l_title type string.
+
+  clear l_answer.
+  l_title = &apos;Overwrite confirm. Proceed with CAUTION!&apos;.
+
+  concatenate &apos;You have selected to overwrite originals.&apos;
+    l_objinfo &apos;will be overwritten. Are you sure?&apos;
+    into l_message separated by space.
+
+  CALL FUNCTION &apos;POPUP_TO_CONFIRM&apos;
+    EXPORTING
+      TITLEBAR                    = l_title
+      text_question               = l_message
+      TEXT_BUTTON_1               = &apos;Yes&apos;
+      TEXT_BUTTON_2               = &apos;Yes to all&apos;
+      DEFAULT_BUTTON              = &apos;1&apos;
+      DISPLAY_CANCEL_BUTTON       = &apos;X&apos;
+    IMPORTING
+      ANSWER                      = l_answer
+            .
+endform.
+*\--------------------------------------------------------------------/
+*/---------------------writeMessage-----------------------\
+FORM writemessage USING value(p_type) TYPE sy-msgty
+                        value(p_msg).
+  CASE p_type.
+    WHEN &apos;E&apos; OR &apos;A&apos; OR &apos;X&apos;.
+      WRITE / icon_led_red AS ICON.
+    WHEN &apos;W&apos;.
+      WRITE / icon_led_yellow AS ICON.
+    WHEN OTHERS.
+      WRITE / icon_led_green AS ICON.
+  ENDCASE.
+
+  WRITE p_msg.
+ENDFORM.                    &quot;WriteMessage</source>
+</PROG>

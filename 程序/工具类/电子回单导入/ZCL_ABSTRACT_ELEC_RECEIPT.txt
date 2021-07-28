@@ -1,0 +1,479 @@
+class ZCL_ABSTRACT_ELEC_RECEIPT definition
+  public
+  create public .
+
+public section.
+
+  interfaces ZIF_ELEC_RECEIPT .
+
+  data GV_BUKRS type T001-BUKRS .
+  data GV_BANK_IND type ZTR_BANK_IND .
+  data GV_BANKN type ZTRT0013-YHZH .
+  data GV_UPLOAD_TYPE type ZTR2_DZHD_FILE_TYPE .
+  data GV_SOURCE type ZTR2_SOURCE .
+  data GT_OUT type ZLTTR2_ZTRE03103_ALV_OUT .
+  data GS_OUT type ZTR2S_ZTRE03103_ALV_OUT .
+  data GV_DATA_REF type ref to DATA .
+
+  methods CONSTRUCTOR
+    importing
+      !IV_BUKRS type T001-BUKRS
+      !IV_BANK_IND type ZTR_BANK_IND
+      !IV_BANKN type ZTRT0013-YHZH optional
+      !IV_UPLOAD_TYPE type ZTR2_DZHD_FILE_TYPE
+      !IV_SOURCE type ZTR2_SOURCE .
+  methods IF_ERROR
+    returning
+      value(ERROR) type WDY_BOOLEAN .
+  methods ADD_MESSAGE
+    importing
+      !X_MSGID type SYMSGID
+      !X_MSGTY type SYMSGTY
+      !X_MSGNO type SYMSGNO
+      !X_MSGV1 type C optional
+      !X_MSGV2 type C optional
+      !X_MSGV3 type C optional
+      !X_MSGV4 type C optional .
+  methods ADJUST_ZTRT9506_FIELD
+    importing
+      !IV_DOC_TYPE type TOADD-DOC_TYPE
+    changing
+      !CS_ZTRT9506 type ZTRT9506 .
+protected section.
+private section.
+
+  methods INIT_OUT_DATA .
+  methods Z_LOG_DATA .
+ENDCLASS.
+
+
+
+CLASS ZCL_ABSTRACT_ELEC_RECEIPT IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ADD_MESSAGE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] X_MSGID                        TYPE        SYMSGID
+* | [--->] X_MSGTY                        TYPE        SYMSGTY
+* | [--->] X_MSGNO                        TYPE        SYMSGNO
+* | [--->] X_MSGV1                        TYPE        C(optional)
+* | [--->] X_MSGV2                        TYPE        C(optional)
+* | [--->] X_MSGV3                        TYPE        C(optional)
+* | [--->] X_MSGV4                        TYPE        C(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD add_message.
+    zif_elec_receipt~go_message->add_message(  x_msgid = x_msgid
+                                               x_msgty = x_msgty
+                                               x_msgno = x_msgno
+                                               x_msgv1 = x_msgv1
+                                               x_msgv2 = x_msgv2
+                                               x_msgv3 = x_msgv3
+                                               x_msgv4 = x_msgv4 ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ADJUST_ZTRT9506_FIELD
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DOC_TYPE                    TYPE        TOADD-DOC_TYPE
+* | [<-->] CS_ZTRT9506                    TYPE        ZTRT9506
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method ADJUST_ZTRT9506_FIELD.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->CONSTRUCTOR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_BUKRS                       TYPE        T001-BUKRS
+* | [--->] IV_BANK_IND                    TYPE        ZTR_BANK_IND
+* | [--->] IV_BANKN                       TYPE        ZTRT0013-YHZH(optional)
+* | [--->] IV_UPLOAD_TYPE                 TYPE        ZTR2_DZHD_FILE_TYPE
+* | [--->] IV_SOURCE                      TYPE        ZTR2_SOURCE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD constructor.
+    zif_elec_receipt~go_message = NEW zcl_tr2_check_common( ).
+
+    gv_bukrs =   iv_bukrs.
+    gv_bank_ind  =   iv_bank_ind.
+    gv_bankn =       iv_bankn.
+    gv_upload_type = iv_upload_type.
+    gv_source =      iv_source.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->IF_ERROR
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] ERROR                          TYPE        WDY_BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD if_error.
+    IF zif_elec_receipt~go_message->exist_error( ).
+      error = abap_true.
+    ENDIF.
+    IF error = abap_true.
+      gs_out-status = 'E'.
+      gs_out-light = icon_led_red.
+      z_log_data( ).
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABSTRACT_ELEC_RECEIPT->INIT_OUT_DATA
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD init_out_data.
+    CLEAR gs_out.
+    gs_out-bukrs = gv_bukrs.
+    gs_out-bank_ind = gv_bank_ind.
+    gs_out-yhzh = gv_bankn.
+    gs_out-erdat = sy-datum.
+    gs_out-erzet = sy-uzeit.
+    gs_out-ernam = sy-uname.
+    gs_out-doccat = gv_upload_type.
+    TRY.
+        gs_out-loguuid = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).   "票据直连日志UUID
+      CATCH cx_uuid_error.
+        add_message( x_msgid = 'ZTR_BANK_APPLICATION'
+                     x_msgty = 'E'
+                     x_msgno = '001' ).
+        EXIT.
+    ENDTRY.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~CHECK_AND_SAVE_XML
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FILE_NAME                   TYPE        STRING(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method ZIF_ELEC_RECEIPT~CHECK_AND_SAVE_XML.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~CHECK_SINGLE_FILE_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FILE_NAME                   TYPE        STRING
+* | [<---] EV_PURE_FILE_NAME              TYPE        STRING
+* | [<---] EV_EXTENSION                   TYPE        SDBAD-FUNCT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~check_single_file_name.
+    DATA:full_file_name TYPE string,
+         long_file_name TYPE string,
+         lv_filename    TYPE string,
+         lv_extension   TYPE string.
+    full_file_name = iv_file_name.
+    TRY .
+        cl_bcs_utilities=>split_path( EXPORTING iv_path = full_file_name IMPORTING ev_name = long_file_name ).
+      CATCH cx_bcs.
+        long_file_name = full_file_name.
+    ENDTRY.
+
+    cl_bcs_utilities=>split_name( EXPORTING iv_name = long_file_name IMPORTING ev_name = lv_filename ev_extension = lv_extension ).
+
+    ev_pure_file_name = lv_filename.
+    TRANSLATE lv_extension TO UPPER CASE.
+    ev_extension = lv_extension.
+
+    long_file_name = lv_filename && '.' && lv_extension.
+    SELECT SINGLE @abap_true INTO @DATA(lv_exist) FROM ztrt9506 WHERE att_name = @long_file_name AND delflag = ''.
+    IF sy-subrc = 0.
+      add_message( x_msgid = 'ZTR202'
+                   x_msgty = 'E'
+                   x_msgno = '039'
+                   x_msgv1 = |{ long_file_name }| ).
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~RUN_CORE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_FILE                        TYPE        ZTR2S_DZHD_FILE_TAB
+* | [<-()] ET_OUT                         TYPE        ZLTTR2_ZTRE03103_ALV_OUT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~run_core.
+    LOOP AT it_file INTO DATA(ls_file).
+      zif_elec_receipt~go_message->clear( ).
+      init_out_data( ).
+      gs_out-att_name = ls_file-file_name.
+      zif_elec_receipt~check_single_file_name( EXPORTING iv_file_name = ls_file-file_name
+                                               IMPORTING ev_pure_file_name = DATA(lv_pure_file_name)
+                                                         ev_extension      = DATA(lv_extension) ).
+      CHECK NOT if_error( ).
+      zif_elec_receipt~upload_file( EXPORTING iv_file = ls_file
+                                    IMPORTING ev_file_length = DATA(lv_file_length) et_xtab = DATA(lt_xtab) ).
+      CHECK NOT if_error( ).
+      CASE lv_extension.
+        WHEN 'XML'.
+          zif_elec_receipt~run_xml( it_xtab = lt_xtab iv_file_length = CONV #( lv_file_length ) iv_file_name = |{ lv_pure_file_name }.{ lv_extension }| ).
+          CHECK NOT if_error( ).
+        WHEN 'PDF' OR 'TIF'.
+
+        WHEN OTHERS.
+      ENDCASE.
+      zif_elec_receipt~send_2_opentext( EXPORTING iv_doc_type = CONV #( lv_extension ) iv_file_name =  |{ lv_pure_file_name }.{ lv_extension }| iv_file_length = lv_file_length it_file = lt_xtab ).
+      CHECK NOT if_error( ).
+      gs_out-status = 'S'.
+      gs_out-light = icon_led_green.
+      add_message( x_msgid = 'ZTR202'
+                   x_msgty = 'S'
+                   x_msgno = '012'
+                   x_msgv1 = |{ ls_file-file_name }| ).
+      z_log_data( ).
+    ENDLOOP.
+    et_out = gt_out.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~RUN_XML
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_XTAB                        TYPE        ZTR2_TBL1024
+* | [--->] IV_FILE_LENGTH                 TYPE        I
+* | [--->] IV_FILE_NAME                   TYPE        STRING(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~run_xml.
+    zif_elec_receipt~xml_transformation( it_xtab = it_xtab iv_file_length = iv_file_length ).
+    CHECK NOT if_error( ).
+    zif_elec_receipt~check_and_save_xml( iv_file_name = iv_file_name ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~SEND_2_OPENTEXT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DOC_TYPE                    TYPE        TOADD-DOC_TYPE
+* | [--->] IV_FILE_LENGTH                 TYPE        NUM12
+* | [--->] IV_FILE_NAME                   TYPE        STRING
+* | [--->] IT_FILE                        TYPE        ZTR2_TBL1024
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~send_2_opentext.
+    DATA:lv_bustype   TYPE zdebustype,
+         lv_ref_no    TYPE zoaref_no,
+         lv_flag      TYPE c,
+         lv_message   TYPE string,
+         lv_message_c TYPE char1024,
+         lv_att_no    TYPE zdeatt_no.
+
+    DATA:ls_ztrt9506 TYPE ztrt9506.
+    CASE gv_upload_type.
+      WHEN zif_elec_receipt~file_type_myrz.
+        lv_bustype = 'TR_0121'.
+      WHEN zif_elec_receipt~file_type_sfk.
+        lv_bustype = 'TR_0122'.
+      WHEN zif_elec_receipt~file_type_dzhd.
+        lv_bustype = 'TR_0123'.
+    ENDCASE.
+
+    TRY.
+        lv_ref_no = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).   "票据直连日志UUID
+      CATCH cx_uuid_error.
+        add_message( x_msgid = 'ZTR_BANK_APPLICATION'
+                     x_msgty = 'E'
+                     x_msgno = '001' ).
+        EXIT.
+    ENDTRY.
+
+    CALL FUNCTION 'ZRFC_ARCHIV_CREATE_FILE'
+      EXPORTING
+        iv_bustype    = lv_bustype
+        iv_bukrs      = gv_bukrs
+        iv_ref_no     = lv_ref_no
+        iv_doc_type   = iv_doc_type
+        iv_filename   = iv_file_name
+        iv_filelength = iv_file_length
+      IMPORTING
+        ev_flag       = lv_flag
+        ev_message    = lv_message
+        ev_att_no     = lv_att_no
+      TABLES
+        it_bin        = it_file.
+
+    IF lv_flag NE 'T'.
+      lv_message_c = lv_message.
+      add_message( x_msgid = '00'
+                   x_msgty = 'E'
+                   x_msgno = '001'
+                   x_msgv1 = lv_message_c ).
+    ELSE.
+      ls_ztrt9506-zztrid = lv_ref_no.
+      ls_ztrt9506-doccat = gv_upload_type.
+      ls_ztrt9506-source = gv_source.
+      ls_ztrt9506-bukrs  = gv_bukrs.
+      ls_ztrt9506-yhzh   = gv_bankn.
+      ls_ztrt9506-bank_ind = gv_bank_ind.
+      ls_ztrt9506-att_name = iv_file_name.
+*      ls_ztrt9506-doctype = .
+      ls_ztrt9506-erdat = sy-datum.
+      ls_ztrt9506-erzet = sy-uzeit.
+      ls_ztrt9506-ernam = sy-uname.
+      adjust_ztrt9506_field( EXPORTING iv_doc_type = iv_doc_type CHANGING cs_ztrt9506 = ls_ztrt9506 ).
+      MODIFY ztrt9506 FROM ls_ztrt9506.
+      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~UPLOAD_FILE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FILE                        TYPE        ZTR2S_DZHD_FILE
+* | [<---] EV_FILE_LENGTH                 TYPE        NUM12
+* | [<---] ET_XTAB                        TYPE        ZTR2_TBL1024
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~upload_file.
+    DATA: lv_filename TYPE c LENGTH 1024,
+          ls_flen     TYPE i, "文件大小
+          ls_xtab     TYPE tbl1024,
+          lt_xtab     TYPE TABLE OF tbl1024. "二进制的数据变量
+
+    DATA:lv_length TYPE i,
+         lv_begin  TYPE i.
+
+    CLEAR et_xtab.
+    CASE gv_source.
+      WHEN zif_elec_receipt~manual_upload.
+        CALL METHOD cl_gui_frontend_services=>gui_upload
+          EXPORTING
+            filename                = iv_file-file_name
+            filetype                = 'BIN'
+          IMPORTING
+            filelength              = ls_flen
+          CHANGING
+            data_tab                = lt_xtab
+          EXCEPTIONS
+            file_open_error         = 1
+            file_read_error         = 2
+            no_batch                = 3
+            gui_refuse_filetransfer = 4
+            invalid_type            = 5
+            no_authority            = 6
+            unknown_error           = 7
+            bad_data_format         = 8
+            header_not_allowed      = 9
+            separator_not_allowed   = 10
+            header_too_long         = 11
+            unknown_dp_error        = 12
+            access_denied           = 13
+            dp_out_of_memory        = 14
+            disk_full               = 15
+            dp_timeout              = 16
+            not_supported_by_gui    = 17
+            error_no_gui            = 18
+            OTHERS                  = 19.
+        IF sy-subrc NE 0.
+          add_message( x_msgid = sy-msgid
+                       x_msgty = sy-msgty
+                       x_msgno = sy-msgno
+                       x_msgv1 = sy-msgv1
+                       x_msgv2 = sy-msgv2
+                       x_msgv3 = sy-msgv3
+                       x_msgv4 = sy-msgv4 ).
+        ENDIF.
+
+        ev_file_length = ls_flen.
+      WHEN zif_elec_receipt~auto_upload.
+        IF iv_file-file_content IS NOT INITIAL.
+          ev_file_length = strlen( iv_file-file_content ).
+          DATA:lv_xtring TYPE xstring.
+          lv_xtring = iv_file-file_content.
+          CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+            EXPORTING
+              buffer     = lv_xtring
+            TABLES
+              binary_tab = lt_xtab.
+*          lv_length = ev_file_length.
+*          WHILE lv_length > 0.
+*            DATA(remain_length) = 1024 - lv_length.
+*            IF remain_length > 0.
+*              ls_xtab-line = iv_file-file_content+lv_begin(remain_length).
+*            ELSE.
+*              ls_xtab-line = iv_file-file_content+lv_begin(1024).
+*            ENDIF.
+*            APPEND ls_xtab TO lt_xtab.
+*            SUBTRACT 1024 FROM lv_length.
+*            ADD 1024 TO lv_begin.
+*          ENDWHILE.
+        ELSE.
+          lv_filename = iv_file-file_name.
+          add_message( x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '051'
+                       x_msgv1 = lv_filename ).
+        ENDIF.
+      WHEN OTHERS.
+        add_message(   x_msgid = 'ZTR202'
+               x_msgty = 'E'
+               x_msgno = '023'
+               x_msgv1 = |{ gv_source }| ).
+    ENDCASE.
+
+    et_xtab = lt_xtab.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABSTRACT_ELEC_RECEIPT->ZIF_ELEC_RECEIPT~XML_TRANSFORMATION
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_XTAB                        TYPE        ZTR2_TBL1024
+* | [--->] IV_FILE_LENGTH                 TYPE        I
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~xml_transformation.
+    DATA: lv_xml    TYPE string,
+          lv_length TYPE i.
+    FIELD-SYMBOLS <fs_data> TYPE any.
+    CALL FUNCTION 'SCMS_BINARY_TO_STRING'
+      EXPORTING
+        input_length  = iv_file_length
+      IMPORTING
+        text_buffer   = lv_xml
+        output_length = lv_length
+      TABLES
+        binary_tab    = it_xtab.
+
+    SELECT SINGLE trans_res,formatted_struc_res INTO @DATA(ls_ztrt9509) FROM ztrt9509 WHERE bank_ind = @gv_bank_ind AND file_type = @gv_upload_type.
+
+    CREATE DATA gv_data_ref TYPE (ls_ztrt9509-formatted_struc_res).
+    ASSIGN gv_data_ref->* TO <fs_data>.
+
+    TRY .
+        CALL TRANSFORMATION (ls_ztrt9509-trans_res) SOURCE XML lv_xml
+                                                    RESULT data = <fs_data>.
+      CATCH cx_st_error INTO DATA(lo_error).
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '015'
+                       x_msgv1 = |{ lo_error->get_text( ) }| ).
+      CATCH cx_call_st_error INTO DATA(lo_call_error).
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '015'
+                       x_msgv1 = |{ lo_call_error->get_text( ) }| ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABSTRACT_ELEC_RECEIPT->Z_LOG_DATA
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD z_log_data.
+    DATA:ls_ztrt9510 TYPE ztrt9510.
+    READ TABLE gt_out INTO DATA(ls_out) WITH KEY att_name = gs_out-att_name.
+    IF sy-subrc NE 0.
+      gs_out-logtxt = zif_elec_receipt~go_message->convert_message_to_string( ).
+      APPEND gs_out TO gt_out.
+      ls_ztrt9510 = CORRESPONDING #( gs_out ).
+      ls_ztrt9510-uname = sy-uname.
+      MODIFY ztrt9510 FROM ls_ztrt9510.
+      COMMIT WORK.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.

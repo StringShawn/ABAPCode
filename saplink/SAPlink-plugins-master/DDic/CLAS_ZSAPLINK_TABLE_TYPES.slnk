@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZSAPLINK_TABLE_TYPES" VERSION="1" LANGU="E" DESCRIPT="SAPlink - Data Dictionary  - Table Types" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk" REFCLSNAME="ZSAPLINK">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <inheritance CLSNAME="ZSAPLINK_TABLE_TYPES" REFCLSNAME="ZSAPLINK" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZSAPLINK_TABLE_TYPES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CHECKEXISTS" EXPOSURE="0"/>
+  <redefinition CLSNAME="ZSAPLINK_TABLE_TYPES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEIXMLDOCFROMOBJECT" EXPOSURE="0"/>
+  <redefinition CLSNAME="ZSAPLINK_TABLE_TYPES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEOBJECTFROMIXMLDOC" EXPOSURE="0"/>
+  <redefinition CLSNAME="ZSAPLINK_TABLE_TYPES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="DELETEOBJECT" EXPOSURE="0"/>
+  <redefinition CLSNAME="ZSAPLINK_TABLE_TYPES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="GETOBJECTTYPE" EXPOSURE="0"/>
+ </inheritance>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014-2015 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+METHOD CHECKEXISTS.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  DATA: l_name   TYPE ddobjname,
+        dd40v_wa TYPE dd40v.
+  l_name = objname.
+  CALL FUNCTION &apos;DDIF_TTYP_GET&apos;
+    EXPORTING
+      name          = l_name
+    IMPORTING
+      dd40v_wa      = dd40v_wa
+    EXCEPTIONS
+      illegal_input = 1
+      OTHERS        = 2.
+  IF sy-subrc = 0 AND dd40v_wa-typename IS NOT INITIAL.
+    exists = &apos;X&apos;.
+  ENDIF.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014-2015 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+METHOD createixmldocfromobject.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  DATA: gotstate   TYPE ddgotstate,
+        dd40v_wa   TYPE dd40v,
+        lt_dd42v   TYPE STANDARD TABLE OF dd42v WITH NON-UNIQUE DEFAULT KEY,
+        ls_dd42v   LIKE LINE OF lt_dd42v,
+        _objtype   TYPE string,
+
+*xml nodes
+        rootnode   TYPE REF TO if_ixml_element,
+        dd42v_node TYPE REF TO if_ixml_element,
+        dd43v_node TYPE REF TO if_ixml_element,
+        rc         TYPE sysubrc,
+        _ttypname  TYPE ddobjname,
+        lrs_dd43V  TYPE REF TO data,
+        lrt_dd43v  TYPE REF TO data.
+
+  FIELD-SYMBOLS: &lt;fs_dd43v&gt; TYPE ANY,
+                 &lt;ft_dd43v&gt; TYPE STANDARD TABLE.
+
+  _ttypname  = objname.
+
+* Check DD43V exist in current version
+  SELECT COUNT(*) FROM dd02l WHERE TABNAME eq &apos;DD43V&apos;.
+  IF sy-dbcnt gt 0.
+   CREATE DATA lrs_dd43V type (&apos;DD43V&apos;).
+    IF sy-subrc is initial.
+      ASSIGN lrs_dd43V-&gt;* to &lt;fs_dd43v&gt;.
+      CREATE DATA lrt_dd43v type table of (&apos;DD43V&apos;).
+      ASSIGN lrt_dd43v-&gt;* to &lt;ft_dd43v&gt;.
+    ENDIF.
+  ENDIF.
+
+  IF &lt;ft_dd43v&gt; IS ASSIGNED.
+      CALL FUNCTION &apos;DDIF_TTYP_GET&apos;
+        EXPORTING
+          name          = _ttypname
+          langu         = sy-langu
+        IMPORTING
+          gotstate      = gotstate
+          dd40v_wa      = dd40v_wa
+        TABLES
+          dd42v_tab     = lt_dd42v
+          dd43v_tab     = &lt;ft_dd43v&gt;
+        EXCEPTIONS
+          illegal_input = 1
+          OTHERS        = 2.
+  ELSE.
+      CALL FUNCTION &apos;DDIF_TTYP_GET&apos;
+        EXPORTING
+          name          = _ttypname
+          langu         = sy-langu
+        IMPORTING
+          gotstate      = gotstate
+          dd40v_wa      = dd40v_wa
+        TABLES
+          dd42v_tab     = lt_dd42v
+        EXCEPTIONS
+          illegal_input = 1
+          OTHERS        = 2.
+  ENDIF.
+
+
+  IF sy-subrc &lt;&gt; 0 OR dd40v_wa-typename IS INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;not_found.
+  ENDIF.
+
+* Create parent node
+  _objtype = getobjecttype( ).
+  rootnode = xmldoc-&gt;create_element( _objtype ).
+  setattributesfromstructure( node = rootnode structure = dd40v_wa ).
+
+  LOOP AT lt_dd42v INTO ls_dd42v.
+    dd42v_node = xmldoc-&gt;create_element( &apos;dd42v&apos; ).
+    setattributesfromstructure( node = dd42v_node structure = ls_dd42v ).
+    rc = rootnode-&gt;append_child( dd42v_node ).
+  ENDLOOP.
+
+  IF &lt;ft_dd43v&gt; IS ASSIGNED.
+    LOOP AT &lt;ft_dd43v&gt; INTO &lt;fs_dd43v&gt;.
+      dd43v_node = xmldoc-&gt;create_element( &apos;dd43v&apos; ).
+      setattributesfromstructure( node = dd43v_node structure = &lt;fs_dd43v&gt; ).
+      rc = rootnode-&gt;append_child( dd43v_node ).
+    ENDLOOP.
+  ENDIF.
+
+*\--------------------------------------------------------------------/
+  rc = xmldoc-&gt;append_child( rootnode ).
+  ixmldocument = xmldoc.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014-2015 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+METHOD createobjectfromixmldoc.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  DATA: gotstate     TYPE ddgotstate,
+        dd40v_wa     TYPE dd40v,
+        lt_dd42v     TYPE STANDARD TABLE OF dd42v WITH NON-UNIQUE DEFAULT KEY,
+        ls_dd42v     LIKE LINE OF lt_dd42v,
+
+*xml nodes
+        rootnode     TYPE REF TO if_ixml_element,
+        dd42v_node   TYPE REF TO if_ixml_element,
+        dd43v_node   TYPE REF TO if_ixml_element,
+        node         TYPE REF TO if_ixml_element,
+        filter       TYPE REF TO if_ixml_node_filter,
+        iterator     TYPE REF TO if_ixml_node_iterator,
+        rc           TYPE sysubrc,
+        _ttypname    TYPE ddobjname,
+        _devclass    TYPE devclass,
+        checkexists  TYPE flag,
+        _objtype     TYPE string,
+* putting object into ddic
+        l_pgmid      TYPE tadir-pgmid,
+        l_object     TYPE tadir-object,
+        l_obj_name   TYPE tadir-obj_name,
+        l_dd_objname TYPE ddobjname,
+        l_srcsystem  TYPE tadir-srcsystem,
+        l_author     TYPE tadir-author,
+        l_devclass   TYPE tadir-devclass,
+        l_masterlang TYPE tadir-masterlang,
+        lrs_dd43V  TYPE REF TO data,
+        lrt_dd43v  TYPE REF TO data.
+
+  FIELD-SYMBOLS: &lt;fs_dd43v&gt; TYPE ANY,
+                 &lt;ft_dd43v&gt; TYPE STANDARD TABLE.
+
+  _devclass   = devclass.
+  _objtype = getobjecttype( ).
+
+  xmldoc = ixmldocument.
+  rootnode = xmldoc-&gt;find_from_name( _objtype ).
+
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node      = rootnode
+    CHANGING
+      structure = dd40v_wa.
+
+  objname = dd40v_wa-typename.
+
+  checkexists = checkexists( ).
+  IF checkexists IS NOT INITIAL.
+    IF overwrite IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;existing.
+    ELSE.
+*     delete object for new install
+      deleteobject( ).
+    ENDIF.
+  ENDIF.
+
+* retrieve table type details
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;dd42v&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+
+  WHILE node IS NOT INITIAL.
+    CLEAR dd42v_node.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node      = node
+      CHANGING
+        structure = ls_dd42v.
+    APPEND ls_dd42v TO lt_dd42v.
+    node ?= iterator-&gt;get_next( ).
+  ENDWHILE.
+
+  FREE: filter, iterator, node.
+  filter = xmldoc-&gt;create_filter_name( &apos;dd43v&apos; ).
+  iterator = xmldoc-&gt;create_iterator_filtered( filter ).
+  node ?= iterator-&gt;get_next( ).
+
+* Check DD43V exist in current version
+  SELECT COUNT(*) FROM dd02l WHERE TABNAME eq &apos;DD43V&apos;.
+  IF sy-dbcnt gt 0.
+    CREATE DATA lrs_dd43V type (&apos;DD43V&apos;).
+    IF sy-subrc is initial.
+      ASSIGN lrs_dd43V-&gt;* to &lt;fs_dd43v&gt;.
+      CREATE DATA lrt_dd43v type table of (&apos;DD43V&apos;).
+      ASSIGN lrt_dd43v-&gt;* to &lt;ft_dd43v&gt;.
+
+        WHILE node IS NOT INITIAL.
+        CLEAR dd43v_node.
+        CALL METHOD getstructurefromattributes
+          EXPORTING
+            node      = node
+          CHANGING
+            structure = &lt;fs_dd43v&gt;.
+        APPEND &lt;fs_dd43v&gt; TO &lt;ft_dd43v&gt;.
+        node ?= iterator-&gt;get_next( ).
+      ENDWHILE.
+
+    ENDIF.
+  ENDIF.
+
+  l_pgmid      = &apos;R3TR&apos;.
+  l_object     = _objtype.
+  l_obj_name   = objname.
+  l_dd_objname = objname.
+  l_srcsystem  = sy-sysid.
+  l_author     = sy-uname.
+  l_devclass   = _devclass.
+  l_masterlang = sy-langu.
+
+  DATA: itadir TYPE tadir.
+  itadir-pgmid      = l_pgmid.
+  itadir-object     = l_object.
+  itadir-obj_name   = l_obj_name.
+  itadir-srcsystem  = l_srcsystem.
+  itadir-author     = l_author.
+  itadir-devclass   = l_devclass.
+  itadir-masterlang = l_masterlang.
+  MODIFY tadir FROM itadir.
+
+  CALL FUNCTION &apos;TR_TADIR_INTERFACE&apos;
+    EXPORTING
+      wi_test_modus                  = &apos; &apos;
+      wi_delete_tadir_entry          = &apos;X&apos;
+      wi_tadir_pgmid                 = l_pgmid
+      wi_tadir_object                = l_object
+      wi_tadir_obj_name              = l_obj_name
+      wi_tadir_srcsystem             = l_srcsystem
+      wi_tadir_author                = l_author
+      wi_tadir_devclass              = l_devclass
+      wi_tadir_masterlang            = l_masterlang
+      iv_set_edtflag                 = &apos;&apos;
+    EXCEPTIONS
+      tadir_entry_not_existing       = 1
+      tadir_entry_ill_type           = 2
+      no_systemname                  = 3
+      no_systemtype                  = 4
+      original_system_conflict       = 5
+      object_reserved_for_devclass   = 6
+      object_exists_global           = 7
+      object_exists_local            = 8
+      object_is_distributed          = 9
+      obj_specification_not_unique   = 10
+      no_authorization_to_delete     = 11
+      devclass_not_existing          = 12
+      simultanious_set_remove_repair = 13
+      order_missing                  = 14
+      no_modification_of_head_syst   = 15
+      pgmid_object_not_allowed       = 16
+      masterlanguage_not_specified   = 17
+      devclass_not_specified         = 18
+      specify_owner_unique           = 19
+      loc_priv_objs_no_repair        = 20
+      gtadir_not_reached             = 21
+      object_locked_for_order        = 22
+      change_of_class_not_allowed    = 23
+      no_change_from_sap_to_tmp      = 24
+      OTHERS                         = 25.
+  IF sy-subrc NE 0.
+    CASE sy-subrc.
+      WHEN 1 OR 9 OR 7 OR 8. &quot;OK! - Doesn&apos;t exist yet
+      WHEN 11 OR 23 OR 24.
+        RAISE EXCEPTION TYPE zcx_saplink
+          EXPORTING
+            textid = zcx_saplink=&gt;not_authorized.
+      WHEN 22.
+        RAISE EXCEPTION TYPE zcx_saplink
+          EXPORTING
+            textid = zcx_saplink=&gt;locked.
+      WHEN OTHERS.
+        RAISE EXCEPTION TYPE zcx_saplink
+          EXPORTING
+            textid = zcx_saplink=&gt;system_error.
+    ENDCASE.
+  ENDIF.
+
+  IF &lt;ft_dd43v&gt; IS ASSIGNED.
+    CALL FUNCTION &apos;DDIF_TTYP_PUT&apos;
+      EXPORTING
+        name              = l_dd_objname
+        dd40v_wa          = dd40v_wa
+      TABLES
+        dd42v_tab         = lt_dd42v
+        dd43v_tab         = &lt;ft_dd43v&gt;
+      EXCEPTIONS
+        ttyp_not_found    = 1
+        name_inconsistent = 2
+        ttyp_inconsistent = 3
+        put_failure       = 4
+        put_refused       = 5
+        OTHERS            = 6.
+    IF sy-subrc &lt;&gt; 0.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;system_error.
+    ENDIF.
+  ELSE.
+    CALL FUNCTION &apos;DDIF_TTYP_PUT&apos;
+        EXPORTING
+          name              = l_dd_objname
+          dd40v_wa          = dd40v_wa
+        TABLES
+          dd42v_tab         = lt_dd42v
+        EXCEPTIONS
+          ttyp_not_found    = 1
+          name_inconsistent = 2
+          ttyp_inconsistent = 3
+          put_failure       = 4
+          put_refused       = 5
+          OTHERS            = 6.
+    IF sy-subrc &lt;&gt; 0.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;system_error.
+    ENDIF.
+  ENDIF.
+
+
+  DATA: trobjtype  TYPE trobjtype,
+        trobj_name TYPE trobj_name.
+  trobjtype  = l_object.
+  trobj_name = l_obj_name.
+  CALL FUNCTION &apos;RS_INSERT_INTO_WORKING_AREA&apos;
+    EXPORTING
+      object            = trobjtype
+      obj_name          = trobj_name
+    EXCEPTIONS
+      wrong_object_name = 1.
+
+  name = objname.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014-2015 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+METHOD DELETEOBJECT.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>*/---------------------------------------------------------------------\
+*| This file is part of SAPlink.                                       |
+*|                                                                     |
+*| Copyright 2014-2015 SAPlink project members                              |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+METHOD GETOBJECTTYPE.
+
+*      Plugin created by:
+*      Thomas Jung
+*      thomas.jung1@gmail.com
+
+  objecttype = &apos;TTYP&apos;.  &quot;Table Type
+ENDMETHOD.</source>
+ </method>
+</CLAS>

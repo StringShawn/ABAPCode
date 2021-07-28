@@ -1,0 +1,579 @@
+class ZCL_ELEC_RECEIPT_CBI definition
+  public
+  inheriting from ZCL_ABSTRACT_ELEC_RECEIPT
+  final
+  create public .
+
+public section.
+
+  methods CHECK_MYRZ
+    importing
+      !IV_MYRZ type ZTR2S_DZHD_ADVICES_CBI
+      !IV_FILE_NAME type STRING .
+  methods CHECK_SFK
+    importing
+      !IV_SFK type ZTR2S_DZHD_REMITADVICES_CBI
+      !IV_FILE_NAME type STRING optional .
+  methods CHECK_DATE
+    importing
+      !IV_DATE type SY-DATUM
+    returning
+      value(EV_ERROR) type WDY_BOOLEAN .
+  methods CHECK_CURR
+    importing
+      !IV_AMOUNT type P
+    returning
+      value(EV_ERROR) type WDY_BOOLEAN .
+  methods CONVERT_DRCR_2_SHKZG
+    importing
+      !IV_DRCR type CLIKE
+    returning
+      value(EV_SHKZG) type BSEG-SHKZG .
+  class-methods CURRENCY_TRANS
+    importing
+      !IV_WAERS type WAERS
+    changing
+      value(EV_NETWR) type ANY .
+
+  methods ADJUST_ZTRT9506_FIELD
+    redefinition .
+  methods ZIF_ELEC_RECEIPT~CHECK_AND_SAVE_XML
+    redefinition .
+  methods ZIF_ELEC_RECEIPT~CHECK_SINGLE_FILE_NAME
+    redefinition .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_ELEC_RECEIPT_CBI IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->ADJUST_ZTRT9506_FIELD
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DOC_TYPE                    TYPE        TOADD-DOC_TYPE
+* | [<-->] CS_ZTRT9506                    TYPE        ZTRT9506
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD adjust_ztrt9506_field.
+    IF iv_doc_type = 'PDF' OR iv_doc_type = 'TIF'.
+      cl_bcs_utilities=>split_name( EXPORTING iv_name = cs_ztrt9506-att_name IMPORTING ev_name = DATA(lv_filename) ev_extension = DATA(lv_extension) ).
+      IF strlen( lv_filename ) > 16.
+        IF lv_filename+13(3) = 'REM'.
+          SPLIT lv_filename AT '_' INTO DATA(lv_pprex) DATA(lv_prex) cs_ztrt9506-docref1 .
+        ELSEIF lv_filename+13(3) = 'TFS'.
+          SPLIT lv_filename AT '_' INTO lv_pprex lv_prex cs_ztrt9506-docref1 cs_ztrt9506-docref2.
+        ELSE.
+          cs_ztrt9506-docref1 = lv_filename.
+        ENDIF.
+        cs_ztrt9506-docref3 = cs_ztrt9506-docref1 && cs_ztrt9506-docref2.
+      ELSE.
+        cs_ztrt9506-docref1 = lv_filename.
+      ENDIF.
+
+      "文件名前8位是“TFS_0089”为贸易融资，文件名前7位是“REM_ITT"或"REM_IRR"为收款，文件名前7位是“REM_OCH"或"REM_OTT"为收款
+      IF strlen( lv_filename ) >= 21 AND ( lv_filename+13(8) = 'TFS_0089' OR lv_filename+13(6) = 'TFS_89' ).
+        cs_ztrt9506-doctype = 'A'.
+      ELSEIF strlen( lv_filename ) >= 20 AND ( lv_filename+13(7) = 'REM_ITT' OR cs_ztrt9506-att_name+13(7) = 'REM_IRR' ).
+        cs_ztrt9506-doctype = 'B'.
+      ELSEIF strlen( lv_filename ) >= 20 AND ( lv_filename+13(7) = 'REM_OCH' OR cs_ztrt9506-att_name+13(7) = 'REM_OTT' ).
+        cs_ztrt9506-doctype = 'C'.
+      ENDIF.
+      gs_out-dzhd_qty = 1.
+    ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->CHECK_CURR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_AMOUNT                      TYPE        P
+* | [<-()] EV_ERROR                       TYPE        WDY_BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method CHECK_CURR.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->CHECK_DATE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DATE                        TYPE        SY-DATUM
+* | [<-()] EV_ERROR                       TYPE        WDY_BOOLEAN
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD check_date.
+    CHECK iv_date IS NOT INITIAL.
+    CALL FUNCTION 'DATE_CHECK_PLAUSIBILITY'
+      EXPORTING
+        date                      = iv_date
+      EXCEPTIONS
+        plausibility_check_failed = 1
+        OTHERS                    = 2.
+    IF sy-subrc <> 0.
+      ev_error = abap_true.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->CHECK_MYRZ
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_MYRZ                        TYPE        ZTR2S_DZHD_ADVICES_CBI
+* | [--->] IV_FILE_NAME                   TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD check_myrz.
+    DATA:lt_ztrt9505_1 TYPE TABLE OF ztrt9505_1,
+         lt_ztrt9505_2 TYPE TABLE OF ztrt9505_2.
+
+    DATA:ls_ztrt9505_1 TYPE ztrt9505_1,
+         ls_ztrt9505_2 TYPE ztrt9505_2.
+
+    DATA:error_flag TYPE abap_bool.
+
+    DATA:lv_zeile TYPE ztrt9505_2-zeile.
+    DATA: lv_waers  TYPE waers.
+
+
+    LOOP AT iv_myrz-advice INTO DATA(ls_advice).
+*&BEGIN-------------------------------------------------------------
+*&币种
+*&CHANGE DATE: 12.03.2020
+*&AUTHOR    : HANDXXJ
+*&------------------------------------------------------------------
+      CLEAR: lv_waers.
+      lv_waers = ls_advice-deal_info-tran_ccy.
+      currency_trans( EXPORTING iv_waers = lv_waers CHANGING ev_netwr = ls_advice-deal_info-tran_amt )."交易金额
+*&END---------------------------------------------------------------
+      ls_ztrt9505_1-trxdate = ls_advice-deal_info-tran_date.
+      ls_ztrt9505_1-bankref = ls_advice-deal_info-cncbi_ref.
+      ls_ztrt9505_1-refstep = ls_advice-deal_info-cncbi_ref_step.
+      ls_ztrt9505_1-loanno  = ls_advice-deal_info-cncbi_loan_no.
+      ls_ztrt9505_1-cref1   = ls_advice-deal_info-client_ref1.
+      ls_ztrt9505_1-cref2   = ls_advice-deal_info-client_ref2.
+      ls_ztrt9505_1-traccy  = ls_advice-deal_info-tran_ccy.
+      ls_ztrt9505_1-traamt  = ls_advice-deal_info-tran_amt.
+      ls_ztrt9505_1-billmd  = ls_advice-deal_info-bill_maturity_date.
+      ls_ztrt9505_1-loandd  = ls_advice-deal_info-loan_due_date.
+      ls_ztrt9505_1-bukrs = gv_bukrs.
+      ls_ztrt9505_1-bank_ind = gv_bank_ind.
+      ls_ztrt9505_1-zbak2 = iv_file_name.
+
+*      SELECT SINGLE @abap_true INTO @DATA(lv_exist) FROM ztrt9505_1 WHERE trxdate = @ls_ztrt9505_1-trxdate
+*                                                                      AND bankref = @ls_ztrt9505_1-bankref
+*                                                                      AND refstep = @ls_ztrt9505_1-refstep
+*                                                                      AND loanno  = @ls_ztrt9505_1-loanno.
+*      IF sy-subrc = 0.
+*        add_message(   x_msgid = 'ZTR202'
+*                       x_msgty = 'E'
+*                       x_msgno = '016'
+*                       x_msgv1 = |{ ls_ztrt9505_1-bankref }|
+*                       x_msgv2 = |{ ls_ztrt9505_1-loanno  }| ).
+*      ENDIF.
+
+      "日期检查
+      error_flag = check_date( ls_ztrt9505_1-trxdate ).
+      IF error_flag  = abap_true.
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '018'
+                       x_msgv1 = |{ ls_ztrt9505_1-trxdate }| ).
+        EXIT.
+      ENDIF.
+      error_flag = check_date( ls_ztrt9505_1-billmd ).
+      IF error_flag  = abap_true.
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '018'
+                       x_msgv1 = |{ ls_ztrt9505_1-billmd }| ).
+        EXIT.
+      ENDIF.
+      error_flag = check_date( ls_ztrt9505_1-loandd ).
+      IF error_flag  = abap_true.
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '018'
+                       x_msgv1 = |{ ls_ztrt9505_1-loandd }| ).
+        EXIT.
+      ENDIF.
+
+      ls_ztrt9505_1-erdat = sy-datum.
+      ls_ztrt9505_1-erzet = sy-uzeit.
+      ls_ztrt9505_1-ernam = sy-uname.
+      APPEND ls_ztrt9505_1 TO lt_ztrt9505_1.
+
+      CHECK ls_advice-fund_movement IS NOT INITIAL.
+
+      LOOP AT ls_advice-fund_movement  INTO DATA(ls_fund_movement).
+        ls_ztrt9505_2 = CORRESPONDING #( ls_ztrt9505_1 ).
+        ls_ztrt9505_2-shkzg = convert_drcr_2_shkzg( ls_fund_movement-dr_cr ).
+        ls_ztrt9505_2-yhzh  = ls_fund_movement-acc_nbr.
+        ls_ztrt9505_2-netamt = ls_fund_movement-dr_cr_net_amt.
+        ls_ztrt9505_2-bukrs = gv_bukrs.
+        ls_ztrt9505_2-bank_ind = gv_bank_ind.
+        ls_ztrt9505_2-zbak2 = iv_file_name.
+
+*        SELECT SINGLE @abap_true INTO @lv_exist FROM ztrt9505_2 WHERE trxdate = @ls_ztrt9505_2-trxdate
+*                                                                  AND bankref = @ls_ztrt9505_2-bankref
+*                                                                  AND refstep = @ls_ztrt9505_2-refstep
+*                                                                  AND loanno = @ls_ztrt9505_2-loanno
+*                                                                  AND yhzh = @ls_ztrt9505_2-yhzh.
+*        IF sy-subrc = 0.
+*          add_message(   x_msgid = 'ZTR202'
+*                       x_msgty = 'E'
+*                       x_msgno = '016'
+*                       x_msgv1 = |{ ls_ztrt9505_1-bankref }|
+*                       x_msgv2 = |{ ls_ztrt9505_1-loanno  }| ).
+*        ENDIF.
+        IF ls_ztrt9505_2-yhzh NE ''.
+          SELECT SINGLE hbkid hktid INTO CORRESPONDING FIELDS OF ls_ztrt9505_2 FROM ztrt0013
+          WHERE yhzh = ls_ztrt9505_2-yhzh
+            AND bukrs = gv_bukrs
+            AND bank_ind = gv_bank_ind.
+          IF sy-subrc NE 0.
+            add_message(   x_msgid = 'ZTR202'
+                           x_msgty = 'E'
+                           x_msgno = '019'
+                           x_msgv1 = |{ ls_ztrt9505_2-yhzh }| ).
+            EXIT.
+          ENDIF.
+        ENDIF.
+
+
+        ls_ztrt9505_2-erdat = sy-datum.
+        ls_ztrt9505_2-erzet = sy-uzeit.
+        ls_ztrt9505_2-ernam = sy-uname.
+
+        CLEAR lv_zeile.
+
+        LOOP AT ls_fund_movement-movement_breakdown-movement_record INTO DATA(ls_move).
+          ADD 1 TO lv_zeile.
+*&BEGIN-------------------------------------------------------------
+*&币种
+*&CHANGE DATE: 12.03.2020
+*&AUTHOR    : HANDXXJ
+*&------------------------------------------------------------------
+          CLEAR: lv_waers.
+          lv_waers = ls_move-movement_ccy.
+          currency_trans( EXPORTING iv_waers = lv_waers CHANGING ev_netwr = ls_move-movement_amt )."金额
+          IF lv_zeile = 1.
+            currency_trans( EXPORTING iv_waers = lv_waers CHANGING ev_netwr = ls_fund_movement-dr_cr_net_amt )."金额
+            ls_ztrt9505_2-netamt = ls_fund_movement-dr_cr_net_amt.
+          ENDIF.
+*&END---------------------------------------------------------------
+          ls_ztrt9505_2-zeile = lv_zeile.
+          ls_ztrt9505_2-moveamt = ls_move-movement_amt.
+          ls_ztrt9505_2-moveccy = ls_move-movement_ccy.
+          ls_ztrt9505_2-movedesc = ls_move-movement_desc.
+          ls_ztrt9505_2-movetype = ls_move-movement_type.
+          ls_ztrt9505_2-moveshkzg = convert_drcr_2_shkzg( ls_move-movement_dr_cr ).
+
+          APPEND ls_ztrt9505_2 TO lt_ztrt9505_2.
+        ENDLOOP.
+        IF ls_fund_movement-movement_breakdown-movement_record IS INITIAL.
+          ls_ztrt9505_2-netamt = ls_fund_movement-dr_cr_net_amt.  "Add by handxxj 20201203
+          APPEND ls_ztrt9505_2 TO lt_ztrt9505_2.
+        ENDIF.
+
+      ENDLOOP.
+
+      IF if_error( ).
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+    CHECK NOT if_error( ).
+
+    gs_out-tfsdi_qty = lines( lt_ztrt9505_1 ).
+    gs_out-tfsfm_qty = lines( lt_ztrt9505_2 ).
+    MODIFY ztrt9505_1 FROM TABLE lt_ztrt9505_1.
+    MODIFY ztrt9505_2 FROM TABLE lt_ztrt9505_2.
+
+    COMMIT WORK.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->CHECK_SFK
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_SFK                         TYPE        ZTR2S_DZHD_REMITADVICES_CBI
+* | [--->] IV_FILE_NAME                   TYPE        STRING(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD check_sfk.
+    DATA:lt_ztrt9505_3 TYPE TABLE OF ztrt9505_3,
+         lt_ztrt9505_4 TYPE TABLE OF ztrt9505_4.
+
+    DATA:ls_ztrt9505_3 TYPE ztrt9505_3,
+         ls_ztrt9505_4 TYPE ztrt9505_4.
+
+    LOOP AT iv_sfk-remitadvices-inwardremit INTO DATA(ls_in).
+      ls_ztrt9505_3 = CORRESPONDING #( ls_in ).
+*&BEGIN-------------------------------------------------------------
+*&币种
+*&CHANGE DATE: 12.03.2020
+*&AUTHOR    : HANDXXJ
+*&------------------------------------------------------------------
+      currency_trans( EXPORTING iv_waers = ls_ztrt9505_3-remccy   CHANGING ev_netwr = ls_ztrt9505_3-remamt )."交易金额
+      currency_trans( EXPORTING iv_waers = ls_ztrt9505_3-crremccy CHANGING ev_netwr = ls_ztrt9505_3-crremamt )."账户金额
+      currency_trans( EXPORTING iv_waers = ls_ztrt9505_3-drcccy   CHANGING ev_netwr = ls_ztrt9505_3-drcamt )."费用金额
+      currency_trans( EXPORTING iv_waers = ls_ztrt9505_3-hdoccy   CHANGING ev_netwr = ls_ztrt9505_3-hdoamt )."手续费原有金额
+      currency_trans( EXPORTING iv_waers = ls_ztrt9505_3-hdccy    CHANGING ev_netwr = ls_ztrt9505_3-hdamt )."手续费金额
+*&END---------------------------------------------------------------
+      ls_ztrt9505_3-bukrs = gv_bukrs.
+      SELECT SINGLE hbkid hktid INTO CORRESPONDING FIELDS OF ls_ztrt9505_3 FROM ztrt0013 WHERE bukrs = gv_bukrs AND yhzh = ls_ztrt9505_3-crremaacno.
+      ls_ztrt9505_3-bank_ind = gv_bank_ind.
+      ls_ztrt9505_3-fee_type = 'F40'.
+      ls_ztrt9505_3-zbak2 = iv_file_name.
+
+      CONCATENATE ls_in-remname1 ls_in-remname2 ls_in-remname3 ls_in-remname4 INTO ls_ztrt9505_3-remname.
+      CONCATENATE ls_in-rembanknam1 ls_in-rembanknam2 ls_in-rembanknam3 ls_in-rembanknam4 INTO ls_ztrt9505_3-rembankname.
+      CONCATENATE ls_in-rempmd1 ls_in-rempmd2 ls_in-rempmd3 ls_in-rempmd4 INTO ls_ztrt9505_3-rempmd.
+
+*      SELECT SINGLE @abap_true INTO @DATA(lv_exist) FROM ztrt9505_3 WHERE bankref = @ls_ztrt9505_3-bankref.
+*      IF sy-subrc = 0.
+*        add_message(   x_msgid = 'ZTR202'
+*                       x_msgty = 'E'
+*                       x_msgno = '020'
+*                       x_msgv1 = |{ ls_ztrt9505_3-bankref }| ).
+*        EXIT.
+*      ENDIF.
+      "日期检查
+      DATA(error_flag) = check_date( ls_ztrt9505_3-trxdate ).
+      IF error_flag  = abap_true.
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '018'
+                       x_msgv1 = |{ ls_ztrt9505_3-trxdate }| ).
+        EXIT.
+      ENDIF.
+      IF ls_ztrt9505_3-crremaacno IS NOT INITIAL.
+        SELECT SINGLE @abap_true INTO @DATA(lv_exist) FROM ztrt0013
+        WHERE yhzh = @ls_ztrt9505_3-crremaacno
+          AND bukrs = @gv_bukrs
+          AND bank_ind = @gv_bank_ind.
+        IF sy-subrc NE 0.
+          add_message(   x_msgid = 'ZTR202'
+                         x_msgty = 'E'
+                         x_msgno = '019'
+                         x_msgv1 = |{ ls_ztrt9505_3-crremaacno }| ).
+          EXIT.
+        ENDIF.
+      ENDIF.
+
+      IF ls_ztrt9505_3-drcaacno IS NOT INITIAL.
+        SELECT SINGLE @abap_true INTO @lv_exist FROM ztrt0013
+        WHERE yhzh = @ls_ztrt9505_3-drcaacno
+          AND bukrs = @gv_bukrs
+          AND bank_ind = @gv_bank_ind.
+        IF sy-subrc NE 0.
+          add_message(   x_msgid = 'ZTR202'
+                         x_msgty = 'E'
+                         x_msgno = '019'
+                         x_msgv1 = |{ ls_ztrt9505_3-drcaacno }| ).
+          EXIT.
+        ENDIF.
+      ENDIF.
+
+      ls_ztrt9505_3-erdat = sy-datum.
+      ls_ztrt9505_3-erzet = sy-uzeit.
+      ls_ztrt9505_3-ernam = sy-uname.
+
+      APPEND ls_ztrt9505_3 TO lt_ztrt9505_3.
+      CLEAR: ls_ztrt9505_3.
+    ENDLOOP.
+
+    CHECK NOT if_error( ).
+    LOOP AT iv_sfk-remitadvices-outwardremit INTO DATA(ls_out).
+*&BEGIN-------------------------------------------------------------
+*&币种
+*&CHANGE DATE: 12.03.2020
+*&AUTHOR    : HANDXXJ
+*&------------------------------------------------------------------
+      currency_trans( EXPORTING iv_waers = ls_out-insccy   CHANGING ev_netwr = ls_out-insamt )."指示交易金额
+      currency_trans( EXPORTING iv_waers = ls_out-remccy   CHANGING ev_netwr = ls_out-remamt )."交易金额
+      currency_trans( EXPORTING iv_waers = ls_out-drremccy CHANGING ev_netwr = ls_out-drremamt  )."账户金额
+      currency_trans( EXPORTING iv_waers = ls_out-drcccy   CHANGING ev_netwr = ls_out-drcamt )."费用金额
+      currency_trans( EXPORTING iv_waers = ls_out-hdoccy   CHANGING ev_netwr = ls_out-hdoamt )."手续费原有金额
+      currency_trans( EXPORTING iv_waers = ls_out-hdccy    CHANGING ev_netwr = ls_out-hdamt )."手续费金额
+      currency_trans( EXPORTING iv_waers = ls_out-ccoccy   CHANGING ev_netwr = ls_out-ccoamt )."电报费原有金额
+      currency_trans( EXPORTING iv_waers = ls_out-ccccy    CHANGING ev_netwr = ls_out-ccamt )."电报费金额
+      currency_trans( EXPORTING iv_waers = ls_out-mcomcy   CHANGING ev_netwr = ls_out-mcoamt )."信息费原有金额
+      currency_trans( EXPORTING iv_waers = ls_out-mcmcy    CHANGING ev_netwr = ls_out-mcamt )."信息费金额
+      currency_trans( EXPORTING iv_waers = ls_out-cccoccy  CHANGING ev_netwr = ls_out-cccoamt )."中文字电码费原有金额
+      currency_trans( EXPORTING iv_waers = ls_out-cccccy   CHANGING ev_netwr = ls_out-cccamt )."中文字电码费金额
+      currency_trans( EXPORTING iv_waers = ls_out-abcoccy  CHANGING ev_netwr = ls_out-abcoamt )."代理费原有金额
+      currency_trans( EXPORTING iv_waers = ls_out-abcccy   CHANGING ev_netwr = ls_out-abcamt )."代理费金额
+      currency_trans( EXPORTING iv_waers = ls_out-cmcoccy  CHANGING ev_netwr = ls_out-cmcoamt )."无兑换手续费原有金额
+      currency_trans( EXPORTING iv_waers = ls_out-cmcccy   CHANGING ev_netwr = ls_out-cmcamt )."无兑换手续费金额
+*      currency_trans( EXPORTING iv_waers = ls_out-hdoccy   CHANGING ev_netwr = ls_out-drcoamt )."费用原有金额
+*&END---------------------------------------------------------------
+      ls_ztrt9505_4 = CORRESPONDING #( ls_out ).
+      ls_ztrt9505_4-bukrs = gv_bukrs.
+      SELECT SINGLE hbkid hktid INTO CORRESPONDING FIELDS OF ls_ztrt9505_4 FROM ztrt0013 WHERE bukrs = gv_bukrs AND yhzh = ls_ztrt9505_4-drremaacno.
+      ls_ztrt9505_4-bank_ind = gv_bank_ind.
+      ls_ztrt9505_4-fee_type = 'F40'.
+      ls_ztrt9505_4-drcoccy = ls_out-hdoccy.
+*      ls_ztrt9505_4-drcoamt = ls_out-hdoamt + ls_out-ccoamt + ls_out-mcoamt + ls_out-cccoamt + ls_out-abcoamt + ls_out-abcoamt.  "费用原有金额
+      ls_ztrt9505_4-drcoamt = ls_out-hdoamt + ls_out-ccoamt + ls_out-mcoamt + ls_out-cccoamt + ls_out-abcoamt + ls_out-cmcoamt. "Modify by handxxj 20201204
+      ls_ztrt9505_4-zbak2 = iv_file_name.
+
+      CONCATENATE ls_out-bename1 ls_out-bename2 ls_out-bename3 ls_out-bename4 INTO ls_ztrt9505_4-bename.
+      CONCATENATE ls_out-bebankname1 ls_out-bebankname2 ls_out-bebankname3 ls_out-bebankname4 INTO ls_ztrt9505_4-bebankname.
+      CONCATENATE ls_out-bepmd1 ls_out-bepmd2 ls_out-bepmd3 ls_out-bepmd4 INTO ls_ztrt9505_4-bepmd.
+
+
+*      SELECT SINGLE @abap_true INTO @lv_exist FROM ztrt9505_4 WHERE bankref = @ls_ztrt9505_4-bankref.
+*      IF sy-subrc = 0.
+*        add_message(   x_msgid = 'ZTR202'
+*                       x_msgty = 'E'
+*                       x_msgno = '021'
+*                       x_msgv1 = |{ ls_ztrt9505_4-bankref }| ).
+*        EXIT.
+*      ENDIF.
+
+      "日期检查
+      error_flag = check_date( ls_ztrt9505_4-trxdate ).
+      IF error_flag  = abap_true.
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '018'
+                       x_msgv1 = |{ ls_ztrt9505_4-trxdate }| ).
+        EXIT.
+      ENDIF.
+
+      IF ls_ztrt9505_4-drcaacno IS NOT INITIAL.
+        SELECT SINGLE @abap_true INTO @lv_exist FROM ztrt0013
+        WHERE yhzh = @ls_ztrt9505_4-drcaacno
+          AND bukrs = @gv_bukrs
+          AND bank_ind = @gv_bank_ind.
+        IF sy-subrc NE 0.
+          add_message(   x_msgid = 'ZTR202'
+                         x_msgty = 'E'
+                         x_msgno = '019'
+                         x_msgv1 = |{ ls_ztrt9505_4-drcaacno }| ).
+          EXIT.
+        ENDIF.
+      ENDIF.
+
+      IF ls_ztrt9505_4-drremaacno IS NOT INITIAL.
+        SELECT SINGLE @abap_true INTO @lv_exist FROM ztrt0013
+        WHERE yhzh = @ls_ztrt9505_4-drremaacno
+          AND bukrs = @gv_bukrs
+          AND bank_ind = @gv_bank_ind.
+        IF sy-subrc NE 0.
+          add_message(   x_msgid = 'ZTR202'
+                         x_msgty = 'E'
+                         x_msgno = '019'
+                         x_msgv1 = |{ ls_ztrt9505_4-drremaacno }| ).
+          EXIT.
+        ENDIF.
+      ENDIF.
+
+      ls_ztrt9505_4-erdat = sy-datum.
+      ls_ztrt9505_4-erzet = sy-uzeit.
+      ls_ztrt9505_4-ernam = sy-uname.
+      APPEND ls_ztrt9505_4 TO lt_ztrt9505_4.
+      CLEAR: ls_ztrt9505_4.
+    ENDLOOP.
+    CHECK NOT if_error( ).
+
+    gs_out-rem_in_qty = lines( lt_ztrt9505_3 ).
+    gs_out-rem_out_qty = lines( lt_ztrt9505_4 ).
+    MODIFY ztrt9505_3 FROM TABLE lt_ztrt9505_3.
+    MODIFY ztrt9505_4 FROM TABLE lt_ztrt9505_4.
+    COMMIT WORK.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->CONVERT_DRCR_2_SHKZG
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DRCR                        TYPE        CLIKE
+* | [<-()] EV_SHKZG                       TYPE        BSEG-SHKZG
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD convert_drcr_2_shkzg.
+    ev_shkzg = SWITCH #( iv_drcr WHEN 'DR' THEN 'H'
+                                 WHEN 'CR' THEN 'S' ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_ELEC_RECEIPT_CBI=>CURRENCY_TRANS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_WAERS                       TYPE        WAERS
+* | [<-->] EV_NETWR                       TYPE        ANY
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD currency_trans.
+    DATA: lv_factor  TYPE isoc_factor.
+    CHECK iv_waers IS NOT INITIAL.
+
+    CALL FUNCTION 'CURRENCY_CONVERTING_FACTOR' EXPORTING currency = iv_waers IMPORTING factor = lv_factor.
+    ev_netwr = ev_netwr / lv_factor.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->ZIF_ELEC_RECEIPT~CHECK_AND_SAVE_XML
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FILE_NAME                   TYPE        STRING(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~check_and_save_xml.
+    FIELD-SYMBOLS:<fs_myrz> TYPE ztr2s_dzhd_advices_cbi,
+                  <fs_sfk>  TYPE ztr2s_dzhd_remitadvices_cbi.
+    CASE gv_upload_type.
+      WHEN zif_elec_receipt~file_type_myrz. "贸易融资
+        ASSIGN gv_data_ref->* TO <fs_myrz>.
+        check_myrz( iv_myrz = <fs_myrz> iv_file_name = iv_file_name ).
+      WHEN zif_elec_receipt~file_type_sfk. "收付款
+        ASSIGN gv_data_ref->* TO <fs_sfk>.
+        check_sfk( iv_sfk = <fs_sfk> iv_file_name = iv_file_name ).
+      WHEN OTHERS.
+        add_message(   x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '022'
+                       x_msgv1 = |{ gv_upload_type }| ).
+    ENDCASE.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ELEC_RECEIPT_CBI->ZIF_ELEC_RECEIPT~CHECK_SINGLE_FILE_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FILE_NAME                   TYPE        STRING
+* | [<---] EV_PURE_FILE_NAME              TYPE        STRING
+* | [<---] EV_EXTENSION                   TYPE        SDBAD-FUNCT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD zif_elec_receipt~check_single_file_name.
+    DATA:long_file_name TYPE string.
+    super->zif_elec_receipt~check_single_file_name( EXPORTING iv_file_name = iv_file_name IMPORTING ev_pure_file_name = ev_pure_file_name ev_extension = ev_extension  ).
+    long_file_name = ev_pure_file_name && '.' && ev_extension.
+    IF gv_bank_ind = 'CBI'.
+      CASE ev_extension.
+        WHEN 'PDF' OR 'TIF'.
+          IF gv_upload_type NE '03'.
+            add_message( x_msgid = 'ZTR202'
+             x_msgty = 'E'
+             x_msgno = '010'
+             x_msgv1 = |{ long_file_name }|  ).
+          ENDIF.
+        WHEN 'XML'.
+          IF  gv_upload_type = zif_elec_receipt~file_type_myrz AND ev_pure_file_name+13(10) NE 'TFS_ADVICE'.
+            add_message( x_msgid = 'ZTR202'
+                         x_msgty = 'E'
+                         x_msgno = '010'
+                         x_msgv1 = |{ long_file_name }|  ).
+            "文件名前7位是“REM_ITT"或"REM_IRR"为收款，文件名前7位是“REM_OCH"或"REM_OTT"为收款,
+          ELSEIF gv_upload_type = zif_elec_receipt~file_type_sfk AND ev_pure_file_name+13(10) NE 'REM_ADVICE' ."AND lv_filename+0(7) NE 'REM_IRR' AND lv_filename+0(7) NE 'REM_OCH' AND lv_filename+0(7) NE 'REM_OTT'.
+            add_message( x_msgid = 'ZTR202'
+                         x_msgty = 'E'
+                         x_msgno = '010'
+                         x_msgv1 = |{ long_file_name }|  ).
+          ENDIF.
+        WHEN OTHERS.
+          add_message( x_msgid = 'ZTR202'
+                       x_msgty = 'E'
+                       x_msgno = '010'
+                       x_msgv1 = |{ long_file_name }|  ).
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
